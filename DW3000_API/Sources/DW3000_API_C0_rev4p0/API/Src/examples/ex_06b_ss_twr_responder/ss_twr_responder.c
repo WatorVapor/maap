@@ -24,6 +24,10 @@
 #include <shared_functions.h>
 #include <example_selection.h>
 
+#define DUMP_VAR_I(x) {\
+  printf("%s:%d,%s=<%d>\n",__FILE__,__LINE__,#x,x);\
+}
+
 
 #if defined(TEST_SS_TWR_RESPONDER)
 
@@ -104,6 +108,7 @@ extern dwt_txconfig_t txconfig_options;
  */
 int ss_twr_responder(void)
 {
+  DUMP_VAR_I(1);
     /* Display application name on LCD. */
     test_run_info((unsigned char *)APP_NAME);
 
@@ -156,6 +161,7 @@ int ss_twr_responder(void)
         while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG_BIT_MASK | SYS_STATUS_ALL_RX_ERR)))
         { };
 
+        DUMP_VAR_I(status_reg & SYS_STATUS_RXFCG_BIT_MASK);
         if (status_reg & SYS_STATUS_RXFCG_BIT_MASK)
         {
             uint32_t frame_len;

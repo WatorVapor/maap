@@ -57,6 +57,9 @@
 #include <config_options.h>
 
 #if defined(TEST_SS_TWR_INITIATOR_STS_NO_DATA)
+#define DUMP_VAR_I(x) {\
+  printf("%s:%d,%s=<%d>\n",__FILE__,__LINE__,#x,x);\
+}
 
 extern void test_run_info(unsigned char *data);
 
@@ -176,7 +179,7 @@ int ss_twr_initiator_sts_no_data(void)
 
     /* Display application name on UART. */
     test_run_info((unsigned char *)APP_NAME);
-
+    DUMP_VAR_I(goodSts);
     /* Configure SPI rate, DW3000 supports up to 38 MHz */
 #ifdef CONFIG_SPI_FAST_RATE
     port_set_dw_ic_spi_fastrate();
@@ -288,6 +291,7 @@ int ss_twr_initiator_sts_no_data(void)
          * Here we are checking for a good packet, a good preamble count and good STS quality.
          * When using No Data STS mode we do not get RXFCG but RXFR.
          */
+        DUMP_VAR_I(status_reg & SYS_STATUS_RXFR_BIT_MASK);
         if (status_reg & SYS_STATUS_RXFR_BIT_MASK)
         {
             /* Clear the RX events. */
@@ -295,6 +299,7 @@ int ss_twr_initiator_sts_no_data(void)
             /*
              * Checking for the SP3 mode RESP packet with good STS
              */
+            DUMP_VAR_I(goodSts);
             if (goodSts >= 0)
             {
                 /* Retrieve poll transmission and response reception timestamps. See NOTE 8 below. */
@@ -322,6 +327,7 @@ int ss_twr_initiator_sts_no_data(void)
                 while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG_BIT_MASK | SYS_STATUS_ALL_RX_TO | SYS_STATUS_ALL_RX_ERR)))
                 { };
 
+                DUMP_VAR_I(status_reg & SYS_STATUS_RXFCG_BIT_MASK);
                 if (status_reg & SYS_STATUS_RXFCG_BIT_MASK)
                 {
                     uint32_t frame_len;
@@ -331,6 +337,7 @@ int ss_twr_initiator_sts_no_data(void)
 
                     /* A frame has been received, read it into the local buffer. */
                     frame_len = dwt_read32bitreg(RX_FINFO_ID) & RXFLEN_MASK;
+                    DUMP_VAR_I((frame_len <= sizeof(rx_buffer)) && (frame_len != 0));
                     if ((frame_len <= sizeof(rx_buffer)) && (frame_len != 0))
                     {
                         dwt_readrxdata(rx_buffer, frame_len, 0);
@@ -338,6 +345,7 @@ int ss_twr_initiator_sts_no_data(void)
                         /* Check that the frame is the expected response from the companion "SS TWR responder" example.
                          * As the sequence number field of the frame is not relevant, it is cleared to simplify the validation of the frame. */
                         rx_buffer[ALL_MSG_SN_IDX] = 0;
+                        DUMP_VAR_I(memcmp(rx_buffer, rx_report_msg, ALL_MSG_COMMON_LEN) == 0);
                         if (memcmp(rx_buffer, rx_report_msg, ALL_MSG_COMMON_LEN) == 0)
                         {
                             /* Read carrier integrator value and calculate clock offset ratio. See NOTE 9 below. */

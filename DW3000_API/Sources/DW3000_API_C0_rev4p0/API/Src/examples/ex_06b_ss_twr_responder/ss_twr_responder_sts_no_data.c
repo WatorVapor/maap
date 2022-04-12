@@ -56,6 +56,11 @@
 
 #if defined(TEST_SS_TWR_RESPONDER_STS_NO_DATA)
 
+#define DUMP_VAR_I(x) {\
+  printf("%s:%d,%s=<%d>\n",__FILE__,__LINE__,#x,x);\
+}
+
+
 extern void test_run_info(unsigned char *data);
 
 /* Example application name */
@@ -140,6 +145,7 @@ static dwt_sts_cp_iv_t cp_iv =
  */
 int ss_twr_responder_sts_no_data(void)
 {
+    DUMP_VAR_I(1);
     int16_t stsQual; /* This will contain STS quality index and status */
     int goodSts = 0; /* Used for checking STS quality in received signal */
     uint8_t firstLoopFlag = 0;
@@ -239,6 +245,7 @@ int ss_twr_responder_sts_no_data(void)
          */
         goodSts = dwt_readstsquality(&stsQual);
 
+        DUMP_VAR_I(status_reg & SYS_STATUS_RXFR_BIT_MASK);
         /*
          * At this point of the program, we are expecting the POLL packet to be received.
          * Since the POLL packet will have no PHY payload (i.e. no data in the packet), we only check
@@ -250,6 +257,7 @@ int ss_twr_responder_sts_no_data(void)
             /*
              * Checking for the SP3 mode POLL packet
              */
+            DUMP_VAR_I(goodSts);
             if (goodSts >= 0)
             {
                 uint32_t resp_tx_time, report_tx_time;
@@ -275,6 +283,7 @@ int ss_twr_responder_sts_no_data(void)
                 dwt_writetxfctrl(0, 0, 1); /* Zero offset in TX buffer, ranging. */
                 ret = dwt_starttx(DWT_START_TX_DELAYED);
 
+                DUMP_VAR_I(ret == DWT_SUCCESS);
                 /* If dwt_starttx() returns an error, abandon this ranging exchange and proceed to the next one. See NOTE 9 & 10 below. */
                 if (ret == DWT_SUCCESS)
                 {
@@ -312,6 +321,7 @@ int ss_twr_responder_sts_no_data(void)
                     dwt_writetxfctrl(sizeof(tx_report_msg), 0, 0); /* Zero offset in TX buffer, not ranging. */
                     ret = dwt_starttx(DWT_START_TX_DELAYED);
 
+                    DUMP_VAR_I(ret == DWT_SUCCESS);
                     /* If dwt_starttx() returns an error, abandon this ranging exchange and proceed to the next one. See NOTE 9 & 10 below. */
                     if (ret == DWT_SUCCESS)
                     {
@@ -324,6 +334,7 @@ int ss_twr_responder_sts_no_data(void)
 
                         /* Increment frame sequence number after transmission of the report frame (modulo 256). */
                         frame_seq_nb++;
+                        DUMP_VAR_I(frame_seq_nb);
                     }
                 }
                 else

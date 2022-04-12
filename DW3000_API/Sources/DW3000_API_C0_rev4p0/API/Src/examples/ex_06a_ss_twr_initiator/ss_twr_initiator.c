@@ -26,6 +26,11 @@
 #include <example_selection.h>
 #include <config_options.h>
 
+
+#define DUMP_VAR_I(x) {\
+  printf("%s:%d,%s=<%d>\n",__FILE__,__LINE__,#x,x);\
+}
+
 #if defined(TEST_SS_TWR_INITIATOR)
 
 extern void test_run_info(unsigned char *data);
@@ -118,6 +123,7 @@ extern dwt_txconfig_t txconfig_options;
  */
 int ss_twr_initiator(void)
 {
+    DUMP_VAR_I(1);
     /* Display application name on LCD. */
     test_run_info((unsigned char *)APP_NAME);
 
@@ -129,6 +135,7 @@ int ss_twr_initiator(void)
 
     Sleep(2); // Time needed for DW3000 to start up (transition from INIT_RC to IDLE_RC, or could wait for SPIRDY event)
 
+    DUMP_VAR_I(1);
     while (!dwt_checkidlerc()) /* Need to make sure DW IC is in IDLE_RC before proceeding */
     { };
     if (dwt_initialise(DWT_DW_INIT) == DWT_ERROR)
@@ -137,6 +144,7 @@ int ss_twr_initiator(void)
         while (1)
         { };
     }
+    DUMP_VAR_I(1);
 
     /* Enabling LEDs here for debug so that for each TX the D1 LED will flash on DW3000 red eval-shield boards. */
     dwt_setleds(DWT_LEDS_ENABLE | DWT_LEDS_INIT_BLINK) ;
@@ -148,6 +156,7 @@ int ss_twr_initiator(void)
         while (1)
         { };
     }
+    DUMP_VAR_I(1);
 
     /* Configure the TX spectrum parameters (power, PG delay and PG count) */
     dwt_configuretxrf(&txconfig_options);
@@ -165,6 +174,7 @@ int ss_twr_initiator(void)
      * Note, in real low power applications the LEDs should not be used. */
     dwt_setlnapamode(DWT_LNA_ENABLE | DWT_PA_ENABLE);
 
+    DUMP_VAR_I(1);
     /* Loop forever initiating ranging exchanges. */
     while (1)
     {
@@ -178,13 +188,17 @@ int ss_twr_initiator(void)
          * set by dwt_setrxaftertxdelay() has elapsed. */
         dwt_starttx(DWT_START_TX_IMMEDIATE | DWT_RESPONSE_EXPECTED);
 
-        /* We assume that the transmission is achieved correctly, poll for reception of a frame or error/timeout. See NOTE 8 below. */
+        DUMP_VAR_I(2);
+       /* We assume that the transmission is achieved correctly, poll for reception of a frame or error/timeout. See NOTE 8 below. */
         while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG_BIT_MASK | SYS_STATUS_ALL_RX_TO | SYS_STATUS_ALL_RX_ERR)))
         { };
+        DUMP_VAR_I(2);
 
         /* Increment frame sequence number after transmission of the poll message (modulo 256). */
         frame_seq_nb++;
 
+        DUMP_VAR_I(frame_seq_nb);
+        DUMP_VAR_I(status_reg & SYS_STATUS_RXFCG_BIT_MASK);
         if (status_reg & SYS_STATUS_RXFCG_BIT_MASK)
         {
             uint32_t frame_len;
@@ -194,6 +208,7 @@ int ss_twr_initiator(void)
 
             /* A frame has been received, read it into the local buffer. */
             frame_len = dwt_read32bitreg(RX_FINFO_ID) & RXFLEN_MASK;
+            DUMP_VAR_I(frame_len);
             if (frame_len <= sizeof(rx_buffer))
             {
                 dwt_readrxdata(rx_buffer, frame_len, 0);

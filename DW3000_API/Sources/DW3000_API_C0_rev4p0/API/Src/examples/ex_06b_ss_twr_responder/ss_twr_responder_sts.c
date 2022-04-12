@@ -37,6 +37,11 @@
 
 #if defined(TEST_SS_TWR_RESPONDER_STS)
 
+#define DUMP_VAR_I(x) {\
+  printf("%s:%d,%s=<%d>\n",__FILE__,__LINE__,#x,x);\
+}
+
+
 extern void test_run_info(unsigned char *data);
 
 /* Example application name */
@@ -125,12 +130,14 @@ static dwt_sts_cp_iv_t cp_iv =
  */
 int ss_twr_responder_sts(void)
 {
+  DUMP_VAR_I(1);
     int16_t stsQual; /* This will contain STS quality index and status */
     int goodSts = 0; /* Used for checking STS quality in received signal */
     uint8_t firstLoopFlag = 0; /* Used to track if the program has gone through the first loop or not. */
     /* Display application name on UART. */
     test_run_info((unsigned char *)APP_NAME);
 
+  DUMP_VAR_I(goodSts);
     /* Configure SPI rate, DW3000 supports up to 38 MHz */
 #ifdef CONFIG_SPI_FAST_RATE
     port_set_dw_ic_spi_fastrate();
@@ -144,6 +151,7 @@ int ss_twr_responder_sts(void)
 
     Sleep(2); // Time needed for DW3000 to start up (transition from INIT_RC to IDLE_RC)
 
+  DUMP_VAR_I(goodSts);
     while (!dwt_checkidlerc()) /* Need to make sure DW IC is in IDLE_RC before proceeding */
     { };
 
@@ -158,6 +166,7 @@ int ss_twr_responder_sts(void)
      * Note, in real low power applications the LEDs should not be used. */
     dwt_setleds(DWT_LEDS_ENABLE | DWT_LEDS_INIT_BLINK) ;
 
+  DUMP_VAR_I(goodSts);
     /* Configure DW IC. See NOTE 14 below. */
     if(dwt_configure(&config_options)) /* if the dwt_configure returns DWT_ERROR either the PLL or RX calibration has failed the host should reset the device */
     {
@@ -221,6 +230,8 @@ int ss_twr_responder_sts(void)
          */
         goodSts = dwt_readstsquality(&stsQual);
 
+  DUMP_VAR_I(goodSts);
+  DUMP_VAR_I(status_reg & SYS_STATUS_RXFCG_BIT_MASK);
         /*
          * Check for a good frame with good STS count.
          */
