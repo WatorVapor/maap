@@ -13,12 +13,12 @@
 
 #include <port.h>
 
-
 /****************************************************************************//**
  *
  *                              APP global variables
  *
  *******************************************************************************/
+pthread_mutex_t dwt_lock;
 
 
 /****************************************************************************//**
@@ -188,7 +188,7 @@ void port_set_dw_ic_spi_fastrate(void)
     /*
      * Fast rates are not available at present.
      */
-//    int fd = wiringPiSPISetupMode(SPI_CHANNEL, SPI_CLOCK_SPEED_FAST, 0);
+    //int fd = wiringPiSPISetupMode(SPI_CHANNEL, SPI_CLOCK_SPEED_FAST, 0);
     int fd = wiringPiSPISetupMode(SPI_CHANNEL, SPI_CLOCK_SPEED_SLOW, 0);
     if (fd == -1) {
         fprintf(stderr, "Failed to init SPI communication: %s\n", strerror(errno));

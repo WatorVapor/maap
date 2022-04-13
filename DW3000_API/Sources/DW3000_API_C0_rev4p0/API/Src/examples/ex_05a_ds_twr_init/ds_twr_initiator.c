@@ -26,6 +26,13 @@
 #include <shared_functions.h>
 #include <example_selection.h>
 
+#define DUMP_VAR_I(x) {\
+  printf("%s:%d,%s=<%d>\n",__FILE__,__LINE__,#x,x);\
+}
+#define DUMP_VAR_S(x) {\
+  printf("%s:%d,%s=<%s>\n",__FILE__,__LINE__,#x,x);\
+}
+
 
 #if defined(TEST_DS_TWR_INITIATOR)
 
@@ -158,6 +165,9 @@ int ds_twr_initiator(void)
      * Note, in real low power applications the LEDs should not be used. */
     dwt_setlnapamode(DWT_LNA_ENABLE | DWT_PA_ENABLE);
     //dwt_setleds(DWT_LEDS_ENABLE | DWT_LEDS_INIT_BLINK);
+    
+    port_set_dwic_isr(dwt_isr);
+    DUMP_VAR_S("Initiator ready");
 
     /* Loop forever initiating ranging exchanges. */
     while (1)
@@ -177,7 +187,9 @@ int ds_twr_initiator(void)
 
         /* Increment frame sequence number after transmission of the poll message (modulo 256). */
         frame_seq_nb++;
-
+        DUMP_VAR_I(frame_seq_nb);
+        DUMP_VAR_I(status_reg & SYS_STATUS_RXFCG_BIT_MASK);
+        
         if (status_reg & SYS_STATUS_RXFCG_BIT_MASK)
         {
             uint32_t frame_len;
@@ -187,6 +199,7 @@ int ds_twr_initiator(void)
 
             /* A frame has been received, read it into the local buffer. */
             frame_len = dwt_read32bitreg(RX_FINFO_ID) & FRAME_LEN_MAX_EX;
+            DUMP_VAR_I(frame_len);
             if (frame_len <= RX_BUF_LEN)
             {
                 dwt_readrxdata(rx_buffer, frame_len, 0);

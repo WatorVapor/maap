@@ -37,12 +37,12 @@ extern "C" {
 #define DW_WAKEUP_Pin 7
 
 #define SPI_CHANNEL 0
-#define SPI_CLOCK_SPEED_FAST 32000000
-#define SPI_CLOCK_SPEED_SLOW 4500000
+#define SPI_CLOCK_SPEED_FAST 38*1000 *1000
+#define SPI_CLOCK_SPEED_SLOW 4500 *1000
 
 #define UNUSED(x) (void)(x)
 
-pthread_mutex_t dwt_lock;
+extern pthread_mutex_t dwt_lock;
 
 /* DW IC IRQ (EXTI15_10_IRQ) handler type. */
 typedef void (*port_dwic_isr_t)(void);

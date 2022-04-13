@@ -29,6 +29,14 @@
 
 #if defined(TEST_DS_TWR_RESPONDER)
 
+
+#define DUMP_VAR_I(x) {\
+  printf("%s:%d,%s=<%d>\n",__FILE__,__LINE__,#x,x);\
+}
+#define DUMP_VAR_S(x) {\
+  printf("%s:%d,%s=<%s>\n",__FILE__,__LINE__,#x,x);\
+}
+
 extern void test_run_info(unsigned char *data);
 
 /* Example application name */
@@ -156,6 +164,9 @@ int ds_twr_responder(void)
     dwt_setlnapamode(DWT_LNA_ENABLE | DWT_PA_ENABLE);
     //dwt_setleds(DWT_LEDS_ENABLE | DWT_LEDS_INIT_BLINK);
 
+    port_set_dwic_isr(dwt_isr);
+    DUMP_VAR_S("responder ready");
+
     /* Loop forever responding to ranging requests. */
     while (1)
     {
@@ -170,6 +181,7 @@ int ds_twr_responder(void)
         while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG_BIT_MASK | SYS_STATUS_ALL_RX_TO | SYS_STATUS_ALL_RX_ERR)))
         { };
 
+        DUMP_VAR_I(status_reg & SYS_STATUS_RXFCG_BIT_MASK);
         if (status_reg & SYS_STATUS_RXFCG_BIT_MASK)
         {
             uint32_t frame_len;
@@ -179,6 +191,7 @@ int ds_twr_responder(void)
 
             /* A frame has been received, read it into the local buffer. */
             frame_len = dwt_read32bitreg(RX_FINFO_ID) & FRAME_LEN_MAX_EX;
+            DUMP_VAR_I(frame_len);
             if (frame_len <= RX_BUF_LEN)
             {
                 dwt_readrxdata(rx_buffer, frame_len, 0);
@@ -187,6 +200,7 @@ int ds_twr_responder(void)
             /* Check that the frame is a poll sent by "DS TWR initiator" example.
              * As the sequence number field of the frame is not relevant, it is cleared to simplify the validation of the frame. */
             rx_buffer[ALL_MSG_SN_IDX] = 0;
+            DUMP_VAR_I(memcmp(rx_buffer, rx_poll_msg, ALL_MSG_COMMON_LEN));
             if (memcmp(rx_buffer, rx_poll_msg, ALL_MSG_COMMON_LEN) == 0)
             {
                 uint32_t resp_tx_time;
@@ -209,13 +223,16 @@ int ds_twr_responder(void)
                 tx_resp_msg[ALL_MSG_SN_IDX] = frame_seq_nb;
                 dwt_writetxdata(sizeof(tx_resp_msg), tx_resp_msg, 0); /* Zero offset in TX buffer. */
                 dwt_writetxfctrl(sizeof(tx_resp_msg), 0, 1); /* Zero offset in TX buffer, ranging. */
-                ret = dwt_starttx(DWT_START_TX_DELAYED | DWT_RESPONSE_EXPECTED);
-
+                
+                #if 1
+                ret = dwt_starttx(DWT_START_TX_IMMEDIATE | DWT_RESPONSE_EXPECTED);
+                DUMP_VAR_I(ret);
                 /* If dwt_starttx() returns an error, abandon this ranging exchange and proceed to the next one. See NOTE 11 below. */
                 if (ret == DWT_ERROR)
                 {
                     continue;
                 }
+                #endif
 
                 /* Poll for reception of expected "final" frame or error/timeout. See NOTE 8 below. */
                 while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG_BIT_MASK | SYS_STATUS_ALL_RX_TO | SYS_STATUS_ALL_RX_ERR)))
@@ -224,6 +241,9 @@ int ds_twr_responder(void)
                 /* Increment frame sequence number after transmission of the response message (modulo 256). */
                 frame_seq_nb++;
 
+                DUMP_VAR_I(frame_seq_nb);
+                DUMP_VAR_I(status_reg);
+                DUMP_VAR_I(status_reg & SYS_STATUS_RXFCG_BIT_MASK);
                 if (status_reg & SYS_STATUS_RXFCG_BIT_MASK)
                 {
                     /* Clear good RX frame event and TX frame sent in the DW IC status register. */
@@ -231,6 +251,7 @@ int ds_twr_responder(void)
 
                     /* A frame has been received, read it into the local buffer. */
                     frame_len = dwt_read32bitreg(RX_FINFO_ID) & FRAME_LEN_MAX_EX;
+                    DUMP_VAR_I(frame_len);
                     if (frame_len <= RX_BUF_LEN)
                     {
                         dwt_readrxdata(rx_buffer, frame_len, 0);
@@ -239,6 +260,7 @@ int ds_twr_responder(void)
                     /* Check that the frame is a final message sent by "DS TWR initiator" example.
                      * As the sequence number field of the frame is not used in this example, it can be zeroed to ease the validation of the frame. */
                     rx_buffer[ALL_MSG_SN_IDX] = 0;
+                    DUMP_VAR_I(memcmp(rx_buffer, rx_final_msg, ALL_MSG_COMMON_LEN) == 0);
                     if (memcmp(rx_buffer, rx_final_msg, ALL_MSG_COMMON_LEN) == 0)
                     {
                         uint32_t poll_tx_ts, resp_rx_ts, final_tx_ts;
