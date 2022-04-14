@@ -50,7 +50,7 @@ static dwt_config_t config = {
     9,               /* TX preamble code. Used in TX only. */
     9,               /* RX preamble code. Used in RX only. */
     1,               /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,      /* Data rate. */
+    DWT_BR_850K,      /* Data rate. */
     DWT_PHRMODE_STD, /* PHY header mode. */
     DWT_PHRRATE_STD, /* PHY header rate. */
     (129 + 8 - 8),   /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */

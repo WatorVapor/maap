@@ -19,6 +19,12 @@
 #include <example_selection.h>
 #include <shared_defines.h>
 
+#define DUMP_VAR_I(x) {\
+  printf("%s:%d,%s=<%d>\n",__FILE__,__LINE__,#x,x);\
+}
+#define DUMP_VAR_S(x) {\
+  printf("%s:%d,%s=<%s>\n",__FILE__,__LINE__,#x,x);\
+}
 
 #if defined(TEST_SIMPLE_RX)
 
@@ -119,6 +125,7 @@ int simple_rx(void)
             if (frame_len <= FRAME_LEN_MAX)
             {
                 dwt_readrxdata(rx_buffer, frame_len-FCS_LEN, 0); /* No need to read the FCS/CRC. */
+                DUMP_VAR_S(rx_buffer);
             }
 
             /* Clear good RX frame event in the DW IC status register. */

@@ -30,6 +30,48 @@
 #define DUMP_VAR_I(x) {\
   printf("%s:%d,%s=<%d>\n",__FILE__,__LINE__,#x,x);\
 }
+#define DUMP_VAR_F(x) {\
+  printf("%s:%d,%s=<%f>\n",__FILE__,__LINE__,#x,x);\
+}
+
+#if 0
+#define DUMP_STATUS(status_reg) {\
+  DUMP_VAR_I(status_reg & SYS_STATUS_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_ARFE_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_CPERR_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_HPDWARN_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_HPDWARN_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_PLL_HILO_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_RXSTO_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_RCINIT_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_SPIRDY_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_RXPTO_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_RXOVRR_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_RXOVRR_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_VWARN_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_CIAERR_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_RXFTO_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_RXFSL_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_RXFCE_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_RXFCG_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_RXFR_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_RXPHE_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_RXPHD_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_CIADONE_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_RXSFDD_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_RXPRD_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_TXFRS_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_TXPHS_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_TXPRS_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_TXFRB_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_AAT_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_SPICRCE_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_CP_LOCK_BIT_MASK);\
+  DUMP_VAR_I(status_reg & SYS_STATUS_IRQS_BIT_MASK);\
+}
+#else
+  #define DUMP_STATUS(status_reg) {}
+#endif
 
 #if defined(TEST_SS_TWR_INITIATOR)
 
@@ -85,7 +127,7 @@ static uint32_t status_reg = 0;
 
 /* Delay between frames, in UWB microseconds. See NOTE 1 below. */
 #ifdef RPI_BUILD
-#define POLL_TX_TO_RESP_RX_DLY_UUS 240
+#define POLL_TX_TO_RESP_RX_DLY_UUS 240 *4
 #endif //RPI_BUILD
 #ifdef STM32F429xx
 #define POLL_TX_TO_RESP_RX_DLY_UUS 240
@@ -198,6 +240,8 @@ int ss_twr_initiator(void)
         frame_seq_nb++;
 
         DUMP_VAR_I(frame_seq_nb);
+        DUMP_VAR_I(status_reg);
+        DUMP_STATUS(status_reg);
         DUMP_VAR_I(status_reg & SYS_STATUS_RXFCG_BIT_MASK);
         if (status_reg & SYS_STATUS_RXFCG_BIT_MASK)
         {
@@ -238,11 +282,13 @@ int ss_twr_initiator(void)
                     rtd_resp = resp_tx_ts - poll_rx_ts;
 
                     tof = ((rtd_init - rtd_resp * (1 - clockOffsetRatio)) / 2.0) * DWT_TIME_UNITS;
+                    DUMP_VAR_F(tof);
                     distance = tof * SPEED_OF_LIGHT;
 
                     /* Display computed distance on LCD. */
                     snprintf(dist_str, sizeof(dist_str), "DIST: %3.2f m", distance);
                     test_run_info((unsigned char *)dist_str);
+                    DUMP_VAR_F(distance);
                 }
             }
         }

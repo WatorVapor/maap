@@ -11,14 +11,15 @@
  * @author DecaWave
  */
 
-#include <port.h>
+#include "port.h"
+#include <SPI.h>
 
 /****************************************************************************//**
  *
  *                              APP global variables
  *
  *******************************************************************************/
-pthread_mutex_t dwt_lock;
+PlatformMutex  dwt_lock;
 
 
 /****************************************************************************//**
@@ -104,14 +105,12 @@ void reset_DWIC(void)
 {
     /* Configure Reset GPIO as output */
     pinMode(DW_RESET_Pin, OUTPUT);
-    pullUpDnControl(DW_RESET_Pin, PUD_OFF);
     digitalWrite(DW_RESET_Pin, LOW);
 
     usleep(1);
 
     /* Configure Reset GPIO as input */
     pinMode(DW_RESET_Pin, INPUT);
-    pullUpDnControl(DW_RESET_Pin, PUD_OFF);
 
     Sleep(2);
 
@@ -172,7 +171,8 @@ void make_very_short_wakeup_io(void)
  * */
 void port_set_dw_ic_spi_slowrate(void)
 {
-    int fd = wiringPiSPISetupMode(SPI_CHANNEL, SPI_CLOCK_SPEED_SLOW, 0);
+    
+    SPISettings mySPISettings = SPISettings(SPI_CLOCK_SPEED_SLOW, MSBFIRST, SPI_MODE0);
     if (fd == -1) {
         fprintf(stderr, "Failed to init SPI communication: %s\n", strerror(errno));
     }
@@ -188,11 +188,8 @@ void port_set_dw_ic_spi_fastrate(void)
     /*
      * Fast rates are not available at present.
      */
-    int fd = wiringPiSPISetupMode(SPI_CHANNEL, SPI_CLOCK_SPEED_FAST, 0);
+    SPISettings mySPISettings = SPISettings(SPI_CLOCK_SPEED_FAST, MSBFIRST, SPI_MODE0);
     //int fd = wiringPiSPISetupMode(SPI_CHANNEL, SPI_CLOCK_SPEED_SLOW, 0);
-    if (fd == -1) {
-        fprintf(stderr, "Failed to init SPI communication: %s\n", strerror(errno));
-    }
     printf("SPI communication successfully setup.\n");
 }
 
@@ -247,13 +244,13 @@ __INLINE void process_deca_irq(void)
  */
 void port_set_dwic_isr(port_dwic_isr_t dwic_isr)
 {
-    pthread_mutex_lock(&dwt_lock);
+    dwt_lock.lock();
 
-    if (wiringPiISR(DW_IRQn_Pin, INT_EDGE_RISING, dwic_isr) < 0 )
+    if (wiringPiISR(DW_IRQn_Pin,, dwic_isr) < 0 )
     {
         fprintf (stderr, "Unable to setup ISR: %s\n", strerror (errno));
     }
-    pthread_mutex_unlock(&dwt_lock);
+    dwt_lock.unlock();
 }
 
 /****************************************************************************//**

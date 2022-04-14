@@ -31,6 +31,8 @@
 
 #if defined(TEST_SS_TWR_RESPONDER)
 
+#define TX_DELAY_MS 10
+
 extern void test_run_info(unsigned char *data);
 
 /* Example application name */
@@ -161,6 +163,7 @@ int ss_twr_responder(void)
         while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG_BIT_MASK | SYS_STATUS_ALL_RX_ERR)))
         { };
 
+        DUMP_VAR_I(status_reg);
         DUMP_VAR_I(status_reg & SYS_STATUS_RXFCG_BIT_MASK);
         if (status_reg & SYS_STATUS_RXFCG_BIT_MASK)
         {
@@ -171,6 +174,7 @@ int ss_twr_responder(void)
 
             /* A frame has been received, read it into the local buffer. */
             frame_len = dwt_read32bitreg(RX_FINFO_ID) & RXFLEN_MASK;
+            DUMP_VAR_I(frame_len);
             if (frame_len <= sizeof(rx_buffer))
             {
                 dwt_readrxdata(rx_buffer, frame_len, 0);
@@ -178,6 +182,7 @@ int ss_twr_responder(void)
                 /* Check that the frame is a poll sent by "SS TWR initiator" example.
                  * As the sequence number field of the frame is not relevant, it is cleared to simplify the validation of the frame. */
                 rx_buffer[ALL_MSG_SN_IDX] = 0;
+                DUMP_VAR_I(frame_len);
                 if (memcmp(rx_buffer, rx_poll_msg, ALL_MSG_COMMON_LEN) == 0)
                 {
                     uint32_t resp_tx_time;
@@ -201,9 +206,11 @@ int ss_twr_responder(void)
                     tx_resp_msg[ALL_MSG_SN_IDX] = frame_seq_nb;
                     dwt_writetxdata(sizeof(tx_resp_msg), tx_resp_msg, 0); /* Zero offset in TX buffer. */
                     dwt_writetxfctrl(sizeof(tx_resp_msg), 0, 1); /* Zero offset in TX buffer, ranging. */
-                    ret = dwt_starttx(DWT_START_TX_DELAYED);
+                    ret = dwt_starttx(DWT_START_TX_IMMEDIATE);
 
                     /* If dwt_starttx() returns an error, abandon this ranging exchange and proceed to the next one. See NOTE 10 below. */
+                    DUMP_VAR_I(ret);
+                    DUMP_VAR_I(ret == DWT_SUCCESS);
                     if (ret == DWT_SUCCESS)
                     {
                         /* Poll DW IC until TX frame sent event set. See NOTE 6 below. */
@@ -224,6 +231,7 @@ int ss_twr_responder(void)
             /* Clear RX error events in the DW IC status register. */
             dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_RX_ERR);
         }
+        Sleep(TX_DELAY_MS);
     }
 }
 #endif
