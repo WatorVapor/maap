@@ -1,15 +1,18 @@
 #include <Arduino.h>
 #include "pico/multicore.h"
 
-void uwb_main(void);
-void core1_main(void) {
-  uwb_main();
-}
-
+void uwb_setup(void);
+void uwb_one_loop(void);
+void c(void);
 void setup() {
-  multicore_launch_core1(core1_main);
+  Serial.begin(115200);
+  Serial.print("core0:start....\r\n");
+  uwb_setup();
 }
 
 void loop() {
+  Serial.print("core0:start....\r\n");
+  uwb_one_loop();
+  delay(100);
 }
 

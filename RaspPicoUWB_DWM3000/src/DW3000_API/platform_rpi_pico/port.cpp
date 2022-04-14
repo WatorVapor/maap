@@ -12,7 +12,12 @@
  */
 
 #include "port.h"
-#include <SPI.h>
+//#include <SPI.h>
+#include "pico/binary_info.h"
+#include "hardware/spi.h"
+#include "boards/pico.h"
+#include "api/HardwareSPI.h"
+
 
 /****************************************************************************//**
  *
@@ -20,7 +25,7 @@
  *
  *******************************************************************************/
 PlatformMutex  dwt_lock;
-
+SPISettings dwt_spi_setting;
 
 /****************************************************************************//**
  *
@@ -72,6 +77,10 @@ Sleep(uint32_t x)
 int peripherals_init (void)
 {
     /* All has been initialized in the CubeMx code, see main.c */
+    pinMode(DW_RESET_Pin, INPUT);
+    pinMode(DW_WAKEUP_Pin, OUTPUT);
+    digitalWrite(DW_WAKEUP_Pin,LOW);
+    pinMode(DW_IRQn_Pin, INPUT_PULLDOWN);
     return 0;
 }
 
@@ -80,6 +89,8 @@ int peripherals_init (void)
  * */
 void spi_peripheral_init()
 {
+    SPI.begin();
+    dwt_spi_setting = SPISettings(SPI_CLOCK_SPEED_FAST, MSBFIRST, SPI_MODE0);
 }
 
 
@@ -171,11 +182,7 @@ void make_very_short_wakeup_io(void)
  * */
 void port_set_dw_ic_spi_slowrate(void)
 {
-    
-    SPISettings mySPISettings = SPISettings(SPI_CLOCK_SPEED_SLOW, MSBFIRST, SPI_MODE0);
-    if (fd == -1) {
-        fprintf(stderr, "Failed to init SPI communication: %s\n", strerror(errno));
-    }
+    dwt_spi_setting = SPISettings(SPI_CLOCK_SPEED_FAST, MSBFIRST, SPI_MODE0);    
     printf("SPI communication successfully setup.\n");
 }
 
@@ -188,8 +195,7 @@ void port_set_dw_ic_spi_fastrate(void)
     /*
      * Fast rates are not available at present.
      */
-    SPISettings mySPISettings = SPISettings(SPI_CLOCK_SPEED_FAST, MSBFIRST, SPI_MODE0);
-    //int fd = wiringPiSPISetupMode(SPI_CHANNEL, SPI_CLOCK_SPEED_SLOW, 0);
+    dwt_spi_setting = SPISettings(SPI_CLOCK_SPEED_SLOW, MSBFIRST, SPI_MODE0);    
     printf("SPI communication successfully setup.\n");
 }
 
@@ -245,8 +251,8 @@ __INLINE void process_deca_irq(void)
 void port_set_dwic_isr(port_dwic_isr_t dwic_isr)
 {
     dwt_lock.lock();
-
-    if (wiringPiISR(DW_IRQn_Pin,, dwic_isr) < 0 )
+    attachInterrupt(DW_IRQn_Pin, dwic_isr,RISING );
+    if ( 0 )
     {
         fprintf (stderr, "Unable to setup ISR: %s\n", strerror (errno));
     }

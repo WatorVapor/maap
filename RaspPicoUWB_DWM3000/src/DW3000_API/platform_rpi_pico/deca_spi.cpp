@@ -19,6 +19,12 @@
 #define SPI_CLOCK_SPEED 32000000
 #define CRC_SIZE 1
 
+int wiringPiSPIDataRW (int channel, uint8_t *data, int len);
+
+
+int writeSpi (int channel, uint8_t *data, int len) ;
+int readSpi (int channel, uint8_t *data, int len) ;
+
 
 /****************************************************************************//**
  *
@@ -140,6 +146,15 @@ int readfromspi(uint16_t headerLength,
 
     return 0;
 } // end readfromspi()
+
+
+int wiringPiSPIDataRW (int channel, uint8_t *data, int len) {
+    digitalWrite(PIN_CS, LOW);
+    SPI.beginTransaction(dwt_spi_setting);
+    SPI.transfer(data,len);
+    SPI.endTransaction();
+    digitalWrite(PIN_CS, HIGH);
+}
 
 /****************************************************************************//**
  *

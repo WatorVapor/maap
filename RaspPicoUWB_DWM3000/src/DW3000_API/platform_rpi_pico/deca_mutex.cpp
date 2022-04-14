@@ -80,6 +80,6 @@ void decamutexoff(decaIrqStatus_t s)        // put a function here that re-enabl
 {
     if(s)
     {
-        dwt_lock.unlock()
+        dwt_lock.unlock();
     }
 }
