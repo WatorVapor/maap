@@ -62,7 +62,6 @@ void uwb_one_loop(void) {
     simple_tx_loop();
 }
 
-
 int simple_tx_setup(void) {
     dwt_setlnapamode(DWT_LNA_ENABLE | DWT_PA_ENABLE);
     dwt_configuresleep(DWT_CONFIG, DWT_PRES_SLEEP | DWT_WAKE_CSN | DWT_WAKE_WUP | DWT_SLP_EN);
