@@ -47,6 +47,10 @@
 extern PlatformMutex  dwt_lock;
 extern SPISettings dwt_spi_setting;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* DW IC IRQ (EXTI15_10_IRQ) handler type. */
 typedef void (*port_dwic_isr_t)(void);
 
@@ -140,6 +144,9 @@ void wakeup_device_with_io(void);
 */
 void make_very_short_wakeup_io(void);
 
+#ifdef __cplusplus
+}
+#endif
 
 //This set the IO for waking up the chip
 #define SET_WAKEUP_PIN_IO_LOW     digitalWrite(DW_RESET_Pin, LOW);
@@ -148,4 +155,7 @@ void make_very_short_wakeup_io(void);
 //#define WAIT_500uSEC    Sleep(1)/*This is should be a delay of 500uSec at least. In our example it is more than that*/
 
 #define WAIT_500uSEC    {usleep(500);}
+
+
+
 #endif /* PORT_H_ */
