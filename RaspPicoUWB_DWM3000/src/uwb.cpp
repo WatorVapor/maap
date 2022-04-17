@@ -35,9 +35,14 @@ void uwb_setup (void) {
     port_set_dw_ic_spi_fastrate();
     reset_DWIC();
     delay(2000);
+    /*
+    int counter = 0;
     while (!dwt_checkidlerc())
     {
-
+        if(counter++ > 10) {
+            return;
+        }
+        delay(100);
     }
     int ret = dwt_initialise(DWT_DW_INIT);
     if ( ret == DWT_ERROR) {
@@ -49,6 +54,7 @@ void uwb_setup (void) {
     }
     dwt_configuretxrf(&txconfig_options);
     simple_tx_setup();
+    */
 }
 
 
@@ -71,7 +77,9 @@ int simple_tx_loop(void) {
     dwt_writetxfctrl(FRAME_LENGTH, 0, 0);
     dwt_starttx(DWT_START_TX_IMMEDIATE);
     while (!(dwt_read32bitreg(SYS_STATUS_ID) & SYS_STATUS_TXFRS_BIT_MASK))
-    { };
+    { 
+        delay(1);
+    };
     dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_TXFRS_BIT_MASK);
     tx_msg[BLINK_FRAME_SN_IDX]++;
 }

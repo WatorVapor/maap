@@ -19,6 +19,9 @@
 #define SPI_CLOCK_SPEED 32000000
 #define CRC_SIZE 1
 
+#define JUNK 0x00
+
+
 int wiringPiSPIDataRW (int channel, uint8_t *data, int len);
 
 
@@ -82,7 +85,7 @@ int writetospiwithcrc(
         headerLength += bodyLength;
     }
     buf[headerLength] = crc8;
-    wiringPiSPIDataRW(SPI_CHANNEL, buf, (headerLength + CRC_SIZE));
+    writeSpi(SPI_CHANNEL, buf, (headerLength + CRC_SIZE));
 
     decamutexoff(stat);
     return 0;
@@ -111,7 +114,7 @@ int writetospi(uint16_t       headerLength,
         memcpy(&buf[headerLength], bodyBuffer, bodyLength);
         headerLength += bodyLength;
     }
-    wiringPiSPIDataRW(SPI_CHANNEL, buf, headerLength);
+    writeSpi(SPI_CHANNEL, buf, headerLength);
 
     decamutexoff(stat);
     return 0;
@@ -135,12 +138,16 @@ int readfromspi(uint16_t headerLength,
     decaIrqStatus_t  stat ;
     stat = decamutexon() ;
 
-    uint8_t buf[headerLength + readlength];
-
-    /* Send header */
-    memcpy(buf, headerBuffer, headerLength);
-    wiringPiSPIDataRW(SPI_CHANNEL, buf, (headerLength + readlength));
-    memcpy(readBuffer, &buf[headerLength], readlength);
+    digitalWrite(PIN_CS, LOW);
+    SPI.beginTransaction(dwt_spi_setting);
+    for(int i = 0 ;i < headerLength; i++) {
+        SPI.transfer(headerBuffer[i]);
+    }
+    for(int i = 0 ;i < readlength; i++) {
+        readBuffer[i] = SPI.transfer(JUNK);
+    }
+    SPI.endTransaction();
+    digitalWrite(PIN_CS, HIGH);
 
     decamutexoff(stat);
 
@@ -148,13 +155,21 @@ int readfromspi(uint16_t headerLength,
 } // end readfromspi()
 
 
-int wiringPiSPIDataRW (int channel, uint8_t *data, int len) {
+int writeSpi (int channel, uint8_t *data, int len) {
     digitalWrite(PIN_CS, LOW);
     SPI.beginTransaction(dwt_spi_setting);
-    SPI.transfer(data,len);
+    for(int i = 0 ;i < len; i++) {
+        SPI.transfer(data[i]);
+    }
     SPI.endTransaction();
     digitalWrite(PIN_CS, HIGH);
 }
+/*
+int readSpi (int channel, uint8_t *data, int len) {
+
+}
+*/
+
 
 /****************************************************************************//**
  *
