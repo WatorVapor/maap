@@ -35,26 +35,27 @@ void uwb_setup (void) {
     port_set_dw_ic_spi_fastrate();
     reset_DWIC();
     delay(2000);
-    /*
     int counter = 0;
     while (!dwt_checkidlerc())
     {
         if(counter++ > 10) {
+            DUMP_VAR_I(counter);
             return;
         }
         delay(100);
     }
+    DUMP_VAR_I(counter);
     int ret = dwt_initialise(DWT_DW_INIT);
+    DUMP_VAR_I(ret);
     if ( ret == DWT_ERROR) {
-        ERROR_VAR(ret);
+        ERROR_VAR_I(ret);
     }
     int ret2 = dwt_configure(&config);
     if ( ret2) {
-        ERROR_VAR(ret2);
+        ERROR_VAR_I(ret2);
     }
     dwt_configuretxrf(&txconfig_options);
     simple_tx_setup();
-    */
 }
 
 

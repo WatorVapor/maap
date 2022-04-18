@@ -34,9 +34,9 @@
 #define PIN_MISO 4
 #define PIN_CS   5
 
-#define DW_IRQn_Pin 6
-#define DW_RESET_Pin 5
-#define DW_WAKEUP_Pin 7
+#define DW_IRQn_Pin 7
+#define DW_WAKEUP_Pin 6
+#define DW_RESET_Pin 26
 
 #define SPI_CHANNEL 0
 #define SPI_CLOCK_SPEED_FAST 38*1000 *1000

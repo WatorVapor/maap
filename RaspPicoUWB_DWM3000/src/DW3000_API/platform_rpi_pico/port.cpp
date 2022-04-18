@@ -17,7 +17,7 @@
 #include "hardware/spi.h"
 #include "boards/pico.h"
 #include "api/HardwareSPI.h"
-
+#include "debug.hpp"
 
 /****************************************************************************//**
  *
@@ -81,6 +81,9 @@ int peripherals_init (void)
     pinMode(DW_WAKEUP_Pin, OUTPUT);
     digitalWrite(DW_WAKEUP_Pin,LOW);
     pinMode(DW_IRQn_Pin, INPUT_PULLDOWN);
+    DUMP_VAR_I(DW_RESET_Pin);
+    DUMP_VAR_I(DW_WAKEUP_Pin);
+    DUMP_VAR_I(DW_IRQn_Pin);
     return 0;
 }
 
@@ -124,6 +127,10 @@ void reset_DWIC(void)
     pinMode(DW_RESET_Pin, INPUT);
 
     Sleep(2);
+
+    DUMP_VAR_I(DW_RESET_Pin);
+    DUMP_VAR_I(DW_WAKEUP_Pin);
+    DUMP_VAR_I(DW_IRQn_Pin);
 
 }
 
@@ -182,8 +189,8 @@ void make_very_short_wakeup_io(void)
  * */
 void port_set_dw_ic_spi_slowrate(void)
 {
-    dwt_spi_setting = SPISettings(SPI_CLOCK_SPEED_FAST, MSBFIRST, SPI_MODE0);    
-    printf("SPI communication successfully setup.\n");
+    dwt_spi_setting = SPISettings(SPI_CLOCK_SPEED_SLOW, MSBFIRST, SPI_MODE0);    
+    Serial.print("SPI communication successfully setup.\n");
 }
 
 /* @fn      port_set_dw_ic_spi_fastrate
@@ -195,8 +202,8 @@ void port_set_dw_ic_spi_fastrate(void)
     /*
      * Fast rates are not available at present.
      */
-    dwt_spi_setting = SPISettings(SPI_CLOCK_SPEED_SLOW, MSBFIRST, SPI_MODE0);    
-    printf("SPI communication successfully setup.\n");
+    dwt_spi_setting = SPISettings(SPI_CLOCK_SPEED_FAST, MSBFIRST, SPI_MODE0);    
+    Serial.print("SPI communication successfully setup.\n");
 }
 
 /****************************************************************************//**
@@ -213,7 +220,7 @@ void port_set_dw_ic_spi_fastrate(void)
  *
  *******************************************************************************/
 /* @fn      process_deca_irq
- * @brief   main call-back for processing of DW3000 IRQ
+ * @brief   main call-back for processinfg of DW3000 IRQ
  *          it re-enters the IRQ routing and processes all events.
  *          After processing of all events, DW3000 will clear the IRQ line.
  * */

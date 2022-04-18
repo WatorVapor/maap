@@ -14,6 +14,7 @@
 #include "deca_spi.h"
 #include "deca_device_api.h"
 #include "port.h"
+#include "debug.hpp"
 
 #define SPI_CHANNEL 0
 #define SPI_CLOCK_SPEED 32000000
@@ -73,6 +74,8 @@ int writetospiwithcrc(
                 const uint8_t *bodyBuffer,
                 uint8_t       crc8)
 {
+    DUMP_VAR_I(headerLength);
+    DUMP_VAR_I(bodyLength);
     decaIrqStatus_t  stat ;
     stat = decamutexon() ;
 
@@ -104,6 +107,9 @@ int writetospi(uint16_t       headerLength,
                uint16_t       bodyLength,
                const uint8_t  *bodyBuffer)
 {
+    DUMP_VAR_I(headerLength);
+    DUMP_VAR_I(bodyLength);
+
     decaIrqStatus_t  stat ;
     stat = decamutexon() ;
 
@@ -135,21 +141,27 @@ int readfromspi(uint16_t headerLength,
                 uint16_t readlength,
                 uint8_t  *readBuffer)
 {
+    DUMP_VAR_I(headerLength);
+    DUMP_VAR_I(readlength);
     decaIrqStatus_t  stat ;
     stat = decamutexon() ;
+    DUMP_VAR_I(stat);
 
     digitalWrite(PIN_CS, LOW);
     SPI.beginTransaction(dwt_spi_setting);
     for(int i = 0 ;i < headerLength; i++) {
+        DUMP_VAR_I(headerBuffer[i]);
         SPI.transfer(headerBuffer[i]);
     }
     for(int i = 0 ;i < readlength; i++) {
         readBuffer[i] = SPI.transfer(JUNK);
+        DUMP_VAR_I(readBuffer[i]);
     }
     SPI.endTransaction();
     digitalWrite(PIN_CS, HIGH);
 
     decamutexoff(stat);
+    DUMP_VAR_I(stat);
 
     return 0;
 } // end readfromspi()
