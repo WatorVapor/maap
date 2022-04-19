@@ -20,6 +20,18 @@
 #define SPI_CLOCK_SPEED 32000000
 #define CRC_SIZE 1
 
+#if 0
+#define DUMP_VAR_I(x) {\
+  printf("%s:%d,%s=<%d>\n",__FILE__,__LINE__,#x,x);\
+}
+#define DUMP_VAR_S(x) {\
+  printf("%s:%d,%s=<%s>\n",__FILE__,__LINE__,#x,x);\
+}
+#else
+#define DUMP_VAR_I(x) {}
+#define DUMP_VAR_S(x) {}
+#endif
+
 
 /****************************************************************************//**
  *
@@ -65,6 +77,8 @@ int writetospiwithcrc(
                 const uint8_t *bodyBuffer,
                 uint8_t       crc8)
 {
+    DUMP_VAR_I(headerLength);
+    DUMP_VAR_I(bodyLength);
     decaIrqStatus_t  stat ;
     stat = decamutexon() ;
 
@@ -96,6 +110,8 @@ int writetospi(uint16_t       headerLength,
                uint16_t       bodyLength,
                const uint8_t  *bodyBuffer)
 {
+    DUMP_VAR_I(headerLength);
+    DUMP_VAR_I(bodyLength);
     decaIrqStatus_t  stat ;
     stat = decamutexon() ;
 
@@ -127,15 +143,25 @@ int readfromspi(uint16_t headerLength,
                 uint16_t readlength,
                 uint8_t  *readBuffer)
 {
+    DUMP_VAR_I(headerLength);
+    DUMP_VAR_I(readlength);
     decaIrqStatus_t  stat ;
     stat = decamutexon() ;
-
+#if 1
     uint8_t buf[headerLength + readlength];
-
     /* Send header */
     memcpy(buf, headerBuffer, headerLength);
-    wiringPiSPIDataRW(SPI_CHANNEL, buf, (headerLength + readlength));
+    int retAll = wiringPiSPIDataRW(SPI_CHANNEL, buf, (headerLength + readlength));
+    DUMP_VAR_I(retAll);
     memcpy(readBuffer, &buf[headerLength], readlength);
+#else
+    int retHeader = wiringPiSPIDataRW(SPI_CHANNEL, headerBuffer, headerLength);
+    DUMP_VAR_I(retHeader);
+    deca_usleep(10);
+    //memset(readBuffer,0x0,readlength);
+    int retRead = wiringPiSPIDataRW(SPI_CHANNEL, readBuffer, readlength);
+    DUMP_VAR_I(retRead);
+#endif
 
     decamutexoff(stat);
 

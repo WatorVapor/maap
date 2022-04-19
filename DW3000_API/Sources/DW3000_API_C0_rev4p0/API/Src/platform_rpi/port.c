@@ -13,6 +13,14 @@
 
 #include <port.h>
 
+#define DUMP_VAR_I(x) {\
+  printf("%s:%d,%s=<%d>\n",__FILE__,__LINE__,#x,x);\
+}
+#define DUMP_VAR_S(x) {\
+  printf("%s:%d,%s=<%s>\n",__FILE__,__LINE__,#x,x);\
+}
+
+
 /****************************************************************************//**
  *
  *                              APP global variables
@@ -176,6 +184,7 @@ void port_set_dw_ic_spi_slowrate(void)
     if (fd == -1) {
         fprintf(stderr, "Failed to init SPI communication: %s\n", strerror(errno));
     }
+    DUMP_VAR_I(SPI_CLOCK_SPEED_SLOW);
     printf("SPI communication successfully setup.\n");
 }
 
@@ -188,11 +197,13 @@ void port_set_dw_ic_spi_fastrate(void)
     /*
      * Fast rates are not available at present.
      */
-    int fd = wiringPiSPISetupMode(SPI_CHANNEL, SPI_CLOCK_SPEED_FAST, 0);
-    //int fd = wiringPiSPISetupMode(SPI_CHANNEL, SPI_CLOCK_SPEED_SLOW, 0);
+    //int fd = wiringPiSPISetupMode(SPI_CHANNEL, SPI_CLOCK_SPEED_FAST, 0);
+    int fd = wiringPiSPISetupMode(SPI_CHANNEL, SPI_CLOCK_SPEED_SLOW, 0);
     if (fd == -1) {
         fprintf(stderr, "Failed to init SPI communication: %s\n", strerror(errno));
     }
+    //DUMP_VAR_I(SPI_CLOCK_SPEED_FAST);
+    DUMP_VAR_I(SPI_CLOCK_SPEED_SLOW);
     printf("SPI communication successfully setup.\n");
 }
 

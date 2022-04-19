@@ -38,7 +38,8 @@ extern "C" {
 
 #define SPI_CHANNEL 0
 #define SPI_CLOCK_SPEED_FAST 38*1000 *1000
-#define SPI_CLOCK_SPEED_SLOW 4500 *1000
+//#define SPI_CLOCK_SPEED_SLOW 4500 *1000
+#define SPI_CLOCK_SPEED_SLOW 18*1000 *1000
 
 #define UNUSED(x) (void)(x)
 
