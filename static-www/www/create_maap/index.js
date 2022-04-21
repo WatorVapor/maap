@@ -1,4 +1,4 @@
-const appPrefix = '/starbian';
+const appPrefix = '/maap';
 const loadFrameWorkJS = ()=> {
   const fileref = document.createElement('script');
   fileref.setAttribute('type','text/javascript');

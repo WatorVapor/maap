@@ -15,7 +15,7 @@ const createGalaxyApp_ = async ()=> {
   const appGalaxy = Vue.createApp({
     data() {
       return {
-        galaxy:{
+        maap:{
           address:address,
           name:address
         }
@@ -40,5 +40,5 @@ const createGalaxyApp_ = async ()=> {
       }
     }
   });
-  const galaxyVM = appGalaxy.mount('#vue-ui-create-galaxy');
+  const galaxyVM = appGalaxy.mount('#vue-ui-create-maap');
 }

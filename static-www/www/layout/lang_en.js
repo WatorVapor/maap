@@ -1,5 +1,5 @@
 export const data = {
   navbar:{
-    galaxy:'galaxy',
+    maap:'maap',
   },
 }

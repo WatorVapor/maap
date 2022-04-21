@@ -1,4 +1,4 @@
-const constKeyLanguangeCode = 'starbian/lang_code';
+const constKeyLanguangeCode = 'maap/lang_code';
 /*
 window.addEventListener('load', (evt) => {
   createMultiLanguage_();

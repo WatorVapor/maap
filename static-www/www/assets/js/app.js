@@ -1,5 +1,5 @@
 const appConf = {
-  title:'StarBian',
+  title:'MaaP',
   debug:false
 };
 

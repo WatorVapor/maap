@@ -1,7 +1,7 @@
-const constGravitonPriKey = 'starbian/Graviton/priKey';
-const constGravitonPubKey = 'starbian/Graviton/pubKey';
-const constGravitonMassAddress = 'starbian/Graviton/mass/address';
-const constGravitonMassName = 'starbian/Graviton/mass/name';
+const constGravitonPriKey = 'maap/Graviton/priKey';
+const constGravitonPubKey = 'maap/Graviton/pubKey';
+const constGravitonMassAddress = 'maap/Graviton/mass/address';
+const constGravitonMassName = 'maap/Graviton/mass/name';
 
 
 export class Graviton {

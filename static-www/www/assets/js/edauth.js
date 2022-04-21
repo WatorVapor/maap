@@ -1,5 +1,5 @@
-const constEdAuthPrefix = 'starbian/edauth';
-const constEdAuthName = 'starbian/edauth/name';
+const constEdAuthPrefix = 'maap/edauth';
+const constEdAuthName = 'maap/edauth/name';
 
 const MASS = await import(`./mass.js`);
 export class EDAuth {

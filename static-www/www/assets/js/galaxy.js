@@ -1,5 +1,5 @@
 const Mass = await import(`${appPrefix}/assets/js/mass.js`);
-const keyGalaxyCreated = 'starbian/galaxy/created';
+const keyGalaxyCreated = 'maap/galaxy/created';
 
 export class Galaxy {
   static debug = true;
@@ -19,7 +19,7 @@ export class Galaxy {
   }
 }
 
-const keyGalaxyCollection = 'starbian/galaxy/collection';
+const keyGalaxyCollection = 'maap/galaxy/collection';
 export class GalaxyFactory {
   static debug = true;
   constructor() {
