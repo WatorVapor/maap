@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <script src="./index.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="./body.css">
+  </head>
+  <body>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark" id="vue-navbar-top">
+      <w-navbar></w-navbar>
+    </nav>
+    <div class="container-fluid mt-5 pt-4" id="vue-ui-create-maap">
+      <div class="row justify-content-md-center">
+        <div class="col-8">
+          <h1 class="vue-lang">{% maap.address %} <span class="badge bg-primary">{{maap.address}}</span></h1>
+         </div>
+      </div>
+      <div class="row justify-content-md-center">
+        <div class="col-8">
+          <div class="input-group mb-3">
+            <span class="input-group-text vue-lang">{% maap.name %}</span>
+            <input type="text" class="form-control" :value="maap.name" v-model="maap.name"/>
+          </div>
+         </div>
+      </div>
+      <div class="row justify-content-md-center">
+        <div class="col-8">
+          <div class="d-grid gap-2">
+            <button type="button" class="btn btn-success" @click="onGalaxyCreateBtn">
+              <span class="vue-lang">{% maap.create_maap %}</span>
+            </button>
+          </div>
+         </div>
+      </div>
+    </div>
+    <script src="./create_maap_app.js" type="module"></script>
+  </body>
+</html>
+
