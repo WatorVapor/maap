@@ -148,16 +148,16 @@ int readfromspi(uint16_t headerLength,
     DUMP_VAR_I(stat);
 
     digitalWrite(PIN_CS, LOW);
-    SPI.beginTransaction(dwt_spi_setting);
+    spi5.beginTransaction(dwt_spi_setting);
     for(int i = 0 ;i < headerLength; i++) {
         DUMP_VAR_I(headerBuffer[i]);
-        SPI.transfer(headerBuffer[i]);
+        spi5.transfer(headerBuffer[i]);
     }
     for(int i = 0 ;i < readlength; i++) {
-        readBuffer[i] = SPI.transfer(JUNK);
+        readBuffer[i] = spi5.transfer(JUNK);
         DUMP_VAR_I(readBuffer[i]);
     }
-    SPI.endTransaction();
+    spi5.endTransaction();
     digitalWrite(PIN_CS, HIGH);
 
     decamutexoff(stat);
@@ -169,11 +169,11 @@ int readfromspi(uint16_t headerLength,
 
 int writeSpi (int channel, uint8_t *data, int len) {
     digitalWrite(PIN_CS, LOW);
-    SPI.beginTransaction(dwt_spi_setting);
+    spi5.beginTransaction(dwt_spi_setting);
     for(int i = 0 ;i < len; i++) {
-        SPI.transfer(data[i]);
+        spi5.transfer(data[i]);
     }
-    SPI.endTransaction();
+    spi5.endTransaction();
     digitalWrite(PIN_CS, HIGH);
 }
 /*
