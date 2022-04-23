@@ -1,5 +1,7 @@
 #include <Arduino.h>
 
+#include "debug.hpp"
+
 void uwb_setup(void);
 void uwb_loop(void);
 
@@ -15,8 +17,8 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 	digitalWrite(PC13, HIGH);
-	delay(500);
+	delay(10);
 	digitalWrite(PC13, LOW);
-	delay(500);
+	delay(10);
   uwb_loop();
 }

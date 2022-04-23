@@ -20,7 +20,7 @@
 #define SPI_CLOCK_SPEED 32000000
 #define CRC_SIZE 1
 
-#define JUNK 0x00
+#define JUNK 0x0
 
 
 int wiringPiSPIDataRW (int channel, uint8_t *data, int len);
@@ -143,38 +143,52 @@ int readfromspi(uint16_t headerLength,
 {
     DUMP_VAR_I(headerLength);
     DUMP_VAR_I(readlength);
+
+
+#if 0
     decaIrqStatus_t  stat ;
     stat = decamutexon() ;
     DUMP_VAR_I(stat);
-
-    digitalWrite(PIN_CS, LOW);
-    spi5.beginTransaction(dwt_spi_setting);
+#endif
     for(int i = 0 ;i < headerLength; i++) {
         DUMP_VAR_I(headerBuffer[i]);
-        spi5.transfer(headerBuffer[i]);
+    }
+
+    SPI.beginTransaction(dwt_spi_setting);
+    digitalWrite(PIN_SPI_SS, LOW);
+    for(int i = 0 ;i < headerLength; i++) {
+        //DUMP_VAR_I(headerBuffer[i]);
+        SPI.transfer(headerBuffer[i]);
     }
     for(int i = 0 ;i < readlength; i++) {
-        readBuffer[i] = spi5.transfer(JUNK);
+        readBuffer[i] = SPI.transfer(JUNK);
+        //DUMP_VAR_I(readBuffer[i]);
+    }
+    delayMicroseconds(5);
+    digitalWrite(PIN_SPI_SS, HIGH);
+    SPI.endTransaction();
+
+    for(int i = 0 ;i < readlength; i++) {
         DUMP_VAR_I(readBuffer[i]);
     }
-    spi5.endTransaction();
-    digitalWrite(PIN_CS, HIGH);
 
+#if 0
     decamutexoff(stat);
     DUMP_VAR_I(stat);
+#endif
 
     return 0;
 } // end readfromspi()
 
 
 int writeSpi (int channel, uint8_t *data, int len) {
-    digitalWrite(PIN_CS, LOW);
-    spi5.beginTransaction(dwt_spi_setting);
+    digitalWrite(PIN_SPI_SS, LOW);
+    SPI.beginTransaction(dwt_spi_setting);
     for(int i = 0 ;i < len; i++) {
-        spi5.transfer(data[i]);
+        SPI.transfer(data[i]);
     }
-    spi5.endTransaction();
-    digitalWrite(PIN_CS, HIGH);
+    SPI.endTransaction();
+    digitalWrite(PIN_SPI_SS, HIGH);
 }
 /*
 int readSpi (int channel, uint8_t *data, int len) {

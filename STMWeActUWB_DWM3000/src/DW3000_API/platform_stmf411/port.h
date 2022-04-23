@@ -26,25 +26,27 @@
 #include <stdlib.h>
 #include <SPI.h>
 
-/// spi 5
-#define PIN_SCK  PB_0
-#define PIN_MOSI PA_10
-#define PIN_MISO PA_12
-#define PIN_CS   PB_1
+/*
+/// spi default
+#define PIN_SCK  PA_5
+#define PIN_MISO PA_6
+#define PIN_MOSI PA_7
+#define PIN_CS   PA_4
+*/
 
 #define DW_IRQn_Pin PC_14
 #define DW_WAKEUP_Pin PC_15
 #define DW_RESET_Pin PB_2
 
 #define SPI_CHANNEL 0
-#define SPI_CLOCK_SPEED_FAST 32*1000 *1000
-#define SPI_CLOCK_SPEED_SLOW 4500 *1000
+//#define SPI_CLOCK_SPEED_FAST 18* 1000 * 1000
+#define SPI_CLOCK_SPEED_FAST   16000 * 1000
+#define SPI_CLOCK_SPEED_SLOW    4500 *  1000
 
 #define UNUSED(x) (void)(x)
 
 //extern PlatformMutex  dwt_lock;
 extern SPISettings dwt_spi_setting;
-extern SPIClass spi5;
 
 #ifdef __cplusplus
 extern "C" {

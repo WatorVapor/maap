@@ -22,7 +22,7 @@
  *******************************************************************************/
 //PlatformMutex  dwt_lock;
 SPISettings dwt_spi_setting;
-SPIClass spi5(PIN_MOSI,PIN_MISO,PIN_SCK,PIN_CS);
+//SPIClass spi5(PIN_MOSI,PIN_MISO,PIN_SCK,PIN_CS);
 
 /****************************************************************************//**
  *
@@ -51,7 +51,7 @@ int usleep(unsigned long usec)
 /* @fn    Sleep
  * @brief Sleep delay in ms using SysTick timer
  * */
-__INLINE void
+void
 Sleep(uint32_t x)
 {
     delay(x);
@@ -73,14 +73,18 @@ Sleep(uint32_t x)
  * */
 int peripherals_init (void)
 {
-    /* All has been initialized in the CubeMx code, see main.c */
-    pinMode(DW_RESET_Pin, INPUT);
-    pinMode(DW_WAKEUP_Pin, OUTPUT);
-    digitalWrite(DW_WAKEUP_Pin,LOW);
-    pinMode(DW_IRQn_Pin, INPUT_PULLDOWN);
+    DUMP_VAR_I(PIN_SPI_SS);
     DUMP_VAR_I(DW_RESET_Pin);
     DUMP_VAR_I(DW_WAKEUP_Pin);
     DUMP_VAR_I(DW_IRQn_Pin);
+
+    /* All has been initialized in the CubeMx code, see main.c */
+
+    pinMode(PIN_SPI_SS, OUTPUT);    
+    pinMode(DW_RESET_Pin, INPUT);
+    pinMode(DW_WAKEUP_Pin, OUTPUT);
+    digitalWrite(DW_WAKEUP_Pin,LOW);
+    pinMode(DW_IRQn_Pin, INPUT);
     return 0;
 }
 
@@ -89,8 +93,9 @@ int peripherals_init (void)
  * */
 void spi_peripheral_init()
 {
-    SPI.begin();
     dwt_spi_setting = SPISettings(SPI_CLOCK_SPEED_FAST, MSBFIRST, SPI_MODE0);
+    SPI.begin(PIN_SPI_SS);
+    SPI.setDataMode(SPI_MODE0);
 }
 
 
@@ -118,11 +123,12 @@ void reset_DWIC(void)
     pinMode(DW_RESET_Pin, OUTPUT);
     digitalWrite(DW_RESET_Pin, LOW);
 
-    usleep(1);
+    delay(2);
 
     /* Configure Reset GPIO as input */
-    pinMode(DW_RESET_Pin, INPUT);
+    pinMode(DW_RESET_Pin, INPUT_FLOATING);
 
+    delay(10);
     Sleep(2);
 
     DUMP_VAR_I(DW_RESET_Pin);
@@ -153,9 +159,11 @@ void setup_DWICRSTnIRQ(int enable)
 */
 void wakeup_device_with_io(void)
 {
+    DUMP_VAR_I(DW_RESET_Pin);
     SET_WAKEUP_PIN_IO_HIGH;
     WAIT_500uSEC;
     SET_WAKEUP_PIN_IO_LOW;
+    DUMP_VAR_I(DW_RESET_Pin);
 }
 
 /*! ------------------------------------------------------------------------------------------------------------------
@@ -172,11 +180,13 @@ void make_very_short_wakeup_io(void)
 {
     uint8_t   cnt;
 
+    DUMP_VAR_I(DW_RESET_Pin);
     SET_WAKEUP_PIN_IO_HIGH;
     for (cnt=0;cnt<10;cnt++)
     ;
 
     SET_WAKEUP_PIN_IO_LOW;
+    DUMP_VAR_I(DW_RESET_Pin);
 }
 
 
@@ -187,6 +197,7 @@ void make_very_short_wakeup_io(void)
 void port_set_dw_ic_spi_slowrate(void)
 {
     dwt_spi_setting = SPISettings(SPI_CLOCK_SPEED_SLOW, MSBFIRST, SPI_MODE0);    
+    DUMP_VAR_I(SPI_CLOCK_SPEED_SLOW);
     Serial.print("SPI communication successfully setup.\n");
 }
 
@@ -200,6 +211,7 @@ void port_set_dw_ic_spi_fastrate(void)
      * Fast rates are not available at present.
      */
     dwt_spi_setting = SPISettings(SPI_CLOCK_SPEED_FAST, MSBFIRST, SPI_MODE0);    
+    DUMP_VAR_I(SPI_CLOCK_SPEED_FAST);
     Serial.print("SPI communication successfully setup.\n");
 }
 
@@ -255,13 +267,14 @@ __INLINE void process_deca_irq(void)
 void port_set_dwic_isr(port_dwic_isr_t dwic_isr)
 {
     //dwt_lock.lock();
-    attachInterrupt(DW_IRQn_Pin, dwic_isr,RISING );
+    attachInterrupt(digitalPinToInterrupt(DW_IRQn_Pin), dwic_isr,RISING );
     if ( 0 )
     {
         fprintf (stderr, "Unable to setup ISR: %s\n", strerror (errno));
     }
     //dwt_lock.unlock();
 }
+
 
 /****************************************************************************//**
  *
@@ -271,8 +284,8 @@ void port_set_dwic_isr(port_dwic_isr_t dwic_isr)
 
 
 extern "C" void __dw_drivers_start(void ){
-
+    DUMP_VAR_I(1);
 }
 extern "C" void __dw_drivers_end(void){
-    
+    DUMP_VAR_I(2);    
 }

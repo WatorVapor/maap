@@ -12,6 +12,7 @@
 
 #include "deca_device_api.h"
 #include "port.h"
+#include "debug.hpp"
 // ---------------------------------------------------------------------------
 //
 // NB: The purpose of this file is to provide for microprocessor interrupt enable/disable, this is used for
@@ -50,14 +51,16 @@
  */
 decaIrqStatus_t decamutexon(void)
 {
+    DUMP_VAR_I(DW_IRQn_Pin);
     decaIrqStatus_t s = digitalRead(DW_IRQn_Pin);
+    DUMP_VAR_I(DW_IRQn_Pin);
 
     if(s)
     {
         //dwt_lock.lock();
+        //noInterrupts();
         
     }
-
     return s ;   // return state before disable, value is used to re-enable in decamutexoff call
 }
 
@@ -81,5 +84,6 @@ void decamutexoff(decaIrqStatus_t s)        // put a function here that re-enabl
     if(s)
     {
         //dwt_lock.unlock();
+        //interrupts();
     }
 }
