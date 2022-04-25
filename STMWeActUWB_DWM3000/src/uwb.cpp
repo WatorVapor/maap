@@ -38,8 +38,6 @@ void uwb_setup(void) {
     int32_t api = dwt_apiversion();
     DUMP_VAR_I(api);
 
-    //char *apis = dwt_version_string();
-    //DUMP_VAR_S(apis);
     read_dev_id();
 #if RUN_TX
     config_tx();
