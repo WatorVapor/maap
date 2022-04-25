@@ -77,8 +77,8 @@ int writetospiwithcrc(
                 const uint8_t *bodyBuffer,
                 uint8_t       crc8)
 {
-    DUMP_VAR_I(headerLength);
-    DUMP_VAR_I(bodyLength);
+    TRACE_VAR_I(headerLength);
+    TRACE_VAR_I(bodyLength);
     decaIrqStatus_t  stat ;
     stat = decamutexon() ;
 
@@ -110,8 +110,8 @@ int writetospi(uint16_t       headerLength,
                uint16_t       bodyLength,
                const uint8_t  *bodyBuffer)
 {
-    DUMP_VAR_I(headerLength);
-    DUMP_VAR_I(bodyLength);
+    TRACE_VAR_I(headerLength);
+    TRACE_VAR_I(bodyLength);
 
     decaIrqStatus_t  stat ;
     stat = decamutexon() ;
@@ -180,7 +180,7 @@ int readfromspi(uint16_t headerLength,
 #endif
 
     for(int i = 0 ;i < readlength; i++) {
-        DUMP_VAR_I(readBuffer[i]);
+        TRACE_VAR_I(readBuffer[i]);
     }
 
 
