@@ -40,6 +40,16 @@
 #define DUMP_VAR_S(x) { }
 #endif
 
+#if 1
+#define DUMP_VAR_F(x) { \
+    char buff[128];\
+    snprintf(buff,sizeof(buff),"DUMP %s::%s:%d:%s=<%f>\r\n",__FILE__,__func__,__LINE__,#x,x);\
+    Serial.print(buff);\
+}
+#else
+#define DUMP_VAR_F(x) { }
+#endif
+
 
 /*
 #define ERROR_VAR(x) { \
