@@ -10,8 +10,8 @@
 
 //#define RUN_TX 1
 //#define RUN_RX 1
-//#define RUN_INITIATOR 1
-#define RUN_RESPONDER 1
+#define RUN_INITIATOR 1
+//#define RUN_RESPONDER 1
 
 
 int read_dev_id(void);
