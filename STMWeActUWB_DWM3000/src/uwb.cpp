@@ -1,11 +1,9 @@
 #include <Arduino.h>
 #include "deca_device_api.h"
-#include "deca_probe_interface.h"
 #include "port.h"
 
 #include "debug.hpp"
 
-void init_dwa_3000(void);
 int read_dev_id(void);
 
 void uwb_setup(void) {
@@ -26,9 +24,6 @@ void uwb_setup(void) {
     int32_t api = dwt_apiversion();
     DUMP_VAR_I(api);
 
-    init_dwa_3000();
-   
-
     //char *apis = dwt_version_string();
     //DUMP_VAR_S(apis);
     read_dev_id();
@@ -42,19 +37,6 @@ void uwb_loop(void) {
 }
 
 
-void init_dwa_3000(void)
-{
-
-    /* Probe for the correct device driver. */
-    while(true) {
-        int retProbe = dwt_probe((struct dwt_probe_s *)&dw3000_probe_interf);
-        DUMP_VAR_I(retProbe == DWT_SUCCESS);
-        if(retProbe == DWT_SUCCESS) {
-            break;
-        }
-        delay(100);
-    }
-}
 
 int read_dev_id(void)
 {

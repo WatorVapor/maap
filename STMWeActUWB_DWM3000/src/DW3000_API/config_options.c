@@ -4,7 +4,7 @@
  *
  * @attention
  *
- * Copyright 2019 - 2021 (c) Decawave Ltd, Dublin, Ireland.
+ * Copyright 2019 - 2020 (c) Decawave Ltd, Dublin, Ireland.
  *
  * All rights reserved.
  *
@@ -13,23 +13,25 @@
 #include "config_options.h"
 
 /* String used to display measured distance on LCD screen (16 characters maximum). */
-char dist_str[16] = { 0 };
+char dist_str[16] = {0};
 
 /*
  * TX Power Configuration Settings
  */
 /* Values for the PG_DELAY and TX_POWER registers reflect the bandwidth and power of the spectrum at the current
  * temperature. These values can be calibrated prior to taking reference measurements. */
-dwt_txconfig_t txconfig_options = {
-    0x34,       /* PG delay. */
-    0xfdfdfdfd, /* TX power. */
-    0x0         /*PG count*/
+dwt_txconfig_t txconfig_options =
+{
+    0x34,           /* PG delay. */
+    0xfdfdfdfd,      /* TX power. */
+    0x0             /*PG count*/
 };
 
-dwt_txconfig_t txconfig_options_ch9 = {
-    0x34,       /* PG delay. */
-    0xfefefefe, /* TX power. */
-    0x0         /*PG count*/
+dwt_txconfig_t txconfig_options_ch9 =
+{
+    0x34,           /* PG delay. */
+    0xfefefefe,     /* TX power. */
+    0x0             /*PG count*/
 };
 
 /*
@@ -47,19 +49,19 @@ dwt_txconfig_t txconfig_options_ch9 = {
  * Channel 5, PRF 64M, Preamble Length 64, PAC 8, Preamble code 9, Data Rate 850k, STS Length 64
  */
 dwt_config_t config_options = {
-    5,                /* Channel number. */
-    DWT_PLEN_64,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,         /* Preamble acquisition chunk size. Used in RX only. */
-    9,                /* TX preamble code. Used in TX only. */
-    9,                /* RX preamble code. Used in RX only. */
-    3,                /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_850K,      /* Data rate. */
-    DWT_PHRMODE_STD,  /* PHY header mode. */
-    DWT_PHRRATE_STD,  /* PHY header rate. */
-    (64 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,   /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,   /* STS length*/
-    DWT_PDOA_M0       /* PDOA mode off */
+    5,                  /* Channel number. */
+    DWT_PLEN_64,        /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    9,                  /* TX preamble code. Used in TX only. */
+    9,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_850K,        /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (64 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -68,19 +70,19 @@ dwt_config_t config_options = {
  * Channel 9, PRF 64M, Preamble Length 64, PAC 8, Preamble code 9, Data Rate 850k, STS Length 64
  */
 dwt_config_t config_options = {
-    9,                /* Channel number. */
-    DWT_PLEN_64,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,         /* Preamble acquisition chunk size. Used in RX only. */
-    9,                /* TX preamble code. Used in TX only. */
-    9,                /* RX preamble code. Used in RX only. */
-    3,                /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_850K,      /* Data rate. */
-    DWT_PHRMODE_STD,  /* PHY header mode. */
-    DWT_PHRRATE_STD,  /* PHY header rate. */
-    (64 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,   /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,   /* STS length*/
-    DWT_PDOA_M0       /* PDOA mode off */
+    9,                  /* Channel number. */
+    DWT_PLEN_64,        /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    9,                  /* TX preamble code. Used in TX only. */
+    9,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_850K,        /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (64 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -89,19 +91,19 @@ dwt_config_t config_options = {
  * Channel 5, PRF 64M, Preamble Length 128, PAC 8, Preamble code 9, Data Rate 850k, STS Length 64
  */
 dwt_config_t config_options = {
-    5,                 /* Channel number. */
-    DWT_PLEN_128,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,          /* Preamble acquisition chunk size. Used in RX only. */
-    9,                 /* TX preamble code. Used in TX only. */
-    9,                 /* RX preamble code. Used in RX only. */
-    3,                 /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_850K,       /* Data rate. */
-    DWT_PHRMODE_STD,   /* PHY header mode. */
-    DWT_PHRRATE_STD,   /* PHY header rate. */
-    (128 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,    /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,    /* STS length*/
-    DWT_PDOA_M0        /* PDOA mode off */
+    5,                  /* Channel number. */
+    DWT_PLEN_128,       /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    9,                  /* TX preamble code. Used in TX only. */
+    9,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_850K,        /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (128 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -110,19 +112,19 @@ dwt_config_t config_options = {
  * Channel 9, PRF 64M, Preamble Length 128, PAC 8, Preamble code 9, Data Rate 850k, STS Length 64
  */
 dwt_config_t config_options = {
-    9,                 /* Channel number. */
-    DWT_PLEN_128,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,          /* Preamble acquisition chunk size. Used in RX only. */
-    9,                 /* TX preamble code. Used in TX only. */
-    9,                 /* RX preamble code. Used in RX only. */
-    3,                 /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_850K,       /* Data rate. */
-    DWT_PHRMODE_STD,   /* PHY header mode. */
-    DWT_PHRRATE_STD,   /* PHY header rate. */
-    (128 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,    /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,    /* STS length*/
-    DWT_PDOA_M0        /* PDOA mode off */
+    9,                  /* Channel number. */
+    DWT_PLEN_128,       /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    9,                  /* TX preamble code. Used in TX only. */
+    9,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_850K,        /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (128 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -131,19 +133,19 @@ dwt_config_t config_options = {
  * Channel 5, PRF 64M, Preamble Length 512, PAC 8, Preamble code 9, Data Rate 850k, STS Length 64
  */
 dwt_config_t config_options = {
-    5,                 /* Channel number. */
-    DWT_PLEN_512,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,          /* Preamble acquisition chunk size. Used in RX only. */
-    9,                 /* TX preamble code. Used in TX only. */
-    9,                 /* RX preamble code. Used in RX only. */
-    3,                 /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_850K,       /* Data rate. */
-    DWT_PHRMODE_STD,   /* PHY header mode. */
-    DWT_PHRRATE_STD,   /* PHY header rate. */
-    (512 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,    /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,    /* STS length*/
-    DWT_PDOA_M0        /* PDOA mode off */
+    5,                  /* Channel number. */
+    DWT_PLEN_512,       /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    9,                  /* TX preamble code. Used in TX only. */
+    9,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_850K,        /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (512 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -152,19 +154,19 @@ dwt_config_t config_options = {
  * Channel 9, PRF 64M, Preamble Length 512, PAC 8, Preamble code 9, Data Rate 850k, STS Length 64
  */
 dwt_config_t config_options = {
-    9,                 /* Channel number. */
-    DWT_PLEN_512,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,          /* Preamble acquisition chunk size. Used in RX only. */
-    9,                 /* TX preamble code. Used in TX only. */
-    9,                 /* RX preamble code. Used in RX only. */
-    3,                 /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_850K,       /* Data rate. */
-    DWT_PHRMODE_STD,   /* PHY header mode. */
-    DWT_PHRRATE_STD,   /* PHY header rate. */
-    (512 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,    /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,    /* STS length*/
-    DWT_PDOA_M0        /* PDOA mode off */
+    9,                  /* Channel number. */
+    DWT_PLEN_512,       /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    9,                  /* TX preamble code. Used in TX only. */
+    9,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_850K,        /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (512 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -182,9 +184,9 @@ dwt_config_t config_options = {
     DWT_BR_850K,        /* Data rate. */
     DWT_PHRMODE_STD,    /* PHY header mode. */
     DWT_PHRRATE_STD,    /* PHY header rate. */
-    (1024 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,     /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,     /* STS length*/
+    (1024 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
     DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
@@ -203,9 +205,9 @@ dwt_config_t config_options = {
     DWT_BR_850K,        /* Data rate. */
     DWT_PHRMODE_STD,    /* PHY header mode. */
     DWT_PHRRATE_STD,    /* PHY header rate. */
-    (1024 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,     /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,     /* STS length*/
+    (1024 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
     DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
@@ -215,19 +217,19 @@ dwt_config_t config_options = {
  * Channel 5, PRF 64M, Preamble Length 64, PAC 8, Preamble code 10, Data Rate 850k, STS Length 64
  */
 dwt_config_t config_options = {
-    5,                /* Channel number. */
-    DWT_PLEN_64,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,         /* Preamble acquisition chunk size. Used in RX only. */
-    10,               /* TX preamble code. Used in TX only. */
-    10,               /* RX preamble code. Used in RX only. */
-    3,                /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_850K,      /* Data rate. */
-    DWT_PHRMODE_STD,  /* PHY header mode. */
-    DWT_PHRRATE_STD,  /* PHY header rate. */
-    (64 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,   /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,   /* STS length*/
-    DWT_PDOA_M0       /* PDOA mode off */
+    5,                  /* Channel number. */
+    DWT_PLEN_64,        /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    10,                  /* TX preamble code. Used in TX only. */
+    10,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_850K,        /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (64 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -236,19 +238,19 @@ dwt_config_t config_options = {
  * Channel 9, PRF 64M, Preamble Length 64, PAC 8, Preamble code 10, Data Rate 850k, STS Length 64
  */
 dwt_config_t config_options = {
-    9,                /* Channel number. */
-    DWT_PLEN_64,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,         /* Preamble acquisition chunk size. Used in RX only. */
-    10,               /* TX preamble code. Used in TX only. */
-    10,               /* RX preamble code. Used in RX only. */
-    3,                /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_850K,      /* Data rate. */
-    DWT_PHRMODE_STD,  /* PHY header mode. */
-    DWT_PHRRATE_STD,  /* PHY header rate. */
-    (64 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,   /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,   /* STS length*/
-    DWT_PDOA_M0       /* PDOA mode off */
+    9,                  /* Channel number. */
+    DWT_PLEN_64,        /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    10,                  /* TX preamble code. Used in TX only. */
+    10,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_850K,        /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (64 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -257,19 +259,19 @@ dwt_config_t config_options = {
  * Channel 5, PRF 64M, Preamble Length 128, PAC 8, Preamble code 10, Data Rate 850k, STS Length 64
  */
 dwt_config_t config_options = {
-    5,                 /* Channel number. */
-    DWT_PLEN_128,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,          /* Preamble acquisition chunk size. Used in RX only. */
-    10,                /* TX preamble code. Used in TX only. */
-    10,                /* RX preamble code. Used in RX only. */
-    3,                 /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_850K,       /* Data rate. */
-    DWT_PHRMODE_STD,   /* PHY header mode. */
-    DWT_PHRRATE_STD,   /* PHY header rate. */
-    (128 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,    /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,    /* STS length*/
-    DWT_PDOA_M0        /* PDOA mode off */
+    5,                  /* Channel number. */
+    DWT_PLEN_128,       /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    10,                  /* TX preamble code. Used in TX only. */
+    10,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_850K,        /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (128 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -278,19 +280,19 @@ dwt_config_t config_options = {
  * Channel 9, PRF 64M, Preamble Length 128, PAC 8, Preamble code 10, Data Rate 850k, STS Length 64
  */
 dwt_config_t config_options = {
-    9,                 /* Channel number. */
-    DWT_PLEN_128,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,          /* Preamble acquisition chunk size. Used in RX only. */
-    10,                /* TX preamble code. Used in TX only. */
-    10,                /* RX preamble code. Used in RX only. */
-    3,                 /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_850K,       /* Data rate. */
-    DWT_PHRMODE_STD,   /* PHY header mode. */
-    DWT_PHRRATE_STD,   /* PHY header rate. */
-    (128 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,    /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,    /* STS length*/
-    DWT_PDOA_M0        /* PDOA mode off */
+    9,                  /* Channel number. */
+    DWT_PLEN_128,       /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    10,                  /* TX preamble code. Used in TX only. */
+    10,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_850K,        /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (128 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -299,19 +301,19 @@ dwt_config_t config_options = {
  * Channel 5, PRF 64M, Preamble Length 512, PAC 8, Preamble code 10, Data Rate 850k, STS Length 64
  */
 dwt_config_t config_options = {
-    5,                 /* Channel number. */
-    DWT_PLEN_512,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,          /* Preamble acquisition chunk size. Used in RX only. */
-    10,                /* TX preamble code. Used in TX only. */
-    10,                /* RX preamble code. Used in RX only. */
-    3,                 /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_850K,       /* Data rate. */
-    DWT_PHRMODE_STD,   /* PHY header mode. */
-    DWT_PHRRATE_STD,   /* PHY header rate. */
-    (512 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,    /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,    /* STS length*/
-    DWT_PDOA_M0        /* PDOA mode off */
+    5,                  /* Channel number. */
+    DWT_PLEN_512,       /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    10,                  /* TX preamble code. Used in TX only. */
+    10,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_850K,        /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (512 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -320,19 +322,19 @@ dwt_config_t config_options = {
  * Channel 9, PRF 64M, Preamble Length 512, PAC 8, Preamble code 10, Data Rate 850k, STS Length 64
  */
 dwt_config_t config_options = {
-    9,                 /* Channel number. */
-    DWT_PLEN_512,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,          /* Preamble acquisition chunk size. Used in RX only. */
-    10,                /* TX preamble code. Used in TX only. */
-    10,                /* RX preamble code. Used in RX only. */
-    3,                 /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_850K,       /* Data rate. */
-    DWT_PHRMODE_STD,   /* PHY header mode. */
-    DWT_PHRRATE_STD,   /* PHY header rate. */
-    (512 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,    /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,    /* STS length*/
-    DWT_PDOA_M0        /* PDOA mode off */
+    9,                  /* Channel number. */
+    DWT_PLEN_512,       /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    10,                  /* TX preamble code. Used in TX only. */
+    10,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_850K,        /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (512 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -344,15 +346,15 @@ dwt_config_t config_options = {
     5,                  /* Channel number. */
     DWT_PLEN_1024,      /* Preamble length. Used in TX only. */
     DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
-    10,                 /* TX preamble code. Used in TX only. */
-    10,                 /* RX preamble code. Used in RX only. */
+    10,                  /* TX preamble code. Used in TX only. */
+    10,                  /* RX preamble code. Used in RX only. */
     3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
     DWT_BR_850K,        /* Data rate. */
     DWT_PHRMODE_STD,    /* PHY header mode. */
     DWT_PHRRATE_STD,    /* PHY header rate. */
-    (1024 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,     /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,     /* STS length*/
+    (1024 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
     DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
@@ -365,15 +367,15 @@ dwt_config_t config_options = {
     9,                  /* Channel number. */
     DWT_PLEN_1024,      /* Preamble length. Used in TX only. */
     DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
-    10,                 /* TX preamble code. Used in TX only. */
-    10,                 /* RX preamble code. Used in RX only. */
+    10,                  /* TX preamble code. Used in TX only. */
+    10,                  /* RX preamble code. Used in RX only. */
     3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
     DWT_BR_850K,        /* Data rate. */
     DWT_PHRMODE_STD,    /* PHY header mode. */
     DWT_PHRRATE_STD,    /* PHY header rate. */
-    (1024 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,     /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,     /* STS length*/
+    (1024 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
     DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
@@ -383,19 +385,19 @@ dwt_config_t config_options = {
  * Channel 5, PRF 64M, Preamble Length 64, PAC 8, Preamble code 9, Data Rate 6.8M, STS Length 64
  */
 dwt_config_t config_options = {
-    5,                /* Channel number. */
-    DWT_PLEN_64,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,         /* Preamble acquisition chunk size. Used in RX only. */
-    9,                /* TX preamble code. Used in TX only. */
-    9,                /* RX preamble code. Used in RX only. */
-    3,                /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,       /* Data rate. */
-    DWT_PHRMODE_STD,  /* PHY header mode. */
-    DWT_PHRRATE_STD,  /* PHY header rate. */
-    (64 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,   /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,   /* STS length*/
-    DWT_PDOA_M0       /* PDOA mode off */
+    5,                  /* Channel number. */
+    DWT_PLEN_64,        /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    9,                  /* TX preamble code. Used in TX only. */
+    9,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,         /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (64 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -404,19 +406,19 @@ dwt_config_t config_options = {
  * Channel 9, PRF 64M, Preamble Length 64, PAC 8, Preamble code 9, Data Rate 6.8M, STS Length 64
  */
 dwt_config_t config_options = {
-    9,                /* Channel number. */
-    DWT_PLEN_64,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,         /* Preamble acquisition chunk size. Used in RX only. */
-    9,                /* TX preamble code. Used in TX only. */
-    9,                /* RX preamble code. Used in RX only. */
-    3,                /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,       /* Data rate. */
-    DWT_PHRMODE_STD,  /* PHY header mode. */
-    DWT_PHRRATE_STD,  /* PHY header rate. */
-    (64 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,   /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,   /* STS length*/
-    DWT_PDOA_M0       /* PDOA mode off */
+    9,                  /* Channel number. */
+    DWT_PLEN_64,        /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    9,                  /* TX preamble code. Used in TX only. */
+    9,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,         /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (64 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -425,19 +427,19 @@ dwt_config_t config_options = {
  * Channel 5, PRF 64M, Preamble Length 128, PAC 8, Preamble code 9, Data Rate 6.8M, STS Length 64
  */
 dwt_config_t config_options = {
-    5,                 /* Channel number. */
-    DWT_PLEN_128,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,          /* Preamble acquisition chunk size. Used in RX only. */
-    9,                 /* TX preamble code. Used in TX only. */
-    9,                 /* RX preamble code. Used in RX only. */
-    3,                 /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,        /* Data rate. */
-    DWT_PHRMODE_STD,   /* PHY header mode. */
-    DWT_PHRRATE_STD,   /* PHY header rate. */
-    (128 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,    /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,    /* STS length*/
-    DWT_PDOA_M0        /* PDOA mode off */
+    5,                  /* Channel number. */
+    DWT_PLEN_128,       /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    9,                  /* TX preamble code. Used in TX only. */
+    9,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,         /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (128 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -446,19 +448,19 @@ dwt_config_t config_options = {
  * Channel 9, PRF 64M, Preamble Length 128, PAC 8, Preamble code 9, Data Rate 6.8M, STS Length 64
  */
 dwt_config_t config_options = {
-    9,                 /* Channel number. */
-    DWT_PLEN_128,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,          /* Preamble acquisition chunk size. Used in RX only. */
-    9,                 /* TX preamble code. Used in TX only. */
-    9,                 /* RX preamble code. Used in RX only. */
-    3,                 /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,        /* Data rate. */
-    DWT_PHRMODE_STD,   /* PHY header mode. */
-    DWT_PHRRATE_STD,   /* PHY header rate. */
-    (128 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,    /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,    /* STS length*/
-    DWT_PDOA_M0        /* PDOA mode off */
+    9,                  /* Channel number. */
+    DWT_PLEN_128,       /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    9,                  /* TX preamble code. Used in TX only. */
+    9,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,         /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (128 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -467,19 +469,19 @@ dwt_config_t config_options = {
  * Channel 5, PRF 64M, Preamble Length 512, PAC 8, Preamble code 9, Data Rate 850k, STS Length 64
  */
 dwt_config_t config_options = {
-    5,                 /* Channel number. */
-    DWT_PLEN_512,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,          /* Preamble acquisition chunk size. Used in RX only. */
-    9,                 /* TX preamble code. Used in TX only. */
-    9,                 /* RX preamble code. Used in RX only. */
-    3,                 /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,        /* Data rate. */
-    DWT_PHRMODE_STD,   /* PHY header mode. */
-    DWT_PHRRATE_STD,   /* PHY header rate. */
-    (512 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,    /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,    /* STS length*/
-    DWT_PDOA_M0        /* PDOA mode off */
+    5,                  /* Channel number. */
+    DWT_PLEN_512,       /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    9,                  /* TX preamble code. Used in TX only. */
+    9,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,         /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (512 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -488,19 +490,19 @@ dwt_config_t config_options = {
  * Channel 9, PRF 64M, Preamble Length 512, PAC 8, Preamble code 9, Data Rate 6.8M, STS Length 64
  */
 dwt_config_t config_options = {
-    9,                 /* Channel number. */
-    DWT_PLEN_512,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,          /* Preamble acquisition chunk size. Used in RX only. */
-    9,                 /* TX preamble code. Used in TX only. */
-    9,                 /* RX preamble code. Used in RX only. */
-    3,                 /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,        /* Data rate. */
-    DWT_PHRMODE_STD,   /* PHY header mode. */
-    DWT_PHRRATE_STD,   /* PHY header rate. */
-    (512 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,    /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,    /* STS length*/
-    DWT_PDOA_M0        /* PDOA mode off */
+    9,                  /* Channel number. */
+    DWT_PLEN_512,       /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    9,                  /* TX preamble code. Used in TX only. */
+    9,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,         /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (512 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -518,9 +520,9 @@ dwt_config_t config_options = {
     DWT_BR_6M8,         /* Data rate. */
     DWT_PHRMODE_STD,    /* PHY header mode. */
     DWT_PHRRATE_STD,    /* PHY header rate. */
-    (1024 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,     /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,     /* STS length*/
+    (1024 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
     DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
@@ -539,9 +541,9 @@ dwt_config_t config_options = {
     DWT_BR_6M8,         /* Data rate. */
     DWT_PHRMODE_STD,    /* PHY header mode. */
     DWT_PHRRATE_STD,    /* PHY header rate. */
-    (1024 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,     /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,     /* STS length*/
+    (1024 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
     DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
@@ -551,19 +553,19 @@ dwt_config_t config_options = {
  * Channel 5, PRF 64M, Preamble Length 64, PAC 8, Preamble code 10, Data Rate 6.8M, STS Length 64
  */
 dwt_config_t config_options = {
-    5,                /* Channel number. */
-    DWT_PLEN_64,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,         /* Preamble acquisition chunk size. Used in RX only. */
-    10,               /* TX preamble code. Used in TX only. */
-    10,               /* RX preamble code. Used in RX only. */
-    3,                /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,       /* Data rate. */
-    DWT_PHRMODE_STD,  /* PHY header mode. */
-    DWT_PHRRATE_STD,  /* PHY header rate. */
-    (64 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,   /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,   /* STS length*/
-    DWT_PDOA_M0       /* PDOA mode off */
+    5,                  /* Channel number. */
+    DWT_PLEN_64,        /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    10,                  /* TX preamble code. Used in TX only. */
+    10,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,         /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (64 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -572,19 +574,19 @@ dwt_config_t config_options = {
  * Channel 9, PRF 64M, Preamble Length 64, PAC 8, Preamble code 10, Data Rate 6.8M, STS Length 64
  */
 dwt_config_t config_options = {
-    9,                /* Channel number. */
-    DWT_PLEN_64,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,         /* Preamble acquisition chunk size. Used in RX only. */
-    10,               /* TX preamble code. Used in TX only. */
-    10,               /* RX preamble code. Used in RX only. */
-    3,                /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,       /* Data rate. */
-    DWT_PHRMODE_STD,  /* PHY header mode. */
-    DWT_PHRRATE_STD,  /* PHY header rate. */
-    (64 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,   /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,   /* STS length*/
-    DWT_PDOA_M0       /* PDOA mode off */
+    9,                  /* Channel number. */
+    DWT_PLEN_64,        /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    10,                  /* TX preamble code. Used in TX only. */
+    10,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,         /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (64 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -593,19 +595,19 @@ dwt_config_t config_options = {
  * Channel 5, PRF 64M, Preamble Length 128, PAC 8, Preamble code 10, Data Rate 6.8M, STS Length 64
  */
 dwt_config_t config_options = {
-    5,                 /* Channel number. */
-    DWT_PLEN_128,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,          /* Preamble acquisition chunk size. Used in RX only. */
-    10,                /* TX preamble code. Used in TX only. */
-    10,                /* RX preamble code. Used in RX only. */
-    3,                 /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,        /* Data rate. */
-    DWT_PHRMODE_STD,   /* PHY header mode. */
-    DWT_PHRRATE_STD,   /* PHY header rate. */
-    (128 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,    /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,    /* STS length*/
-    DWT_PDOA_M0        /* PDOA mode off */
+    5,                  /* Channel number. */
+    DWT_PLEN_128,       /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    10,                  /* TX preamble code. Used in TX only. */
+    10,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,         /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (128 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -614,19 +616,19 @@ dwt_config_t config_options = {
  * Channel 9, PRF 64M, Preamble Length 128, PAC 8, Preamble code 10, Data Rate 6.8M, STS Length 64
  */
 dwt_config_t config_options = {
-    9,                 /* Channel number. */
-    DWT_PLEN_128,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,          /* Preamble acquisition chunk size. Used in RX only. */
-    10,                /* TX preamble code. Used in TX only. */
-    10,                /* RX preamble code. Used in RX only. */
-    3,                 /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,        /* Data rate. */
-    DWT_PHRMODE_STD,   /* PHY header mode. */
-    DWT_PHRRATE_STD,   /* PHY header rate. */
-    (128 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,    /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,    /* STS length*/
-    DWT_PDOA_M0        /* PDOA mode off */
+    9,                  /* Channel number. */
+    DWT_PLEN_128,       /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    10,                  /* TX preamble code. Used in TX only. */
+    10,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,         /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (128 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -635,19 +637,19 @@ dwt_config_t config_options = {
  * Channel 5, PRF 64M, Preamble Length 512, PAC 8, Preamble code 10, Data Rate 6.8M, STS Length 64
  */
 dwt_config_t config_options = {
-    5,                 /* Channel number. */
-    DWT_PLEN_512,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,          /* Preamble acquisition chunk size. Used in RX only. */
-    10,                /* TX preamble code. Used in TX only. */
-    10,                /* RX preamble code. Used in RX only. */
-    3,                 /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,        /* Data rate. */
-    DWT_PHRMODE_STD,   /* PHY header mode. */
-    DWT_PHRRATE_STD,   /* PHY header rate. */
-    (512 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,    /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,    /* STS length*/
-    DWT_PDOA_M0        /* PDOA mode off */
+    5,                  /* Channel number. */
+    DWT_PLEN_512,       /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    10,                  /* TX preamble code. Used in TX only. */
+    10,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,         /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (512 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -656,19 +658,19 @@ dwt_config_t config_options = {
  * Channel 9, PRF 64M, Preamble Length 512, PAC 8, Preamble code 10, Data Rate 6.8M, STS Length 64
  */
 dwt_config_t config_options = {
-    9,                 /* Channel number. */
-    DWT_PLEN_512,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,          /* Preamble acquisition chunk size. Used in RX only. */
-    10,                /* TX preamble code. Used in TX only. */
-    10,                /* RX preamble code. Used in RX only. */
-    3,                 /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,        /* Data rate. */
-    DWT_PHRMODE_STD,   /* PHY header mode. */
-    DWT_PHRRATE_STD,   /* PHY header rate. */
-    (512 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,    /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,    /* STS length*/
-    DWT_PDOA_M0        /* PDOA mode off */
+    9,                  /* Channel number. */
+    DWT_PLEN_512,       /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    10,                  /* TX preamble code. Used in TX only. */
+    10,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,         /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (512 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
 
@@ -680,15 +682,15 @@ dwt_config_t config_options = {
     5,                  /* Channel number. */
     DWT_PLEN_1024,      /* Preamble length. Used in TX only. */
     DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
-    10,                 /* TX preamble code. Used in TX only. */
-    10,                 /* RX preamble code. Used in RX only. */
+    10,                  /* TX preamble code. Used in TX only. */
+    10,                  /* RX preamble code. Used in RX only. */
     3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
     DWT_BR_6M8,         /* Data rate. */
     DWT_PHRMODE_STD,    /* PHY header mode. */
     DWT_PHRRATE_STD,    /* PHY header rate. */
-    (1024 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,     /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,     /* STS length*/
+    (1024 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
     DWT_PDOA_M0         /* PDOA mode off */
 };
 #endif
@@ -701,16 +703,16 @@ dwt_config_t config_options = {
     9,                  /* Channel number. */
     DWT_PLEN_1024,      /* Preamble length. Used in TX only. */
     DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
-    10,                 /* TX preamble code. Used in TX only. */
-    10,                 /* RX preamble code. Used in RX only. */
+    10,                  /* TX preamble code. Used in TX only. */
+    10,                  /* RX preamble code. Used in RX only. */
     3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
     DWT_BR_6M8,         /* Data rate. */
     DWT_PHRMODE_STD,    /* PHY header mode. */
     DWT_PHRRATE_STD,    /* PHY header rate. */
-    (1024 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,     /* Mode 1 STS enabled */
-    DWT_STS_LEN_64,     /* STS length*/
-    DWT_PDOA_M0         /* PDOA mode off */
+    (1024 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,      /* Mode 1 STS enabled */
+    DWT_STS_LEN_64,      /* STS length*/
+    DWT_PDOA_M0          /* PDOA mode off */
 };
 #endif
 
@@ -719,57 +721,57 @@ dwt_config_t config_options = {
  * Channel 5, PRF 64M, Preamble Length 128, PAC 8, Preamble code 9, Data Rate 6.8M, STS Length 128
  */
 dwt_config_t config_options = {
-    5,                 /* Channel number. */
+    5,                  /* Channel number. */
     DWT_PLEN_128,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,          /* Preamble acquisition chunk size. Used in RX only. */
-    9,                 /* TX preamble code. Used in TX only. */
-    9,                 /* RX preamble code. Used in RX only. */
-    3,                 /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,        /* Data rate. */
-    DWT_PHRMODE_STD,   /* PHY header mode. */
-    DWT_PHRRATE_STD,   /* PHY header rate. */
-    (128 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_1,    /* Mode 1 STS enabled */
-    DWT_STS_LEN_128,   /* (STS length  in blocks of 8) - 1*/
-    DWT_PDOA_M0        /* PDOA mode off */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    9,                  /* TX preamble code. Used in TX only. */
+    9,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,         /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (128 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_1,     /* Mode 1 STS enabled */
+    DWT_STS_LEN_128,    /* (STS length  in blocks of 8) - 1*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 
 /* Configuration option SP3.
  * Channel 5, PRF 64M, Preamble Length 128, PAC 8, Preamble code 9, Data Rate 6.8M, STS Length 128, STS Mode 3
  */
 dwt_config_t config_option_sp3 = {
-    5,                 /* Channel number. */
-    DWT_PLEN_128,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,          /* Preamble acquisition chunk size. Used in RX only. */
-    9,                 /* TX preamble code. Used in TX only. */
-    9,                 /* RX preamble code. Used in RX only. */
-    3,                 /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,        /* Data rate. */
-    DWT_PHRMODE_STD,   /* PHY header mode. */
-    DWT_PHRRATE_STD,   /* PHY header rate. */
-    (128 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_ND,   /* Mode 3 STS (no data) enabled */
-    DWT_STS_LEN_128,   /* (STS length  in blocks of 8) - 1*/
-    DWT_PDOA_M0        /* PDOA mode off */
+    5,                  /* Channel number. */
+    DWT_PLEN_128,       /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    9,                  /* TX preamble code. Used in TX only. */
+    9,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,         /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (128 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_ND,    /* Mode 3 STS (no data) enabled */
+    DWT_STS_LEN_128,    /* (STS length  in blocks of 8) - 1*/
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 
 /* Configuration option SP0.
  * Channel 5, PRF 64M, Preamble Length 128, PAC 8, Preamble code 9, Data Rate 6.8M, No STS
  */
 dwt_config_t config_option_sp0 = {
-    5,                 /* Channel number. */
-    DWT_PLEN_128,      /* Preamble length. Used in TX only. */
-    DWT_PAC8,          /* Preamble acquisition chunk size. Used in RX only. */
-    9,                 /* TX preamble code. Used in TX only. */
-    9,                 /* RX preamble code. Used in RX only. */
-    3,                 /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
-    DWT_BR_6M8,        /* Data rate. */
-    DWT_PHRMODE_STD,   /* PHY header mode. */
-    DWT_PHRRATE_STD,   /* PHY header rate. */
-    (128 + 1 + 8 - 8), /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
-    DWT_STS_MODE_OFF,  /* STS Off */
-    DWT_STS_LEN_128,   /* Ignore value when STS is disabled */
-    DWT_PDOA_M0        /* PDOA mode off */
+    5,                  /* Channel number. */
+    DWT_PLEN_128,       /* Preamble length. Used in TX only. */
+    DWT_PAC8,           /* Preamble acquisition chunk size. Used in RX only. */
+    9,                  /* TX preamble code. Used in TX only. */
+    9,                  /* RX preamble code. Used in RX only. */
+    3,                  /* 0 to use standard 8 symbol SFD, 1 to use non-standard 8 symbol, 2 for non-standard 16 symbol SFD and 3 for 4z 8 symbol SDF type */
+    DWT_BR_6M8,         /* Data rate. */
+    DWT_PHRMODE_STD,    /* PHY header mode. */
+    DWT_PHRRATE_STD,    /* PHY header rate. */
+    (128 + 1 + 8 - 8),  /* SFD timeout (preamble length + 1 + SFD length - PAC size). Used in RX only. */
+    DWT_STS_MODE_OFF,   /* STS Off */
+    DWT_STS_LEN_128,    /* Ignore value when STS is disabled */
+    DWT_PDOA_M0         /* PDOA mode off */
 };
 
 #endif
