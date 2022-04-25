@@ -2,11 +2,17 @@
 #include "deca_device_api.h"
 #include "deca_regs.h"
 #include "port.h"
+#include "shared_defines.h"
 
 #include "debug.hpp"
 
+//#define RUNTX 1
+#define RUNRX 1
+
+
 int read_dev_id(void);
 bool config_tx(void);
+bool config_rx(void);
 
 void uwb_setup(void) {
     Serial.printf("UWB Go!!!!\r\n");
@@ -29,7 +35,13 @@ void uwb_setup(void) {
     //char *apis = dwt_version_string();
     //DUMP_VAR_S(apis);
     read_dev_id();
+#if RUNTX
     config_tx();
+#endif
+#if RUNRX
+    config_rx();
+#endif
+
 }
 
 int read_dev_id(void)
@@ -90,10 +102,35 @@ bool config_tx(void)
 
 }
 
+
+bool config_rx(void)
+{
+    while (!dwt_checkidlerc())
+    { };
+    if (dwt_initialise(DWT_DW_INIT) == DWT_ERROR)
+    {
+        Serial.printf("INIT FAILED\r\n");
+        return false;
+    }
+    dwt_setleds(DWT_LEDS_ENABLE | DWT_LEDS_INIT_BLINK) ;
+    if(dwt_configure(&config)){
+        Serial.printf("CONFIG FAILED\r\n");
+        return false;
+    }
+    return true;
+}
+
 bool simple_tx(void);
+bool simple_rx(void);
+
 void uwb_loop(void) {
     //DUMP_VAR_I(dwt_spi);
+#if RUNTX
     simple_tx();
+#endif
+#if RUNRX
+    simple_rx();
+#endif
 }
 
 
@@ -102,7 +139,7 @@ bool simple_tx(void)
     std::string msg;
     static int msgId = 0;
     msg = std::to_string(msgId++);
-    msg += "mapp test!!!";
+    msg += "mapp tx test!!!";
     uint8_t buffer[msg.length() + 2 ];
     memcpy(buffer,msg.c_str(),msg.length());
     dwt_writetxdata(msg.length(), buffer, 0);
@@ -112,5 +149,36 @@ bool simple_tx(void)
     { };
     dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_TXFRS_BIT_MASK);
     Serial.printf("%s\r\n",msg.c_str());
+    return true;
+}
+
+static uint8_t rx_buffer[FRAME_LEN_MAX];
+bool simple_rx(void)
+{
+    uint32_t status_reg;
+
+    memset(rx_buffer,0,sizeof(rx_buffer));
+    dwt_rxenable(DWT_START_RX_IMMEDIATE);
+    while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG_BIT_MASK | SYS_STATUS_ALL_RX_ERR )))
+    { };
+    if (status_reg & SYS_STATUS_RXFCG_BIT_MASK)
+    {
+        /* A frame has been received, copy it to our local buffer. */
+        uint16_t frame_len = dwt_read32bitreg(RX_FINFO_ID) & RX_FINFO_RXFLEN_BIT_MASK;
+        if (frame_len <= FRAME_LEN_MAX)
+        {
+            dwt_readrxdata(rx_buffer, frame_len-FCS_LEN, 0); /* No need to read the FCS/CRC. */
+            DUMP_VAR_S(rx_buffer);
+            std::string msg((char*)rx_buffer,frame_len-FCS_LEN);
+            Serial.printf("%s\r\n",msg.c_str());
+        }
+        /* Clear good RX frame event in the DW IC status register. */
+        dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_RXFCG_BIT_MASK); 
+    }
+    else
+    {
+        /* Clear RX error events in the DW IC status register. */
+        dwt_write32bitreg(SYS_STATUS_ID, SYS_STATUS_ALL_RX_ERR);
+    }
     return true;
 }
