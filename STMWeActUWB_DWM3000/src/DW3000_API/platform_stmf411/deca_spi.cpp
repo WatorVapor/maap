@@ -144,43 +144,49 @@ int readfromspi(uint16_t headerLength,
                 uint16_t readlength,
                 uint8_t  *readBuffer)
 {
-    DUMP_VAR_I(headerLength);
-    DUMP_VAR_I(readlength);
+    TRACE_VAR_I(headerLength);
+    TRACE_VAR_I(readlength);
 
 
-#if 0
+#if 1
     decaIrqStatus_t  stat ;
     stat = decamutexon() ;
-    DUMP_VAR_I(stat);
+    TRACE_VAR_I(stat);
 #endif
     for(int i = 0 ;i < headerLength; i++) {
-        DUMP_VAR_I(headerBuffer[i]);
+        TRACE_VAR_I(headerBuffer[i]);
     }
 
-    SPI.beginTransaction(dwt_spi_setting);
-    digitalWrite(PIN_SPI_SS, LOW);
+#if 1
+    dwt_spi.beginTransaction(dwt_spi_setting);
+    digitalWrite(DW_PIN_NSS, LOW);
     //delayMicroseconds(5);
-
+/*
     for(int i = 0 ;i < headerLength; i++) {
-        //DUMP_VAR_I(headerBuffer[i]);
-        SPI.transfer(headerBuffer[i],SPI_CONTINUE);
+        //TRACE_VAR_I(headerBuffer[i]);
+        dwt_spi.transfer(headerBuffer[i]);
     }
-    //delayMicroseconds(5);
+*/
+    dwt_spi.transfer(headerBuffer,headerLength);
+
+    delayMicroseconds(5);
     for(int i = 0 ;i < readlength; i++) {
-        readBuffer[i] = SPI.transfer(JUNK,SPI_CONTINUE);
-        //DUMP_VAR_I(readBuffer[i]);
+        readBuffer[i] = dwt_spi.transfer(JUNK);
+        //TRACE_VAR_I(readBuffer[i]);
     }
     //delayMicroseconds(5);
-    digitalWrite(PIN_SPI_SS, HIGH);
-    SPI.endTransaction();
+    digitalWrite(DW_PIN_NSS, HIGH);
+    dwt_spi.endTransaction();
+#endif
 
     for(int i = 0 ;i < readlength; i++) {
         DUMP_VAR_I(readBuffer[i]);
     }
 
-#if 0
+
+#if 1
     decamutexoff(stat);
-    DUMP_VAR_I(stat);
+    TRACE_VAR_I(stat);
 #endif
 
     return 0;
@@ -188,13 +194,13 @@ int readfromspi(uint16_t headerLength,
 
 
 int writeSpi (int channel, uint8_t *data, int len) {
-    digitalWrite(PIN_SPI_SS, LOW);
-    SPI.beginTransaction(dwt_spi_setting);
+    digitalWrite(DW_PIN_NSS, LOW);
+    dwt_spi.beginTransaction(dwt_spi_setting);
     for(int i = 0 ;i < len; i++) {
-        SPI.transfer(data[i]);
+        dwt_spi.transfer(data[i]);
     }
-    SPI.endTransaction();
-    digitalWrite(PIN_SPI_SS, HIGH);
+    dwt_spi.endTransaction();
+    digitalWrite(DW_PIN_NSS, HIGH);
     return 0;
 }
 /*

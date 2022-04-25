@@ -13,6 +13,6 @@
 #define DECA_PROBE_INTERFACE_H
 #include "deca_device_api.h"
 
-extern "C" const struct dwt_probe_s dw3000_probe_interf;
+extern "C" struct dwt_probe_s dw3000_probe_interf;
 
 #endif

@@ -26,27 +26,27 @@
 #include <stdlib.h>
 #include <SPI.h>
 
-/*
-/// spi default
-#define PIN_SCK  PA_5
-#define PIN_MISO PA_6
-#define PIN_MOSI PA_7
-#define PIN_CS   PA_4
-*/
+/// spi 2
+#define DW_PIN_SCK  PB13
+#define DW_PIN_MISO PB14
+#define DW_PIN_MOSI PB15
+#define DW_PIN_NSS  PB12
 
-#define DW_IRQn_Pin PC_14
-#define DW_WAKEUP_Pin PC_15
-#define DW_RESET_Pin PB_2
+#define DW_IRQn_Pin PC14
+#define DW_WAKEUP_Pin PC15
+#define DW_RESET_Pin PB2
 
 #define SPI_CHANNEL 0
-//#define SPI_CLOCK_SPEED_FAST 18* 1000 * 1000
-#define SPI_CLOCK_SPEED_FAST   38*1000 * 1000
+#define SPI_CLOCK_SPEED_FAST 38* 1000 * 1000
+//#define SPI_CLOCK_SPEED_FAST    4500 * 1000
 #define SPI_CLOCK_SPEED_SLOW    4500 *  1000
 
 #define UNUSED(x) (void)(x)
 
 //extern PlatformMutex  dwt_lock;
 extern SPISettings dwt_spi_setting;
+extern SPIClass dwt_spi;
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -150,8 +150,8 @@ void make_very_short_wakeup_io(void);
 #endif
 
 //This set the IO for waking up the chip
-#define SET_WAKEUP_PIN_IO_LOW     digitalWrite(DW_RESET_Pin, LOW);
-#define SET_WAKEUP_PIN_IO_HIGH    digitalWrite(DW_RESET_Pin, HIGH);
+#define SET_WAKEUP_PIN_IO_LOW     digitalWrite(DW_WAKEUP_Pin, LOW);
+#define SET_WAKEUP_PIN_IO_HIGH    digitalWrite(DW_WAKEUP_Pin, HIGH);
 
 //#define WAIT_500uSEC    Sleep(1)/*This is should be a delay of 500uSec at least. In our example it is more than that*/
 

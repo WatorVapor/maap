@@ -14,7 +14,7 @@
 #include "deca_spi.h"
 #include "port.h"
 
-static const struct dwt_spi_s dw3000_spi_fct = {
+static struct dwt_spi_s dw3000_spi_fct = {
     .readfromspi = readfromspi,
     .writetospi = writetospi,
     .writetospiwithcrc = writetospiwithcrc,
@@ -22,7 +22,7 @@ static const struct dwt_spi_s dw3000_spi_fct = {
     .setfastrate = port_set_dw_ic_spi_fastrate
 };
 
-extern "C" const struct dwt_probe_s dw3000_probe_interf = 
+extern "C" struct dwt_probe_s dw3000_probe_interf = 
 {
     .dw = NULL,
     .spi = (void*)&dw3000_spi_fct,
