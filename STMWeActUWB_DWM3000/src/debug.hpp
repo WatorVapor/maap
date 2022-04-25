@@ -8,16 +8,25 @@
     std::cout << "DUMP " << __FILE__ << "::" << __LINE__  << "::" << #x << "=<" << x << ">" <<std::endl;\
 }
 */
+#if 1
 #define DUMP_VAR_I(x) { \
     char buff[128];\
     snprintf(buff,sizeof(buff),"DUMP %s::%s:%d:%s=<%d>\r\n",__FILE__,__func__,__LINE__,#x,x);\
     Serial.print(buff);\
 }
+#else
+#define DUMP_VAR_I(x) { }
+#endif
+
+#if 1
 #define DUMP_VAR_S(x) { \
     char buff[128];\
     snprintf(buff,sizeof(buff),"DUMP %s::%s:%d:%s=<%s>\r\n",__FILE__,__func__,__LINE__,#x,x);\
     Serial.print(buff);\
 }
+#else
+#define DUMP_VAR_S(x) { }
+#endif
 
 
 /*

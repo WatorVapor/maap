@@ -84,7 +84,7 @@ int peripherals_init (void)
     pinMode(DW_RESET_Pin, INPUT);
     pinMode(DW_WAKEUP_Pin, OUTPUT);
     digitalWrite(DW_WAKEUP_Pin,LOW);
-    pinMode(DW_IRQn_Pin, INPUT);
+    pinMode(DW_IRQn_Pin, INPUT_PULLDOWN);
     return 0;
 }
 
@@ -94,8 +94,11 @@ int peripherals_init (void)
 void spi_peripheral_init()
 {
     dwt_spi_setting = SPISettings(SPI_CLOCK_SPEED_FAST, MSBFIRST, SPI_MODE0);
+    SPI.setMISO(MISO);
+    SPI.setMOSI(MOSI);
+    SPI.setSCLK(SCK);
+    SPI.setSSEL(PIN_SPI_SS);
     SPI.begin(PIN_SPI_SS);
-    SPI.setDataMode(SPI_MODE0);
 }
 
 

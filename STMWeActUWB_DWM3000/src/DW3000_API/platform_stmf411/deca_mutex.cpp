@@ -53,12 +53,12 @@ decaIrqStatus_t decamutexon(void)
 {
     DUMP_VAR_I(DW_IRQn_Pin);
     decaIrqStatus_t s = digitalRead(DW_IRQn_Pin);
-    DUMP_VAR_I(DW_IRQn_Pin);
+    DUMP_VAR_I(s);
 
     if(s)
     {
         //dwt_lock.lock();
-        //noInterrupts();
+        noInterrupts();
         
     }
     return s ;   // return state before disable, value is used to re-enable in decamutexoff call
@@ -84,6 +84,6 @@ void decamutexoff(decaIrqStatus_t s)        // put a function here that re-enabl
     if(s)
     {
         //dwt_lock.unlock();
-        //interrupts();
+        interrupts();
     }
 }

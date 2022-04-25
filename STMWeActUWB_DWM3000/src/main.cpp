@@ -17,8 +17,8 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 	digitalWrite(PC13, HIGH);
-	delay(10);
+	delay(100);
 	digitalWrite(PC13, LOW);
-	delay(10);
+	delay(100);
   uwb_loop();
 }
