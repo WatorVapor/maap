@@ -155,14 +155,18 @@ bool config_initiator(void)
         Serial.printf("CONFIG FAILED\r\n");
         return false;
     }
+    
     dwt_configuretxrf(&txconfig_options);
+    
     dwt_setrxantennadelay(RX_ANT_DLY);
     dwt_settxantennadelay(TX_ANT_DLY);
+    
     dwt_setrxaftertxdelay(POLL_TX_TO_RESP_RX_DLY_UUS);
     dwt_setrxtimeout(RESP_RX_TIMEOUT_UUS);
     dwt_setpreambledetecttimeout(PRE_TIMEOUT);
+    
     dwt_setlnapamode(DWT_LNA_ENABLE | DWT_PA_ENABLE);
-    port_set_dwic_isr(dwt_isr);
+
     return true;
 }
 
@@ -294,13 +298,53 @@ bool ds_twr_initiator(void)
     dwt_starttx(DWT_START_TX_IMMEDIATE | DWT_RESPONSE_EXPECTED);
 
     /* We assume that the transmission is achieved correctly, poll for reception of a frame or error/timeout. See NOTE 10 below. */
-    while (!((status_reg = dwt_read32bitreg(SYS_STATUS_ID)) & (SYS_STATUS_RXFCG_BIT_MASK | SYS_STATUS_ALL_RX_TO | SYS_STATUS_ALL_RX_ERR)))
-    { };
+    while (true)
+    { 
+        status_reg = dwt_read32bitreg(SYS_STATUS_ID);
+        auto status = status_reg & (SYS_STATUS_RXFCG_BIT_MASK | SYS_STATUS_ALL_RX_TO | SYS_STATUS_ALL_RX_ERR);
+        DUMP_VAR_I(status);
+        if(status)
+        {
+            break;
+        }
+
+    };
 
     /* Increment frame sequence number after transmission of the poll message (modulo 256). */
     frame_seq_nb++;
     DUMP_VAR_I(frame_seq_nb);
+    DUMP_VAR_I(status_reg);
+    DUMP_VAR_I(status_reg & SYS_STATUS_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_ARFE_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_CPERR_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_HPDWARN_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_RXSTO_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_PLL_HILO_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_RCINIT_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_SPIRDY_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_RXPTO_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_RXOVRR_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_VWARN_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_CIAERR_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_RXFTO_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_RXFSL_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_RXFCE_BIT_MASK);
     DUMP_VAR_I(status_reg & SYS_STATUS_RXFCG_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_RXFR_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_RXPHE_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_RXPHD_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_CIADONE_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_RXSFDD_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_RXPRD_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_TXFRS_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_TXPHS_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_TXPRS_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_TXFRB_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_AAT_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_SPICRCE_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_CP_LOCK_BIT_MASK);
+    DUMP_VAR_I(status_reg & SYS_STATUS_IRQS_BIT_MASK);
+
 
     if (status_reg & SYS_STATUS_RXFCG_BIT_MASK)
     {
