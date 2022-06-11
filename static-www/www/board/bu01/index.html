@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <script src="./index.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark" id="vue-navbar-top">
+      <w-navbar></w-navbar>
+    </nav>
+    <div class="container-fluid mt-1" id="vue-ui-open-serial">
+      <btn-open-serial></btn-open-serial>
+    </div>
+    <hr/>
+    <div class="container-fluid mt-1 pt-4">
+      <div class="row mt-2 collapse d-flex justify-content-center" id="collapse-uwb-board-test">
+        <div class="col-2">
+          <div class="d-grid gap-2">
+            <button class="btn btn-success" onclick="onClickStartMeasurementDistance(this)">测距开始</button>
+          </div>         
+        </div>
+        <div class="col-2">
+          <div class="d-grid gap-2">
+            <button class="btn btn-success" onclick="onClickStopMeasurementDistance(this)">测距停止</button>
+          </div>         
+        </div>
+      </div>
+      <hr/>
+      <div class="row d-flex justify-content-center">
+        <div class="col-8">
+          <div id="editor" style="min-height: 200px"></div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.130.0/build/three.min.js" integrity="sha256-dbEjIXMDSTQ6VNsrBqaN6u0VvyYVgIvmzNUknkURbP0=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.130.0/examples/js/controls/OrbitControls.js" integrity="sha256-9Eys2xnAkykPKzDJbo6vxJVqPPtwhMOFezAjy1rdQlU=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.1.5/dist/vue.global.prod.js" integrity="sha256-vUyufywPLWATL+5NTyQFwAxyNJ+7p/xHeUi3Ayr/JmU=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js"></script>
+    <script src="./vue.component.js" type="text/javascript"></script>
+    <script src="./vue.ui.js" type="text/javascript"></script>
+    <script src="./WebSerialCandy.js" type="text/javascript"></script>
+    <script src="./uwb_bu01.js" type="text/javascript"></script>
+  </body>
+</html>
+
