@@ -192,7 +192,6 @@ bool config_responder(void)
 
     
     dwt_setlnapamode(DWT_LNA_ENABLE | DWT_PA_ENABLE);
-    port_set_dwic_isr(dwt_isr);
     return true;
 }
 
@@ -216,6 +215,7 @@ void uwb_loop(void) {
 #if RUN_RESPONDER
     ds_twr_responder();
 #endif
+    delay(1000);
 }
 
 
@@ -345,6 +345,8 @@ bool ds_twr_initiator(void)
     DUMP_VAR_I(status_reg & SYS_STATUS_CP_LOCK_BIT_MASK);
     DUMP_VAR_I(status_reg & SYS_STATUS_IRQS_BIT_MASK);
 
+
+    DUMP_VAR_I(status_reg & SYS_STATUS_RXFCG_BIT_MASK);
 
     if (status_reg & SYS_STATUS_RXFCG_BIT_MASK)
     {
@@ -498,7 +500,8 @@ bool ds_twr_responder(void)
             dwt_writetxfctrl(sizeof(tx_resp_msg), 0, 1); /* Zero offset in TX buffer, ranging. */
             
             #if 1
-            ret = dwt_starttx(DWT_START_TX_IMMEDIATE | DWT_RESPONSE_EXPECTED);
+            //ret = dwt_starttx(DWT_START_TX_IMMEDIATE | DWT_RESPONSE_EXPECTED);
+            ret = dwt_starttx(DWT_START_TX_DELAYED | DWT_RESPONSE_EXPECTED);
             DUMP_VAR_I(ret);
             /* If dwt_starttx() returns an error, abandon this ranging exchange and proceed to the next one. See NOTE 11 below. */
             if (ret == DWT_ERROR)
