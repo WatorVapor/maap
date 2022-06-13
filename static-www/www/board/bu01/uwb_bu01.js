@@ -50,8 +50,9 @@ const onDistanceData = (distance)=> {
   if(distPama.length > 1) {
     const anchor = distPama[0];
     const distanceF = parseFloat(distPama[1]);
-    console.log('onDistanceData::anchor:=<',anchor,'>');
-    console.log('onDistanceData::distanceF:=<',distanceF,'>');
+    //console.log('onDistanceData::anchor:=<',anchor,'>');
+    //console.log('onDistanceData::distanceF:=<',distanceF,'>');
+    gAppPointCloud.onDistanceData(anchor,distanceF);
   }
 }
 
@@ -78,3 +79,8 @@ const onClickStopMeasurementDistance = (elem)=> {
   console.log('onClickStopMeasurementDistance::elem=<',elem,'>');
   sendSerial('AT+switchdis=0\r\n');
 }
+const onClickSetMeasurementInterval = (elem)=> {
+  console.log('onClickSetMeasurementInterval::elem=<',elem,'>');
+  sendSerial('AT+interval=1\r\n');
+}
+

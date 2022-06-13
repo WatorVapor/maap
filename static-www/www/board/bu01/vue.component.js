@@ -4,7 +4,7 @@ const btn_open_serial_template = `
         <input type="button" class="btn btn-success" onclick="onClickOpenDevice(this)" value="Open Device of UWB BU01(UART)"></input>
       </div>
       <div class="col-4">
-        <input type="button" class="btn btn-warning" onclick="onClickClearCloudPoint(this)" value="???"></input>
+        <input type="button" class="btn btn-warning" onclick="onClickClearCloudPoint(this)" value="Clear Cloud Point"></input>
       </div>
     </div>
 `;
