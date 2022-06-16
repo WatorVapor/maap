@@ -35,27 +35,28 @@ const uiOnClickSearchBleDevice = async (elem) => {
   BLE.tx = txCh;
 }
 
+const gGPS = new GPS();
+gGPS.on('data', data => {
+  onGPSData(data);
+});
 const onBleData = (characteristic,value) => {
   //console.log('::onBleData::characteristic=<',characteristic,'>');
   //console.log('::onBleData::value=<',value,'>');
   const decoder = new TextDecoder('utf-8');
-  const strData = decoder.decode(value).trim();
-  console.log('::onBleData::strData=<',strData,'>');
-  /*
-  const jData = JSON.parse(strData);
-  //console.log('::onBleData::jData=<',jData,'>');
-  if(typeof onBLEDataMagnet === 'function' && jData) {
-    if(typeof jData.mx !== 'undefined') {
-      onBLEDataMagnet(jData);
-    }
-    if(typeof jData.my !== 'undefined') {
-      onBLEDataMagnet(jData);
-    }
-    if(typeof jData.mz !== 'undefined') {
-      onBLEDataMagnet(jData);
+  const strData = decoder.decode(value);
+  //console.log('::onBleData::strData=<',strData,'>');
+  if(strData.startsWith('$')) {
+    try {
+      gGPS.update(strData);
+    } catch(err) {
+      //console.error('::onBleData::gGPS=<',gGPS,'>');
     }
   }
-  */
+}
+const onGPSData = (data) => {
+  if( data.type === 'GGA') {
+    console.log('::onGPSData::data=<',data,'>');
+  }
 }
 
 const writeJsonCmd = (jCmd) => {
