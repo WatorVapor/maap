@@ -49,6 +49,7 @@ void loop() {
     if(ch == '\n') {
       std::lock_guard<std::mutex> lock(gGpsLineMtx);
       gGPSLineBuff.push_back(gpsLine);
+      gpsLine.clear();
     }
   }
   if(UWB_.available()) {
@@ -63,7 +64,8 @@ void loop() {
     }
     if(ch == '\n') {
       std::lock_guard<std::mutex> lock(gUWBLineMtx);
-      gUWBLineBuff.push_back(uwbLine);      
+      gUWBLineBuff.push_back(uwbLine);
+      uwbLine.clear();   
     }
   }
 }
