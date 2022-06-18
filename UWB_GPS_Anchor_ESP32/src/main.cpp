@@ -30,6 +30,8 @@ void setup() {
 }
 
 
+bool isPreferenceAllow = false;
+
 static const int iConstGPSLineMax = 1024;
 static std::string gpsLine;
 std::mutex gGpsLineMtx;
@@ -70,4 +72,5 @@ void loop() {
       uwbLine.clear();   
     }
   }
+  isPreferenceAllow = true;
 }

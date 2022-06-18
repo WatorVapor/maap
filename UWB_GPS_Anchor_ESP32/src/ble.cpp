@@ -12,6 +12,7 @@
 #include <mutex>
 #include <list>
 #include "debug.hpp"
+#include "pref.hpp"
 
 BLEServer *pServer = NULL;
 BLECharacteristic * pTxCharacteristic;
@@ -30,6 +31,67 @@ class MyServerCallbacks: public BLEServerCallbacks {
     }
 };
 
+static Preferences preferences;
+
+extern bool isPreferenceAllow;
+void savePref(const char * key,const std::string &value){
+  LOG_SC(key);
+  LOG_S(value);
+  int waitPressCounter = 10;
+  while(waitPressCounter -- > 0) {
+    if(isPreferenceAllow){
+      LOG_I(isPreferenceAllow);
+      preferences.putString(key,value.c_str());
+      return;
+    }
+    delay(1000);
+  }
+}
+static void onSettingMqttTopic(const JsonObject &topic) {
+  if(topic.containsKey("in")) {
+    std::string inStr;
+    serializeJson(topic["in"], inStr);
+    savePref(strConstMqttTopicInKey,inStr);
+  }
+  if(topic.containsKey("out")) {
+    std::string outStr;
+    serializeJson(topic["out"], outStr);
+    savePref(strConstMqttTopicOutKey,outStr);
+  }
+}
+
+static void onSettingCommand(const JsonObject &setting) {
+  preferences.begin(preferencesZone);
+  if(setting.containsKey("wifi")) {
+    auto wifi = setting["wifi"];
+    std::string ssid;
+    if(wifi.containsKey("ssid")) {
+      ssid = wifi["ssid"].as<std::string>();
+    }
+    std::string password;
+    if(wifi.containsKey("password")) {
+      password = wifi["password"].as<std::string>();
+    }
+    if(ssid.empty() == false && password.empty() == false) {
+      savePref(strConstWifiSsidKey,ssid);
+      savePref(strConstWifiPasswordKey,password);
+    }
+  }
+  if(setting.containsKey("mqtt")) {
+    auto mqtt = setting["mqtt"];
+    if(mqtt.containsKey("server")) {
+      auto url = mqtt["url"].as<std::string>();
+      savePref(strConstMqttURLKey,url);
+    }
+    if(mqtt.containsKey("topic")) {
+      auto topic = mqtt["topic"].as<JsonObject>();
+      onSettingMqttTopic(topic);
+    }
+  }
+  preferences.end();
+}
+
+
 
 void onExternalCommand(StaticJsonDocument<256> &doc) {
   if(doc.containsKey("uwb")) {
@@ -38,6 +100,10 @@ void onExternalCommand(StaticJsonDocument<256> &doc) {
       auto atCmd = uwb["AT"].as<std::string>();
       LOG_S(atCmd);
     }
+  }
+  if(doc.containsKey("setting")) {
+    auto setting = doc["setting"].as<JsonObject>();
+    onSettingCommand(setting);
   }
 }
 

@@ -55,18 +55,4 @@
 #define LOG_H(x,y) {}
 #endif
 
-#if 1
-#define LOG_I(x) { \
-  Serial.printf("[log] %s::%d:%s=<%d>\r\n",__func__,__LINE__,#x,x);\
-}
-#define LOG_F(x) { \
-  Serial.printf("[log] %s::%d:%s=<%f>\r\n",__func__,__LINE__,#x,x);\
-}
-#define LOG_S(x) { \
-  Serial.printf("[log] %s::%d:%s=<%s>\r\n",__func__,__LINE__,#x,x.c_str());\
-}
-#else
-#define LOG_I(x) {}
-#define LOG_F(x) {}
-#define LOG_S(x) {}
-#endif
+

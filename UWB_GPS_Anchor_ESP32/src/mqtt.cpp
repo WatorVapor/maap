@@ -5,21 +5,19 @@
 #include <PubSubClient.h>
 #include <Preferences.h>
 
-/*
-#include <Ed25519.h>
-#include <SHA256.h>
-*/
-
 #include <base64.hpp>
+#include "base32/Base32.h"
 extern "C" {
   #include <tweetnacl.h>
-  //extern int crypto_sign_open(unsigned char *,unsigned long long *,const unsigned char *,unsigned long long,const unsigned char *);
 }
-
 #include "debug.hpp"
+#include "pref.hpp"
+
 
 static const char* ssid = "mayingkuiG";
 static const char* password = "xuanxuanhaohao";
+
+
 static const char* mqtt_server = "broker.emqx.io";
 static WiFiClient espClient;
 static PubSubClient client(espClient);
@@ -195,7 +193,23 @@ void callback(char* topic, byte* payload, unsigned int length) {
 }
 
 
-
+void calcAddress(void) {
+  byte secretKey[crypto_sign_BYTES] = {0};
+  byte publicKey[crypto_sign_BYTES] = {0};
+  DUMP_H(secretKey,sizeof(secretKey));
+  DUMP_H(publicKey,sizeof(publicKey));
+  //while(true)
+  {
+    crypto_sign_keypair(secretKey,publicKey);
+    LOG_H(secretKey,sizeof(secretKey));
+    LOG_H(publicKey,sizeof(publicKey));
+    byte publicKeyB64[crypto_sign_BYTES*2] = {0};
+    int shaRet = encode_base64(publicKey,crypto_sign_BYTES,publicKeyB64);
+    LOG_I(shaRet);
+    LOG_SC(publicKeyB64);
+    //auto hashRet = crypto_hash_sha512(gCalcTempHash,(unsigned char*)payloadStr.c_str(),payloadStr.size());
+  }
+}
 
 void setupMQTT(void) {
   WiFi.mode(WIFI_STA);
@@ -267,6 +281,7 @@ void reconnect() {
 void MQTTTask( void * parameter){
   int core = xPortGetCoreID();
   LOG_I(core);
+  calcAddress();
   setupMQTT();
   for(;;) {//
     if (!client.connected()) {
