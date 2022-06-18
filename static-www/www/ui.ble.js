@@ -51,6 +51,10 @@ const onBleData = (characteristic,value) => {
     } catch(err) {
       //console.error('::onBleData::gGPS=<',gGPS,'>');
     }
+  } else if(strData.startsWith('an') && strData.endsWith('m\r\n')) {
+    onUWBDistanceData(strData);
+  } else {
+    console.log('::onBleData::strData=<',strData,'>');
   }
 }
 const onGPSData = (data) => {
@@ -58,6 +62,18 @@ const onGPSData = (data) => {
     console.log('::onGPSData::data=<',data,'>');
   }
 }
+const onUWBDistanceData = (distance)=> {
+  //console.log('onUWBDistanceData::distance:=<',distance,'>');
+  const distPama = distance.split(':');
+  //console.log('onUWBDistanceData::distPama:=<',distPama,'>');
+  if(distPama.length > 1) {
+    const anchor = distPama[0];
+    const distanceF = parseFloat(distPama[1]);
+    console.log('onUWBDistanceData::anchor:=<',anchor,'>');
+    console.log('onUWBDistanceData::distanceF:=<',distanceF,'>');
+  }
+}
+
 
 const writeJsonCmd = (jCmd) => {
   const strCmd = JSON.stringify(jCmd);
