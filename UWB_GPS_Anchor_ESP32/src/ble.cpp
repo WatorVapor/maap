@@ -5,6 +5,7 @@
 #include <BLE2902.h>
 
 #include <ArduinoJson.h>
+#include <Preferences.h>
 
 #include <sstream>
 #include <string>

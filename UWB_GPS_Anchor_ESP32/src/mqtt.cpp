@@ -219,10 +219,14 @@ void setupMQTT(void) {
 //static const char *defaultTopics = "u51h7JJd6054erGLKjVvOqa6hhfzC/xWbLYhPZN3S0M=";
 
 #include <list>
+
+/*
 extern std::list<std::string> gAllowTopics;
 extern std::list<std::string> gDenyTopics;
+*/
 
 void subscribeAtConnected(void) {
+  /*
   for(const auto topic :gAllowTopics) {
     for(const auto deny :gDenyTopics) {
       if(topic == deny) {
@@ -234,6 +238,7 @@ void subscribeAtConnected(void) {
     delay(1000);
     //client.publish(topic.c_str(), "hello world");
   }
+  */
 }
 
 void reconnect() {
