@@ -129,6 +129,16 @@ const loadScriptOfApp = () => {
     window.frameworkScriptLoadCountUp++;
     fileref.onload = () => {onFrameworkScriptLoaded(fileref);};
   }
+  {
+    const fileref = document.createElement('script');
+    fileref.setAttribute('type', 'text/javascript');
+    fileref.setAttribute('src', 'https://cdn.jsdelivr.net/npm/base32.js@0.1.0/dist/base32.min.js');
+    fileref.setAttribute('integrity', 'sha256-ldOeMFJRCfPOxZR9dDqaMn2MZwP94Ut+maKjKQsbK4s=');
+    fileref.setAttribute('crossorigin', 'anonymous');
+    document.getElementsByTagName('body')[0].appendChild(fileref);
+    window.frameworkScriptLoadCountUp++;
+    fileref.onload = () => {onFrameworkScriptLoaded(fileref);};
+  }
   
   {
     const fileref = document.createElement('script');
@@ -139,7 +149,8 @@ const loadScriptOfApp = () => {
     document.getElementsByTagName('body')[0].appendChild(fileref);
     window.frameworkScriptLoadCountUp++;
     fileref.onload = () => {onFrameworkScriptLoaded(fileref);};
-  }  
+  }
+  
   
   {
     const fileref = document.createElement('script');
