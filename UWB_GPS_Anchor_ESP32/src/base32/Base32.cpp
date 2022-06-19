@@ -19,7 +19,8 @@ int Base32::toBase32(byte* in, long length, byte*& out)
 
 int Base32::toBase32(byte* in, long length, byte*& out, boolean usePadding)
 {
-  char base32StandardAlphabet[] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"};
+  //char base32StandardAlphabet[] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"};
+  char base32StandardAlphabet[] = {"abcdefghijklmnopqrstuvwxyz234567"};
   char standardPaddingChar = '='; 
 
   int result = 0;

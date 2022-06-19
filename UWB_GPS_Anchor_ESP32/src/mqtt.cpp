@@ -6,6 +6,7 @@
 #include <Preferences.h>
 
 #include <base64.hpp>
+#include "mbedtls/sha1.h"
 #include "base32/Base32.h"
 extern "C" {
   #include <tweetnacl.h>
@@ -192,26 +193,64 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
 }
 
-
-void calcAddress(void) {
-  byte secretKey[crypto_sign_BYTES] = {0};
-  byte publicKey[crypto_sign_BYTES] = {0};
+std::string sha1Address(byte *msg,size_t length) {
+  mbedtls_sha1_context sha1_ctx;
+  mbedtls_sha1_init(&sha1_ctx);
+  mbedtls_sha1_starts(&sha1_ctx);
+  mbedtls_sha1_update(&sha1_ctx, msg, length);
+  byte digest[20] = {0};
+  mbedtls_sha1_finish(&sha1_ctx, digest);
+  Base32 base32;
+  byte *digestB32 = NULL;
+  auto b32Ret = base32.toBase32(digest,sizeof(digest),digestB32,true);
+  DUMP_I(b32Ret);
+  std::string result((char*)digestB32,b32Ret);
+  return result;
+}
+void miningAddress(void) {
+  Serial.println("Waiting mining address ...");
+  byte secretKey[crypto_sign_SECRETKEYBYTES] = {0};
+  byte publicKey[crypto_sign_PUBLICKEYBYTES] = {0};
   DUMP_H(secretKey,sizeof(secretKey));
   DUMP_H(publicKey,sizeof(publicKey));
-  //while(true)
+  std::string address;
+  while(true)
   {
     crypto_sign_keypair(secretKey,publicKey);
-    LOG_H(secretKey,sizeof(secretKey));
-    LOG_H(publicKey,sizeof(publicKey));
-    byte publicKeyB64[crypto_sign_BYTES*2] = {0};
-    int shaRet = encode_base64(publicKey,crypto_sign_BYTES,publicKeyB64);
-    LOG_I(shaRet);
-    LOG_SC(publicKeyB64);
-    //auto hashRet = crypto_hash_sha512(gCalcTempHash,(unsigned char*)payloadStr.c_str(),payloadStr.size());
+    DUMP_H(secretKey,sizeof(secretKey));
+    DUMP_H(publicKey,sizeof(publicKey));
+    byte mineSha512[crypto_hash_sha512_BYTES] = {0};
+    auto hashRet = crypto_hash_sha512(mineSha512,publicKey,crypto_sign_PUBLICKEYBYTES);
+    DUMP_I(hashRet);
+    address = sha1Address(mineSha512,sizeof(mineSha512));
+    DUMP_S(address);
+    if(address.at(0) == 'm') {
+      break;
+    }
+    if(address.at(0) == 'm' && address.at(1) == 'p' ) {
+      break;
+    }
+    if(address.at(0) == 'm' && address.at(1) == 'a' && address.at(2) == 'a' && address.at(3) == 'p' ) {
+      break;
+    }
   }
+  LOG_S(address);
+  byte publicKeyB64[crypto_sign_PUBLICKEYBYTES*2] = {0};
+  int b64Ret = encode_base64(publicKey,crypto_sign_PUBLICKEYBYTES,publicKeyB64);
+  LOG_I(b64Ret);
+  std::string pubKeyB64((char*)publicKeyB64,b64Ret);
+  LOG_S(pubKeyB64);
+  
+  LOG_H(secretKey,sizeof(secretKey));
+  byte secretKeyB64[crypto_sign_SECRETKEYBYTES*2] = {0};
+  int b64Ret2 = encode_base64(secretKey,crypto_sign_SECRETKEYBYTES,secretKeyB64);
+  LOG_I(b64Ret2);
+  std::string secKeyB64((char*)secretKeyB64,b64Ret2);
+  LOG_S(secKeyB64);
 }
 
 void setupMQTT(void) {
+   miningAddress();
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   while ( true ) {
@@ -281,7 +320,6 @@ void reconnect() {
 void MQTTTask( void * parameter){
   int core = xPortGetCoreID();
   LOG_I(core);
-  calcAddress();
   setupMQTT();
   for(;;) {//
     if (!client.connected()) {
