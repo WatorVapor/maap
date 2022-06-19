@@ -75,17 +75,15 @@ static void onSettingCommand(const JsonObject &setting) {
   }
   if(setting.containsKey("mqtt")) {
     auto mqtt = setting["mqtt"];
-    if(mqtt.containsKey("server")) {
-      auto server = mqtt["server"];
-      if(server.containsKey("server")) {
-        auto url = server["url"].as<std::string>();
-        savePref(strConstMqttURLKey,url);
-      }
-      if(server.containsKey("jwt")) {
-        auto jwt = server["jwt"].as<std::string>();
-        savePref(strConstMqttURLKey,jwt);
-      }
+    if(mqtt.containsKey("url")) {
+      auto url = mqtt["url"].as<std::string>();
+      savePref(strConstMqttURLKey,url);
     }
+    if(mqtt.containsKey("jwt")) {
+      auto jwt = mqtt["jwt"].as<std::string>();
+      savePref(strConstMqttJWTKey,jwt);
+    }
+   
     if(mqtt.containsKey("topic")) {
       auto topic = mqtt["topic"].as<JsonObject>();
       onSettingMqttTopic(topic);
@@ -94,7 +92,35 @@ static void onSettingCommand(const JsonObject &setting) {
   preferences.end();
 }
 
+static void onInfoCommand(void) {
+  auto goodPref = preferences.begin(preferencesZone);
+  LOG_I(goodPref);
+  auto ssid = preferences.getString(strConstWifiSsidKey);
+  auto password = preferences.getString(strConstWifiPasswordKey);
+  auto url = preferences.getString(strConstMqttURLKey);
+  auto jwt = preferences.getString(strConstMqttJWTKey);
+  auto address = preferences.getString(strConstEdtokenAddressKey);
+  preferences.end();
+  StaticJsonDocument<256> doc;
+  StaticJsonDocument<256> info;
+  StaticJsonDocument<128> wifi;
+  StaticJsonDocument<128> mqtt;
+  wifi["ssid"] = ssid;
+  wifi["password"] = password;
+  info["wifi"] = wifi;
+  mqtt["address"] = address;
+  mqtt["url"] = url;
+  mqtt["jwt"] = jwt;
+  info["mqtt"] = mqtt;
 
+  doc["info"] = info;
+
+  std::string outStr;
+  serializeJson(doc, outStr);
+  outStr += "\r\n";
+  pTxCharacteristic->setValue(outStr);
+  pTxCharacteristic->notify();
+}
 
 void onExternalCommand(StaticJsonDocument<256> &doc) {
   if(doc.containsKey("uwb")) {
@@ -107,6 +133,9 @@ void onExternalCommand(StaticJsonDocument<256> &doc) {
   if(doc.containsKey("setting")) {
     auto setting = doc["setting"].as<JsonObject>();
     onSettingCommand(setting);
+  }
+  if(doc.containsKey("info")) {
+    onInfoCommand();
   }
 }
 

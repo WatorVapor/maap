@@ -3,6 +3,7 @@
 #include <ArduinoJson.h>
 #include <map>
 #include <PubSubClient.h>
+#include <WiFiClientSecure.h>
 #include <Preferences.h>
 
 #include <base64.hpp>
@@ -13,6 +14,8 @@ extern "C" {
 }
 #include "debug.hpp"
 #include "pref.hpp"
+#include "WebSocketClient250.h"
+#include "WebSocketStreamClient.h"
 
 /*
 static const char* ssid = "mayingkuiG";
@@ -21,8 +24,6 @@ static const char* password = "xuanxuanhaohao";
 
 
 static const char* mqtt_server = "broker.emqx.io";
-static WiFiClient espClient;
-static PubSubClient client(espClient);
 
 static StaticJsonDocument<1024> gMattMsgDoc;
 
@@ -311,8 +312,6 @@ void setupMQTT(void) {
   LOG_S(WiFi.localIP().toString());
   LOG_S(WiFi.localIPv6().toString());
   Serial.println("Wifi Is Ready");
-  client.setServer(mqtt_server, 1883);
-  client.setCallback(callback);
 }
 
 
@@ -320,11 +319,11 @@ void setupMQTT(void) {
 #include <list>
 
 
-void subscribeAtConnected(void) {
+void subscribeAtConnected(PubSubClient client) {
   client.subscribe(gAddress.c_str(),1);
 }
 
-void reconnect() {
+void reconnect(PubSubClient &client) {
   // Loop until we're reconnected
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
@@ -336,7 +335,7 @@ void reconnect() {
     if (rc) {
       LOG_I(client.connected());
       // ... and resubscribe
-      subscribeAtConnected();
+      subscribeAtConnected(client);
     } else {
       LOG_I(client.state());
       Serial.println(" try again in 5 seconds");
@@ -351,9 +350,21 @@ void MQTTTask( void * parameter){
   int core = xPortGetCoreID();
   LOG_I(core);
   setupMQTT();
+
+  WiFiClientSecure wiFiClient;
+  const char *host = "";
+  const int16_t port = 8083;
+  const char *path = "/mqtt";
+  WebSocketClient250 wsClient(wiFiClient,host,port);
+  WebSocketStreamClient wsStreamClient(wsClient,path);
+  static PubSubClient client(wsStreamClient);
+
+  client.setServer(mqtt_server, 1883);
+  client.setCallback(callback);
+
   for(;;) {//
     if (!client.connected()) {
-      reconnect();
+      reconnect(client);
     }
     client.loop();
     delay(1);
