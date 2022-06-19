@@ -26,13 +26,29 @@ const createVueApps = ()=> {
     },
     methods: {
       onClickChangeSetting(evt) {
-        console.log('onClickChangeSetting::evt=<',evt,'>');
-        console.log('onClickChangeSetting::this.wifi=<',this.wifi,'>');
-        console.log('onClickChangeSetting::this.mqtt=<',this.mqtt,'>');
+        //console.log('onClickChangeSetting::evt=<',evt,'>');
+        //console.log('onClickChangeSetting::this.wifi=<',this.wifi,'>');
+        //console.log('onClickChangeSetting::this.mqtt=<',this.mqtt,'>');
+        const uri = URI.parse(this.mqtt.url);
+        const jwt = URI.parse(this.mqtt.jwt);
+        //console.log('onClickChangeSetting::uri=<',uri,'>');
+        //console.log('onClickChangeSetting::jwt=<',jwt,'>');
         const setting = {
           setting:{
             wifi:this.wifi,
-            mqtt:this.mqtt
+            mqtt:this.mqtt,
+            mqtt_:{
+              url:{
+                host:uri.host,
+                port:uri.port,
+                path:uri.resourceName,
+              },
+              jwt:{
+                host:jwt.host,
+                port:jwt.port,
+                path:jwt.resourceName,
+              }
+            }
           }
         }
         writeJsonCmd(setting);
