@@ -48,6 +48,22 @@ static void savePref(const char * key,const std::string &value){
     delay(1000);
   }
 }
+static void savePref(const char * key,int32_t value){
+  LOG_SC(key);
+  LOG_I(value);
+  int waitPressCounter = 10;
+  while(waitPressCounter -- > 0) {
+    if(isPreferenceAllow){
+      LOG_I(isPreferenceAllow);
+      auto retPref = preferences.putInt(key,value);
+      LOG_I(retPref);
+      return;
+    }
+    delay(1000);
+  }
+}
+
+
 static void onSettingMqttTopic(const JsonObject &topic) {
   if(topic.containsKey("out")) {
     std::string outStr;
@@ -89,6 +105,40 @@ static void onSettingCommand(const JsonObject &setting) {
       onSettingMqttTopic(topic);
     }
   }
+  if(setting.containsKey("mqtt_")) {
+    auto mqtt = setting["mqtt_"];
+    if(mqtt.containsKey("url")) {
+      auto url = mqtt["url"];
+      if(url.containsKey("host")) {
+        auto host = url["host"].as<std::string>();
+        savePref(strConstMqttURLHostKey,host);
+      }
+      if(url.containsKey("port")) {
+        auto port = url["port"].as<int32_t>();
+        savePref(strConstMqttURLPortKey,port);
+      }
+      if(url.containsKey("path")) {
+        auto path = url["path"].as<std::string>();
+        savePref(strConstMqttURLPathKey,path);
+      }
+    }
+    if(mqtt.containsKey("jwt")) {
+      auto jwt = mqtt["jwt"];
+      if(jwt.containsKey("host")) {
+        auto host = jwt["host"].as<std::string>();
+        savePref(strConstMqttJWTHostKey,host);
+      }
+      if(jwt.containsKey("port")) {
+        auto port = jwt["port"].as<int32_t>();
+        savePref(strConstMqttJWTPortKey,port);
+      }
+      if(jwt.containsKey("path")) {
+        auto path = jwt["path"].as<std::string>();
+        savePref(strConstMqttJWTPathKey,path);
+      }
+    }
+
+  }
   preferences.end();
 }
 
@@ -99,20 +149,24 @@ static void onInfoCommand(void) {
   auto password = preferences.getString(strConstWifiPasswordKey);
   auto url = preferences.getString(strConstMqttURLKey);
   auto jwt = preferences.getString(strConstMqttJWTKey);
+  LOG_S(jwt);
+
   auto address = preferences.getString(strConstEdtokenAddressKey);
   preferences.end();
-  StaticJsonDocument<256> doc;
-  StaticJsonDocument<256> info;
-  StaticJsonDocument<128> wifi;
-  StaticJsonDocument<128> mqtt;
+  StaticJsonDocument<256> wifi;
   wifi["ssid"] = ssid;
   wifi["password"] = password;
-  info["wifi"] = wifi;
+
+  StaticJsonDocument<256> mqtt;
   mqtt["address"] = address;
   mqtt["url"] = url;
   mqtt["jwt"] = jwt;
-  info["mqtt"] = mqtt;
 
+  StaticJsonDocument<256> info;
+  info["mqtt"] = mqtt;
+  info["wifi"] = wifi;
+
+  StaticJsonDocument<512> doc;
   doc["info"] = info;
 
   std::string outStr;
@@ -122,7 +176,7 @@ static void onInfoCommand(void) {
   pTxCharacteristic->notify();
 }
 
-void onExternalCommand(StaticJsonDocument<256> &doc) {
+void onExternalCommand(StaticJsonDocument<512> &doc) {
   if(doc.containsKey("uwb")) {
     auto uwb = doc["uwb"];
     if(uwb.containsKey("AT")) {
@@ -148,7 +202,7 @@ class MyCallbacks: public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *pCharacteristic) {
     std::string value = pCharacteristic->getValue();
     LOG_S(value);
-    StaticJsonDocument<256> doc;
+    StaticJsonDocument<512> doc;
     DeserializationError error = deserializeJson(doc, value);
     LOG_S(error);
     if(error == DeserializationError::Ok) {

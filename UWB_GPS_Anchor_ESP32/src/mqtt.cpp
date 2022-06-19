@@ -279,6 +279,7 @@ void setupMQTT(void) {
   gAddress = preferences.getString(strConstEdtokenAddressKey);
   auto pubKeyB64 = preferences.getString(strConstEdtokenPublicKey);
   auto secKeyB64 = preferences.getString(strConstEdtokenSecretKey);
+
   auto ssid = preferences.getString(strConstWifiSsidKey);
   auto password = preferences.getString(strConstWifiPasswordKey);
   LOG_S(ssid);
@@ -350,13 +351,20 @@ void MQTTTask( void * parameter){
   int core = xPortGetCoreID();
   LOG_I(core);
   setupMQTT();
+  auto goodPref = preferences.begin(preferencesZone);
+
+  auto jwt_host = preferences.getString(strConstMqttJWTHostKey);
+  auto jwt_port = preferences.getInt(strConstMqttJWTPortKey);
+  auto jwt_path = preferences.getString(strConstMqttJWTPathKey);
+
+  auto mqtt_host = preferences.getString(strConstMqttURLHostKey);
+  auto mqtt_port = preferences.getInt(strConstMqttURLPortKey);
+  auto mqtt_path = preferences.getString(strConstMqttURLPathKey);
+  preferences.end();
 
   WiFiClientSecure wiFiClient;
-  const char *host = "";
-  const int16_t port = 8083;
-  const char *path = "/mqtt";
-  WebSocketClient250 wsClient(wiFiClient,host,port);
-  WebSocketStreamClient wsStreamClient(wsClient,path);
+  WebSocketClient250 wsClient(wiFiClient,mqtt_host.c_str(),mqtt_port);
+  WebSocketStreamClient wsStreamClient(wsClient,mqtt_path.c_str());
   static PubSubClient client(wsStreamClient);
 
   client.setServer(mqtt_server, 1883);
