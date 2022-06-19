@@ -34,25 +34,21 @@ class MyServerCallbacks: public BLEServerCallbacks {
 static Preferences preferences;
 
 extern bool isPreferenceAllow;
-void savePref(const char * key,const std::string &value){
+static void savePref(const char * key,const std::string &value){
   LOG_SC(key);
   LOG_S(value);
   int waitPressCounter = 10;
   while(waitPressCounter -- > 0) {
     if(isPreferenceAllow){
       LOG_I(isPreferenceAllow);
-      preferences.putString(key,value.c_str());
+      auto retPref = preferences.putString(key,value.c_str());
+      LOG_I(retPref);
       return;
     }
     delay(1000);
   }
 }
 static void onSettingMqttTopic(const JsonObject &topic) {
-  if(topic.containsKey("in")) {
-    std::string inStr;
-    serializeJson(topic["in"], inStr);
-    savePref(strConstMqttTopicInKey,inStr);
-  }
   if(topic.containsKey("out")) {
     std::string outStr;
     serializeJson(topic["out"], outStr);

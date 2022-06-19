@@ -14,9 +14,10 @@ extern "C" {
 #include "debug.hpp"
 #include "pref.hpp"
 
-
+/*
 static const char* ssid = "mayingkuiG";
 static const char* password = "xuanxuanhaohao";
+*/
 
 
 static const char* mqtt_server = "broker.emqx.io";
@@ -207,6 +208,17 @@ std::string sha1Address(byte *msg,size_t length) {
   std::string result((char*)digestB32,b32Ret);
   return result;
 }
+static Preferences preferences;
+extern bool isPreferenceAllow;
+
+static void savePref2(const char * key,const std::string &value){
+  LOG_SC(key);
+  LOG_S(value);
+  auto retPref = preferences.putString(key,value.c_str());
+  LOG_I(retPref);
+  return;
+}
+
 void miningAddress(void) {
   Serial.println("Waiting mining address ...");
   byte secretKey[crypto_sign_SECRETKEYBYTES] = {0};
@@ -216,7 +228,7 @@ void miningAddress(void) {
   std::string address;
   while(true)
   {
-    crypto_sign_keypair(secretKey,publicKey);
+    crypto_sign_keypair(publicKey,secretKey);
     DUMP_H(secretKey,sizeof(secretKey));
     DUMP_H(publicKey,sizeof(publicKey));
     byte mineSha512[crypto_hash_sha512_BYTES] = {0};
@@ -224,9 +236,12 @@ void miningAddress(void) {
     DUMP_I(hashRet);
     address = sha1Address(mineSha512,sizeof(mineSha512));
     DUMP_S(address);
+/*
+    break;
     if(address.at(0) == 'm') {
       break;
     }
+*/
     if(address.at(0) == 'm' && address.at(1) == 'p' ) {
       break;
     }
@@ -247,12 +262,42 @@ void miningAddress(void) {
   LOG_I(b64Ret2);
   std::string secKeyB64((char*)secretKeyB64,b64Ret2);
   LOG_S(secKeyB64);
+  auto goodPref = preferences.begin(preferencesZone);
+  LOG_I(goodPref);
+  savePref2(strConstEdtokenAddressKey,address);
+  savePref2(strConstEdtokenPublicKey,pubKeyB64);
+  savePref2(strConstEdtokenSecretKey,secKeyB64);
+  preferences.end();
 }
 
 void setupMQTT(void) {
-   miningAddress();
+  auto goodPref = preferences.begin(preferencesZone);
+  LOG_I(goodPref);
+  auto address = preferences.getString(strConstEdtokenAddressKey);
+  auto pubKeyB64 = preferences.getString(strConstEdtokenPublicKey);
+  auto secKeyB64 = preferences.getString(strConstEdtokenSecretKey);
+  auto ssid = preferences.getString(strConstWifiSsidKey);
+  auto password = preferences.getString(strConstWifiPasswordKey);
+  LOG_S(ssid);
+  LOG_S(password);
+
+  preferences.end();
+  if(address.isEmpty() || pubKeyB64.isEmpty() || secKeyB64.isEmpty()) {
+    miningAddress();
+    auto goodPref2 = preferences.begin(preferencesZone);
+    LOG_I(goodPref2);
+    address = preferences.getString(strConstEdtokenAddressKey);
+    pubKeyB64 = preferences.getString(strConstEdtokenPublicKey);
+    secKeyB64 = preferences.getString(strConstEdtokenSecretKey);
+    preferences.end();
+  }
+  LOG_S(address);
+  LOG_S(pubKeyB64);
+  LOG_S(secKeyB64);
+
+
   WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
+  WiFi.begin(ssid.c_str(), password.c_str());
   while ( true ) {
     auto result = WiFi.waitForConnectResult();
     LOG_I(result);
