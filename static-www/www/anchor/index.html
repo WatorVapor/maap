@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8">
+    <script src="./index.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark" id="vue-navbar-top">
+      <w-navbar></w-navbar>
+    </nav>
+    <div class="container-fluid mt-1">
+      <div class="row justify-content-center align-items-center">
+        <div class="col-2">
+          <div class="d-grid gap-2">
+            <button class="btn btn-success w-100" type="button" onclick="uiOnClickSearchBleDevice(this)">
+              <i class="material-icons">bluetooth_searching</i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <hr/>
+
+      <div class="row justify-content-center align-items-center" id="vue-ui-info-of-achor">
+        <div class="col-6">
+          <div class="input-group mb-3">
+            <span class="input-group-text">Star Id:</span>
+            <input type="text" class="form-control" readonly :value="mqtt.address" v-model="mqtt.address">
+            <select class="form-select">
+              <option selected>Choose Star Area ...</option>
+            </select>
+            <button class="btn btn-success" type="button">+</button>
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text">Star Area Id:</span>
+            <input type="text" class="form-control">
+          </div>
+        </div>
+
+        <div class="col-6">
+          <div class="input-group mb-3">
+            <span class="input-group-text">Wifi ssid:</span>
+            <input type="text" class="form-control" :value="wifi.ssid" v-model="wifi.ssid">
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text">Wifi password:</span>
+            <input type="password" class="form-control" :value="wifi.password" v-model="wifi.password">
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text">MQTT URL:</span>
+            <input type="text" class="form-control" :value="mqtt.url" v-model="mqtt.url">
+          </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text">MQTT JWT:</span>
+            <input type="text" class="form-control" :value="mqtt.jwt" v-model="mqtt.jwt">
+          </div>
+          <div class="input-group mb-3">
+            <button class="btn btn-success" type="button" @click="onClickChangeSetting($event)">Apply</button>
+          </div>
+        </div>
+
+      </div>
+      
+    </div>
+    <script src="./ui.ble.js" type="text/javascript"></script>
+    <script src="./vue.ui.js" type="text/javascript"></script>
+  </body>
+</html>
+

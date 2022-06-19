@@ -33,44 +33,33 @@ const uiOnClickSearchBleDevice = async (elem) => {
   const txCh = await service.getCharacteristic(constNiuMaTxUUID);
   console.log('::uiOnClickSearchBleDevice::txCh=<',txCh,'>');
   BLE.tx = txCh;
+  setTimeout(()=>{
+    const info = {info:'fetch'};
+    writeJsonCmd(info);
+  },1000)
 }
 
-const gGPS = new GPS();
-gGPS.on('data', data => {
-  onGPSData(data);
-});
 const onBleData = (characteristic,value) => {
   //console.log('::onBleData::characteristic=<',characteristic,'>');
   //console.log('::onBleData::value=<',value,'>');
   const decoder = new TextDecoder('utf-8');
   const strData = decoder.decode(value);
   //console.log('::onBleData::strData=<',strData,'>');
-  if(strData.startsWith('$')) {
-    try {
-      gGPS.update(strData);
-    } catch(err) {
-      //console.error('::onBleData::gGPS=<',gGPS,'>');
+  try {
+    const jData = JSON.parse(strData);
+    console.log('::onBleData::jData=<',jData,'>');
+    if(jData.info) {
+      onSettingInfo(jData.info);
     }
-  } else if(strData.startsWith('an') && strData.endsWith('m\r\n')) {
-    onUWBDistanceData(strData);
-  } else {
-    console.log('::onBleData::strData=<',strData,'>');
+  } catch(err) {
+    console.error('::onBleData::strData=<',strData,'>');
   }
 }
-const onGPSData = (data) => {
-  if( data.type === 'GGA') {
-    console.log('::onGPSData::data=<',data,'>');
-  }
-}
-const onUWBDistanceData = (distance)=> {
-  //console.log('onUWBDistanceData::distance:=<',distance,'>');
-  const distPama = distance.split(':');
-  //console.log('onUWBDistanceData::distPama:=<',distPama,'>');
-  if(distPama.length > 1) {
-    const anchor = distPama[0];
-    const distanceF = parseFloat(distPama[1]);
-    console.log('onUWBDistanceData::anchor:=<',anchor,'>');
-    console.log('onUWBDistanceData::distanceF:=<',distanceF,'>');
+
+const onSettingInfo = (info) => {
+  console.log('::onSettingInfo::info=<',info,'>');
+  if(typeof onUISettingInfo === 'function') {
+    onUISettingInfo(info);
   }
 }
 
