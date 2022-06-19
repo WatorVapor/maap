@@ -270,10 +270,12 @@ void miningAddress(void) {
   preferences.end();
 }
 
+static String gAddress;
+
 void setupMQTT(void) {
   auto goodPref = preferences.begin(preferencesZone);
   LOG_I(goodPref);
-  auto address = preferences.getString(strConstEdtokenAddressKey);
+  gAddress = preferences.getString(strConstEdtokenAddressKey);
   auto pubKeyB64 = preferences.getString(strConstEdtokenPublicKey);
   auto secKeyB64 = preferences.getString(strConstEdtokenSecretKey);
   auto ssid = preferences.getString(strConstWifiSsidKey);
@@ -282,16 +284,16 @@ void setupMQTT(void) {
   LOG_S(password);
 
   preferences.end();
-  if(address.isEmpty() || pubKeyB64.isEmpty() || secKeyB64.isEmpty()) {
+  if(gAddress.isEmpty() || pubKeyB64.isEmpty() || secKeyB64.isEmpty()) {
     miningAddress();
     auto goodPref2 = preferences.begin(preferencesZone);
     LOG_I(goodPref2);
-    address = preferences.getString(strConstEdtokenAddressKey);
+    gAddress = preferences.getString(strConstEdtokenAddressKey);
     pubKeyB64 = preferences.getString(strConstEdtokenPublicKey);
     secKeyB64 = preferences.getString(strConstEdtokenSecretKey);
     preferences.end();
   }
-  LOG_S(address);
+  LOG_S(gAddress);
   LOG_S(pubKeyB64);
   LOG_S(secKeyB64);
 
@@ -314,29 +316,12 @@ void setupMQTT(void) {
 }
 
 
-//static const char *defaultTopics = "u51h7JJd6054erGLKjVvOqa6hhfzC/xWbLYhPZN3S0M=";
 
 #include <list>
 
-/*
-extern std::list<std::string> gAllowTopics;
-extern std::list<std::string> gDenyTopics;
-*/
 
 void subscribeAtConnected(void) {
-  /*
-  for(const auto topic :gAllowTopics) {
-    for(const auto deny :gDenyTopics) {
-      if(topic == deny) {
-        continue;
-      }
-    }
-    client.subscribe(topic.c_str(),1);
-    // Once connected, publish an announcement...
-    delay(1000);
-    //client.publish(topic.c_str(), "hello world");
-  }
-  */
+  client.subscribe(gAddress.c_str(),1);
 }
 
 void reconnect() {

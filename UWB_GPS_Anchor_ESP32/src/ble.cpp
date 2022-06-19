@@ -76,8 +76,15 @@ static void onSettingCommand(const JsonObject &setting) {
   if(setting.containsKey("mqtt")) {
     auto mqtt = setting["mqtt"];
     if(mqtt.containsKey("server")) {
-      auto url = mqtt["url"].as<std::string>();
-      savePref(strConstMqttURLKey,url);
+      auto server = mqtt["server"];
+      if(server.containsKey("server")) {
+        auto url = server["url"].as<std::string>();
+        savePref(strConstMqttURLKey,url);
+      }
+      if(server.containsKey("jwt")) {
+        auto jwt = server["jwt"].as<std::string>();
+        savePref(strConstMqttURLKey,jwt);
+      }
     }
     if(mqtt.containsKey("topic")) {
       auto topic = mqtt["topic"].as<JsonObject>();
