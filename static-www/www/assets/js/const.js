@@ -11,3 +11,5 @@ const constMasnsionName = 'maap/mansion/create/name';
 
 const constMansionList = 'maap/mansion/list'
 const constMansionPrefix = 'maap/mansion/store'
+
+const constMansionTargetAddress = 'maap/mansion/target/address'

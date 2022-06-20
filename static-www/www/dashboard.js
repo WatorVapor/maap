@@ -1,5 +1,4 @@
 document.addEventListener('AppScriptLoaded', async (evt) => {
-  console.log('AppScriptLoaded::evt=<',evt,'>');
   createDashboardApp_();
 });
 const iConstGalaxyLayoutColOfOneRow = 3;

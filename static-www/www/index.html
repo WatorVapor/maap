@@ -30,9 +30,24 @@
           </div>         
         </div>
       </div>
-      <hr/>
-
-      <hr/>
+    </div>
+    <hr/>
+    <div class="container-fluid mt-2" id="vue-ui-starry-dashboard">
+      <div class="row justify-content-center mt-1" v-for="mansionRow in mansionMatrix">
+        <div class="col-5" v-for="mansion in mansionRow">
+          <div class="card text-center">
+            <div class="card-header">
+              {{ mansion }}
+            </div>
+            <div class="card-body">
+              <button href="/maap/mansion/view/" :mansion="mansion" class="btn btn-primary" @click="onClickGotoBtn($event)">View</button>
+              <button href="/maap/mansion/remove/" :mansion="mansion" class="btn btn-danger" @click="onClickGotoBtn($event)">remove</button>
+            </div>
+            <div class="card-footer text-muted">
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/gps@0.6.1/gps.min.js" integrity="sha256-aP5ZLTc1l1e/GuhJwYW63UokuP2gHI7L9UB+utU8aA4=" crossorigin="anonymous"></script>
     <script src="./starry.js" type="module"></script>
