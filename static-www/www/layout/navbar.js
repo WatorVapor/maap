@@ -7,8 +7,8 @@ const navbarTemplate =
     <div class="collapse navbar-collapse d-flex justify-content-start">
       <ul class="navbar-nav">
         <li class="nav-item active border rounded-pill">
-          <a class="nav-link text-primary vue-lang" v-bind:href="root + '/create_maap/'" role="button">
-            <i class="material-icons md-48">add</i> {% navbar.maap %}
+          <a class="nav-link text-primary vue-lang" v-bind:href="root + '/mansion/create/'" role="button">
+            <i class="material-icons md-48">add</i> {% navbar.mansion %}
           </a>
         </li>
       </ul>

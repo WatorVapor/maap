@@ -1,8 +1,8 @@
 export class Mass {
   static debug = false;
   constructor(storePrefix) {
-    this.priKeyPath_ = `${storePrefix}/priKey`;
-    this.pubKeyPath_ = `${storePrefix}/pubKey`;
+    this.secretKeyPath_ = `${storePrefix}/secretKey`;
+    this.publicKeyPath_ = `${storePrefix}/publicKey`;
     this.addressPath_ = `${storePrefix}/address`;
     const result = this.loadMassKey_();
     if(!result) {
@@ -20,8 +20,8 @@ export class Mass {
     return this.address_;
   }
   destory() {
-    localStorage.removeItem(this.priKeyPath_);
-    localStorage.removeItem(this.pubKeyPath_);
+    localStorage.removeItem(this.secretKeyPath_);
+    localStorage.removeItem(this.publicKeyPath_);
     localStorage.removeItem(this.addressPath_);
   }
   verifySecretKey(secretKey) {
@@ -80,12 +80,12 @@ export class Mass {
     if(Mass.debug) {
       console.log('Mass::save2Storage_:b64Pri=<',b64Pri,'>');
     }
-    localStorage.setItem(this.priKeyPath_,b64Pri);    
+    localStorage.setItem(this.secretKeyPath_,b64Pri);    
     const b64Pub = nacl.util.encodeBase64(keyPair.publicKey);
     if(Mass.debug) {
       console.log('Mass::save2Storage_:b64Pub=<',b64Pub,'>');
     }
-    localStorage.setItem(this.pubKeyPath_,b64Pub);
+    localStorage.setItem(this.publicKeyPath_,b64Pub);
     const hash1Pub = CryptoJS.SHA1(b64Pub).toString(CryptoJS.enc.Base64);
     if(Mass.debug) {
       console.log('Mass::save2Storage_:hash1Pub=<',hash1Pub,'>');
@@ -109,7 +109,7 @@ export class Mass {
         console.log('Mass::loadMassKey_:address=<',address,'>');
       }
       this.address_ = address;
-      const PriKey = localStorage.getItem(this.priKeyPath_);
+      const PriKey = localStorage.getItem(this.secretKeyPath_);
       if(Mass.debug) {
         console.log('Mass::loadMassKey_:PriKey=<',PriKey,'>');
       }
@@ -122,7 +122,7 @@ export class Mass {
       if(Mass.debug) {
         console.log('Mass::loadMassKey_:keyPair=<',keyPair,'>');
       }    
-      const pubKey = localStorage.getItem(this.pubKeyPath_);
+      const pubKey = localStorage.getItem(this.publicKeyPath_);
       if(Mass.debug) {
         console.log('Mass::loadMassKey_:pubKey=<',pubKey,'>');
       }

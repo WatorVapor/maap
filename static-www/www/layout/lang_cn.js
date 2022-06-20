@@ -1,5 +1,5 @@
 export const data = {
   navbar:{
-    maap:'马铺',
+    mansion:'星宿',
   },
 }
