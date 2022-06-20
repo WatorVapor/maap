@@ -60,12 +60,20 @@ export class Mass {
     }
     return false;
   }
-  createMassKey_(){
+  createMassKey_() {
+    while(true) {
+      const address = this.mineMassKey_();
+      if(address.startsWith('mp')) {
+        break;
+      }
+    }
+  }
+  mineMassKey_() {
     const keyPair = nacl.sign.keyPair();
     if(Mass.debug) {
-      console.log('Mass::createMassKey_:keyPair=<',keyPair,'>');
+      console.log('Mass::mineMassKey_:keyPair=<',keyPair,'>');
     }
-    this.save2Storage_(keyPair);
+    return this.save2Storage_(keyPair);
   }
   save2Storage_(keyPair){
     const b64Pri = nacl.util.encodeBase64(keyPair.secretKey);
@@ -78,19 +86,21 @@ export class Mass {
       console.log('Mass::save2Storage_:b64Pub=<',b64Pub,'>');
     }
     localStorage.setItem(this.pubKeyPath_,b64Pub);
-    const hash1Pub = CryptoJS.RIPEMD160(b64Pub).toString(CryptoJS.enc.Base64);
+    const hash1Pub = CryptoJS.SHA1(b64Pub).toString(CryptoJS.enc.Base64);
     if(Mass.debug) {
       console.log('Mass::save2Storage_:hash1Pub=<',hash1Pub,'>');
     }
     const hash1pubBuffer = nacl.util.decodeBase64(hash1Pub);
     if(Mass.debug) {
       console.log('Mass::save2Storage_:hash1pubBuffer=<',hash1pubBuffer,'>');
-    }  
-    const address = Base58.encode(hash1pubBuffer);
+    }
+    const encoder = new base32.Encoder({ type: "crockford", lc: true });
+    const address = encoder.write(hash1pubBuffer).finalize();
     if(Mass.debug) {
       console.log('Mass::save2Storage_:address=<',address,'>');
     }
-    localStorage.setItem(this.addressPath_,address);  
+    localStorage.setItem(this.addressPath_,address);
+    return address;
   }
   loadMassKey_() {
     try {

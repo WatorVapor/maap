@@ -151,6 +151,26 @@ const loadScriptOfApp = () => {
     fileref.onload = () => {onFrameworkScriptLoaded(fileref);};
   }
   
+  {
+    const fileref = document.createElement('script');
+    fileref.setAttribute('type', 'text/javascript');
+    fileref.setAttribute('src', 'https://cdn.jsdelivr.net/npm/mqtt@4.3.7/dist/mqtt.min.js');
+    fileref.setAttribute('integrity', 'sha256-DB4GAFiyqysd5z3QJsC20rSBBK6syd7qJlL+NndQ8HY=');
+    fileref.setAttribute('crossorigin', 'anonymous');
+    document.getElementsByTagName('body')[0].appendChild(fileref);
+    window.frameworkScriptLoadCountUp++;
+    fileref.onload = () => {onFrameworkScriptLoaded(fileref);};
+  }
+  
+
+  {
+    const fileref = document.createElement('script');
+    fileref.setAttribute('type', 'text/javascript');
+    fileref.setAttribute('src', `${appPrefix}/assets/js/const.js`);
+    document.getElementsByTagName('body')[0].appendChild(fileref);
+    window.frameworkScriptLoadCountUp++;
+    fileref.onload = () => {onFrameworkScriptLoaded(fileref);};
+  }
   
   {
     const fileref = document.createElement('script');
@@ -160,6 +180,7 @@ const loadScriptOfApp = () => {
     window.frameworkScriptLoadCountUp++;
     fileref.onload = () => {onFrameworkScriptLoaded(fileref);};
   }
+
   {
     const fileref = document.createElement('script');
     fileref.setAttribute('type', 'module');

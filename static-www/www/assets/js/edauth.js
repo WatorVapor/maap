@@ -1,7 +1,4 @@
-const constEdAuthPrefix = 'maap/edauth';
-const constEdAuthName = 'maap/edauth/name';
-
-const MASS = await import(`./mass.js`);
+const MASS = await import(`./gravity/mass.js`);
 export class EDAuth {
   constructor() {
     if(EDAuth.debug) {
