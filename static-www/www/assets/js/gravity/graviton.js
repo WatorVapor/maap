@@ -18,7 +18,7 @@ export class Graviton {
     }
     const request = {
       jwt:{
-        
+        address:this.mass_.address_
       }
     }
     const signedReq = this.mass_.sign(request);
