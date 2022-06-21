@@ -1,4 +1,5 @@
 const MASS = await import(`./mass.js`);
+const GRVT = await import(`./graviton.js`);
 export class StarMansion {
   constructor(prefix,target) {
     this.target_ = target;
@@ -8,6 +9,7 @@ export class StarMansion {
     if(target) {
       this.mass_ = new MASS.Mass();
       this.loadMass_();
+      this.graviton_ = new GRVT.Graviton(this.mass_);
     } else {
       this.mass_ = new MASS.Mass(prefix);
     }

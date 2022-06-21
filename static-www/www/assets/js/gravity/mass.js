@@ -1,5 +1,5 @@
 export class Mass {
-  static debug = false;
+  static debug = true;
   constructor(storePrefix) {
     if(storePrefix) {
       this.secretKeyPath_ = `${storePrefix}/secretKey`;
@@ -11,6 +11,25 @@ export class Mass {
         this.loadMassKey_();
       }
     }
+  }
+  sign(msgOrig) {
+    msgOrig.ts = new Date().toISOString();
+    const msgOrigStr = JSON.stringify(msgOrig);
+    const encoder = new TextEncoder();
+    const hash = nacl.hash(encoder.encode(msgOrigStr));
+    if(Mass.debug) {
+      console.log('Mass::sign::hash=<',hash,'>');
+    }
+    const signed = nacl.sign(hash,this.secretKey_);
+    if(Mass.debug) {
+      console.log('Mass::sign::signed=<',signed,'>');
+    }
+    const signedB64 = nacl.util.encodeBase64(signed);
+    const signMsgObj = JSON.parse(msgOrigStr);
+    signMsgObj.auth = {};
+    signMsgObj.auth.pub = this.publicKeyB64_;
+    signMsgObj.auth.sign = signedB64;
+    return signMsgObj;
   }
   load(secretKey) {
     if(Mass.debug) {
@@ -111,16 +130,7 @@ export class Mass {
       console.log('Mass::save2Storage_:b64Pub=<',b64Pub,'>');
     }
     localStorage.setItem(this.publicKeyPath_,b64Pub);
-    const hash1Pub = CryptoJS.SHA1(b64Pub).toString(CryptoJS.enc.Base64);
-    if(Mass.debug) {
-      console.log('Mass::save2Storage_:hash1Pub=<',hash1Pub,'>');
-    }
-    const hash1pubBuffer = nacl.util.decodeBase64(hash1Pub);
-    if(Mass.debug) {
-      console.log('Mass::save2Storage_:hash1pubBuffer=<',hash1pubBuffer,'>');
-    }
-    const encoder = new base32.Encoder({ type: "crockford", lc: true });
-    const address = encoder.write(hash1pubBuffer).finalize();
+    const address = this.calcAddress_(b64Pub);
     if(Mass.debug) {
       console.log('Mass::save2Storage_:address=<',address,'>');
     }
@@ -160,7 +170,9 @@ export class Mass {
     return true;
   }
   calcAddress_(b64Pub) {
-    const hash1Pub = CryptoJS.SHA1(b64Pub).toString(CryptoJS.enc.Base64);
+    const hash512 = nacl.hash(nacl.util.decodeBase64(b64Pub));
+    const hash512B64 = nacl.util.encodeBase64(hash512);
+    const hash1Pub = CryptoJS.SHA1(hash512B64).toString(CryptoJS.enc.Base64);
     if(Mass.debug) {
       console.log('Mass::load:hash1Pub=<',hash1Pub,'>');
     }
