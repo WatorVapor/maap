@@ -1,10 +1,16 @@
 const MASS = await import(`./mass.js`);
 export class StarMansion {
-  constructor(prefix) {
+  constructor(prefix,target) {
+    this.target_ = target;
     if(StarMansion.debug) {
       console.log('StarMansion::constructor:MASS=<',MASS,'>');
     }
-    this.mass_ = new MASS.Mass(prefix);
+    if(target) {
+      this.mass_ = new MASS.Mass();
+      this.loadMass_();
+    } else {
+      this.mass_ = new MASS.Mass(prefix);
+    }
     if(StarMansion.debug) {
       console.log('StarMansion::constructor:this.mass_=<',this.mass_,'>');
     }
@@ -38,6 +44,33 @@ export class StarMansion {
       console.log('StarMansion::importSecretKey:secretKey=<',secretKey,'>');
     }
     return this.mass_.importSecretKey(secretKey);
+  }
+  loadMass_() {
+    const keyPath = `${constMansionPrefix}/${this.target_}`;
+    if(StarMansion.debug) {
+      console.log('StarMansion::loadMass_:keyPath=<',keyPath,'>');
+    }
+    const mansionStr = localStorage.getItem(keyPath);
+    if(StarMansion.debug) {
+      console.log('StarMansion::loadMass_:mansionStr=<',mansionStr,'>');
+    }
+    if(!mansionStr) {
+      return;
+    }
+    const mansion = JSON.parse(mansionStr);
+    if(StarMansion.debug) {
+      console.log('StarMansion::loadMass_:mansion=<',mansion,'>');
+    }
+    if(mansion && mansion.core && mansion.core.secretKey) {
+      const address = this.mass_.load(mansion.core.secretKey);
+      if(StarMansion.debug) {
+        console.log('StarMansion::loadMass_:address=<',address,'>');
+        console.log('StarMansion::loadMass_:this.target_=<',this.target_,'>');
+      }
+      if(this.target_ !== address) {
+        this.mass_ = false;
+      }
+    }
   }
   static debug = true;
   static name_ = null;

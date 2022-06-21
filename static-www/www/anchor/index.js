@@ -5,4 +5,6 @@ const loadFrameWorkJS = ()=> {
   fileref.setAttribute('src', `${appPrefix}/assets/js/app.js`);
   document.getElementsByTagName('head')[0].appendChild(fileref);
 }
-loadFrameWorkJS();
+document.addEventListener('DOMContentLoaded', (evt) => {
+  loadFrameWorkJS();
+});

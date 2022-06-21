@@ -217,7 +217,6 @@ const onFrameworkScriptLoaded = (ref)=> {
   }
 }
 
-
 loadHeaderOfApp();
 loadScriptOfApp();
 

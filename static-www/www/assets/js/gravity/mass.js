@@ -1,14 +1,39 @@
 export class Mass {
   static debug = false;
   constructor(storePrefix) {
-    this.secretKeyPath_ = `${storePrefix}/secretKey`;
-    this.publicKeyPath_ = `${storePrefix}/publicKey`;
-    this.addressPath_ = `${storePrefix}/address`;
-    const result = this.loadMassKey_();
-    if(!result) {
-      this.createMassKey_();
-      this.loadMassKey_();
+    if(storePrefix) {
+      this.secretKeyPath_ = `${storePrefix}/secretKey`;
+      this.publicKeyPath_ = `${storePrefix}/publicKey`;
+      this.addressPath_ = `${storePrefix}/address`;
+      const result = this.loadMassKey_();
+      if(!result) {
+        this.createMassKey_();
+        this.loadMassKey_();
+      }
     }
+  }
+  load(secretKey) {
+    if(Mass.debug) {
+      console.log('Mass::load::secretKey=<',secretKey,'>');
+    }
+    const secretBin = nacl.util.decodeBase64(secretKey);
+    if(Mass.debug) {
+      console.log('Mass::load::secretBin=<',secretBin,'>');
+    }
+    const keyPair = nacl.sign.keyPair.fromSecretKey(secretBin);
+    if(Mass.debug) {
+      console.log('Mass::load::keyPair=<',keyPair,'>');
+    }
+    this.secretKey_ = keyPair.secretKey;
+    this.publicKey_ = keyPair.publicKey;
+    const b64Pub = nacl.util.encodeBase64(keyPair.publicKey);
+    if(Mass.debug) {
+      console.log('Mass::load:b64Pub=<',b64Pub,'>');
+    }
+    this.publicKeyB64_ = b64Pub;
+    const address = this.calcAddress_(b64Pub);
+    this.address_ = address;
+    return address;
   }
   pub() {
     return this.pubKeyB64_;
@@ -26,15 +51,15 @@ export class Mass {
   }
   verifySecretKey(secretKey) {
     if(Mass.debug) {
-      console.log('verifySecretKey::secretKey=<',secretKey,'>');
+      console.log('Mass::verifySecretKey::secretKey=<',secretKey,'>');
     }
     const secretBin = nacl.util.decodeBase64(secretKey);
     if(Mass.debug) {
-      console.log('verifySecretKey::secretBin=<',secretBin,'>');
+      console.log('Mass::verifySecretKey::secretBin=<',secretBin,'>');
     }
     const keyPair = nacl.sign.keyPair.fromSecretKey(secretBin);
     if(Mass.debug) {
-      console.log('verifySecretKey::keyPair=<',keyPair,'>');
+      console.log('Mass::verifySecretKey::keyPair=<',keyPair,'>');
     }
     if(keyPair) {
       return true;
@@ -43,15 +68,15 @@ export class Mass {
   }
   importSecretKey(secretKey) {
     if(Mass.debug) {
-      console.log('importSecretKey::secretKey=<',secretKey,'>');
+      console.log('Mass::importSecretKey::secretKey=<',secretKey,'>');
     }
     const secretBin = nacl.util.decodeBase64(secretKey);
     if(Mass.debug) {
-      console.log('importSecretKey::secretBin=<',secretBin,'>');
+      console.log('Mass::importSecretKey::secretBin=<',secretBin,'>');
     }
     const keyPair = nacl.sign.keyPair.fromSecretKey(secretBin);
     if(Mass.debug) {
-      console.log('importSecretKey::keyPair=<',keyPair,'>');
+      console.log('Mass::importSecretKey::keyPair=<',keyPair,'>');
     }
     if(keyPair) {
       save2Storage_(keyPair);
@@ -133,6 +158,22 @@ export class Mass {
       return false;
     }
     return true;
+  }
+  calcAddress_(b64Pub) {
+    const hash1Pub = CryptoJS.SHA1(b64Pub).toString(CryptoJS.enc.Base64);
+    if(Mass.debug) {
+      console.log('Mass::load:hash1Pub=<',hash1Pub,'>');
+    }
+    const hash1pubBuffer = nacl.util.decodeBase64(hash1Pub);
+    if(Mass.debug) {
+      console.log('Mass::load:hash1pubBuffer=<',hash1pubBuffer,'>');
+    }
+    const encoder = new base32.Encoder({ type: "crockford", lc: true });
+    const address = encoder.write(hash1pubBuffer).finalize();
+    if(Mass.debug) {
+      console.log('Mass::load:address=<',address,'>');
+    }
+    return address;
   }
 }
 

@@ -2,7 +2,6 @@ document.addEventListener('AppScriptLoaded', async (evt) => {
   createStarMansionApp_();
 });
 const GRVT = await import(`${appPrefix}/assets/js/gravity/graviton.js`);
-const GSM = await import(`${appPrefix}/assets/js/gravity/mansion.js`);
 
 const star_mansion_option = {
   data() {
@@ -22,14 +21,8 @@ const star_mansion_option = {
   }  
 }
 const createStarMansionApp_ = async ()=> {
-  console.log('createStarMansionApp_::GRVT=<',GRVT,'>');
-  const target = localStorage.getItem(constMansionTargetAddress);
-  if(!target) {
-    return
-  }
-  console.log('createStarMansionApp_::target=<',target,'>');
-  const mansion = new GSM.StarMansion(constCreateMansionPrefix,target);
-  /*
+  console.log('createStarMansionApp_::GSM=<',GSM,'>');
+  const mansion = new GSM.StarMansion(constCreateMansionPrefix);
   console.log('createStarMansionApp_::mansion=<',mansion,'>');
   console.log('createStarMansionApp_::mansion=<',mansion,'>');
   const address = mansion.address();
@@ -39,7 +32,6 @@ const createStarMansionApp_ = async ()=> {
   mansionVM.mansion.address = address;
   mansionVM.mansion.name = `star-mansion_${address}`;
   mansionVM.instance = mansion;
-  */
 }
 
 const onStarMansionSave = (mansionUI,mansion) => {
