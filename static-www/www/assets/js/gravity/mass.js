@@ -1,5 +1,5 @@
 export class Mass {
-  static debug = true;
+  static debug = false;
   constructor(storePrefix) {
     if(storePrefix) {
       this.secretKeyPath_ = `${storePrefix}/secretKey`;

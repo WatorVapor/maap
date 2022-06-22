@@ -6,88 +6,104 @@ export class Graviton {
       console.log('Graviton::constructor:mass=<',mass,'>');
     }
     this.mass_ = mass;
-    this.requestJWTBuff_ = [];
-    this.requestJWT_();
+    this.createMqttClient_();
   }
-  requestJWT_() {
+  createMqttClient_() {
+    const keyPath = `${constMansionMqttJwtPrefix}/${this.mass_.address_}`
     if(Graviton.debug) {
-      console.log('Graviton::requestJWT_:this.mass_=<',this.mass_,'>');
+      console.log('Graviton::createMqttClient_:keyPath=<',keyPath,'>');
     }
+    const jwtReplyStr = localStorage.getItem(keyPath);
     if(Graviton.debug) {
-      console.log('Graviton::requestJWT_:Graviton.wsClient=<',Graviton.wsClient,'>');
+      console.log('Graviton::createMqttClient_:jwtReplyStr=<',jwtReplyStr,'>');
     }
-    const request = {
-      jwt:{
-        address:this.mass_.address_
-      }
+    if(!jwtReplyStr) {
+      return this.jump2jwtRequest_();
     }
-    const signedReq = this.mass_.sign(request);
+    const jwtReply = JSON.parse(jwtReplyStr);
     if(Graviton.debug) {
-      console.log('Graviton::constructor:signedReq=<',signedReq,'>');
+      console.log('Graviton::createMqttClient_:jwtReply=<',jwtReply,'>');
     }
-    if(Graviton.wsClient && Graviton.wsClient.readyState) {
-      this.sendWS_(signedReq);
+    const isGood = this.verifyJwt_(jwtReply)
+    if(Graviton.debug) {
+      console.log('Graviton::constructor:isGood=<',isGood,'>');
+    }
+    if(!isGood) {
+      return this.jump2jwtRequest_();
+    }
+    this.createMqttConnection_(jwtReply);
+  }
+  jump2jwtRequest_() {
+    
+  }
+  verifyJwt_(jwtReply) {
+    if(!jwtReply.jwt) {
+      return false;
+    }
+    // wait decode jwt...
+    // this time believe payload from server.
+    if(!jwtReply.payload) {
+      return false;
+    }
+    const now = new Date();
+    const iat = new Date();
+    iat.setTime(parseInt(jwtReply.payload.iat) * 1000);
+    const exp = new Date();
+    exp.setTime(parseInt(jwtReply.payload.exp) * 1000);
+    if(Graviton.debug) {
+      console.log('Graviton::verifyJwt_:now=<',now,'>');
+      console.log('Graviton::verifyJwt_:iat=<',iat,'>');
+      console.log('Graviton::verifyJwt_:iat=<',exp,'>');
+    }
+    const remain_ms = exp - now;
+    if(Graviton.debug) {
+      console.log('Graviton::verifyJwt_:remain_ms=<',remain_ms,'>');
+    }
+    if(remain_ms > 0) {
+      return true;
     } else {
-      this.requestJWTBuff_.push(signedReq);
-      const self = this;
-      setTimeout(()=>{
-        self.rollOutBufferedJwtReq_();
-      },100);
+      return false;
     }
   }
-  rollOutBufferedJwtReq_() {
-    if(Graviton.debug) {
-      console.log('Graviton::constructor:Graviton.wsClient=<',Graviton.wsClient,'>');
+  createMqttConnection_(jwtReply) {
+    const options = {
+      connectTimeout: 4000,
+      // Authentication
+      clientId: `browser_jwt_${this.mass_.address_}`,
+      username: '',
+      password: jwtReply.jwt,
+      keepalive: 60*5,
+      clean: true,
+      rejectUnauthorized: false
     }
-    if(Graviton.wsClient && Graviton.wsClient.readyState) {
-      if(this.requestJWTBuff_.length > 0) {
-        this.sendWS_(this.requestJWTBuff_[0]);
-        this.requestJWTBuff_.shift();
+    if(Graviton.debug) {
+      console.log('Graviton::createMqttConnection_:options=<',options,'>');
+    }
+    this.mqttClient_ = mqtt.connect('wss://wator.xyz:8084/mqtt',options);
+    this.mqttClient_.on('connect', () => {
+      console.log('Graviton::createMqttConnection_ connect this.mqttClient_.connected:=<', this.mqttClient_.connected, '>');
+    });
+    const self = this;
+    this.mqttClient_.on('message', (channel, message) => {
+      self.onMqttMessage_(channel, message);
+    });
+    this.mqttClient_.subscribe(`${this.mass_.address_}/#`);
+  }  
+  onMqttMessage_(channel, message) {
+    //console.log('Graviton::onMqttMessage_ channel:=<', channel, '>');
+    //console.log('Graviton::onMqttMessage_ message:=<', message, '>');
+    const msgStr = new TextDecoder().decode(message);
+    //console.log('Graviton::onMqttMessage_ msgStr:=<', msgStr, '>');
+    try {
+      const msgJson = JSON.parse(msgStr);
+      //console.log('Graviton::onMqttMessage_ msgJson:=<', msgJson, '>');
+      if(typeof this.cb_ === 'function') {
+        this.cb_(channel, msgJson);
       }
+    } catch(err) {
+      console.log('Graviton::onMqttMessage_ err:=<', err, '>');
+      console.log('Graviton::onMqttMessage_ msgStr:=<', msgStr, '>');
     }
-    if(this.requestJWTBuff_.length > 0) {
-      const self = this;
-      setTimeout(()=>{
-        self.rollOutBufferedJwtReq_();
-      },100);      
-    }
-  }
-  sendWS_(msg) {
-    if(Graviton.debug) {
-      console.log('Graviton::sendWS_:msg=<',msg,'>');
-    }
-    Graviton.wsClient.send(JSON.stringify(msg));
   }
 }
 
-document.addEventListener('AppScriptLoaded', async (evt) => {
-  loadGravitonChannel_(evt);
-});
-const loadGravitonChannel_ = (evt) => {
-  const wsClient = new WebSocket('wss://wator.xyz:8084/jwt');
-  console.log('loadGravitonChannel_::wsClient=<',wsClient,'>');
-  wsClient.onopen = (evt)=> {
-    if(Graviton.debug) {
-      console.log('Graviton::loadGravitonChannel_::onopen:evt=<',evt,'>');
-    }
-  }
-  wsClient.onclose = (evt)=> {
-    if(Graviton.debug) {
-      console.log('Graviton::loadGravitonChannel_::onclose:evt=<',evt,'>');
-    }
-  }
-  wsClient.onerror = (err)=> {
-    console.error('Graviton::loadGravitonChannel_::onerror:err=<',err,'>');
-  }
-  wsClient.onmessage = (evt)=> {
-    if(Graviton.debug) {
-      console.log('Graviton::loadGravitonChannel_::onmessage:evt=<',evt,'>');
-    }
-    try {
-      const msg = JSON.parse(evt.data);
-    } catch(err) {
-      console.error('Graviton::loadGravitonChannel_::onmessage:err=<',err,'>');
-    }
-  }
-  Graviton.wsClient = wsClient;
-}

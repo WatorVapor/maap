@@ -39,6 +39,6 @@ export class EDAuth {
     }
     return this.mass_.importSecretKey(secretKey);
   }
-  static debug = true;
+  static debug = false;
   static name_ = null;
 }
