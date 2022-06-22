@@ -40,8 +40,18 @@
               {{ mansion }}
             </div>
             <div class="card-body">
-              <button href="/maap/mansion/view/" :mansion="mansion" class="btn btn-primary" @click="onClickGotoBtn($event)">View</button>
-              <button href="/maap/mansion/remove/" :mansion="mansion" class="btn btn-danger" @click="onClickGotoBtn($event)">remove</button>
+              <div class="row justify-content-center mt-1">
+                <div class="col-5">
+                  <div class="d-grid gap-2">
+                    <button href="/maap/mansion/view/" :mansion="mansion" class="btn btn-primary" @click="onClickGotoBtn($event)">Enter</button>
+                  </div>
+                </div>
+                <div class="col-5">
+                  <div class="d-grid gap-2">
+                    <button href="/maap/mansion/remove/" :mansion="mansion" class="btn btn-danger" @click="onClickGotoBtn($event)">Destory</button>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="card-footer text-muted">
             </div>

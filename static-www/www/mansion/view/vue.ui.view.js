@@ -1,8 +1,8 @@
+const GRVT = await import(`${appPrefix}/assets/js/gravity/graviton.js`);
+const GSM = await import(`${appPrefix}/assets/js/gravity/mansion.js`);
 document.addEventListener('AppScriptLoaded', async (evt) => {
   createStarMansionApp_();
 });
-const GRVT = await import(`${appPrefix}/assets/js/gravity/graviton.js`);
-const GSM = await import(`${appPrefix}/assets/js/gravity/mansion.js`);
 
 const star_mansion_option = {
   data() {
