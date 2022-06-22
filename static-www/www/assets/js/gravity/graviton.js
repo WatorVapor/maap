@@ -38,6 +38,7 @@ export class Graviton {
     if(Graviton.debug) {
       console.log('Graviton::jump2jwtRequest_:jwtPaht=<',jwtPaht,'>');
     }
+    window.location.assign(jwtPaht) ;
   }
   verifyJwt_(jwtReply) {
     if(!jwtReply.jwt) {
