@@ -26,7 +26,7 @@ export class Graviton {
     }
     const isGood = this.verifyJwt_(jwtReply)
     if(Graviton.debug) {
-      console.log('Graviton::constructor:isGood=<',isGood,'>');
+      console.log('Graviton::createMqttClient_:isGood=<',isGood,'>');
     }
     if(!isGood) {
       return this.jump2jwtRequest_();
@@ -34,7 +34,10 @@ export class Graviton {
     this.createMqttConnection_(jwtReply);
   }
   jump2jwtRequest_() {
-    
+    const jwtPaht = `${appPrefix}/mqtt_jwt/`;
+    if(Graviton.debug) {
+      console.log('Graviton::jump2jwtRequest_:jwtPaht=<',jwtPaht,'>');
+    }
   }
   verifyJwt_(jwtReply) {
     if(!jwtReply.jwt) {
