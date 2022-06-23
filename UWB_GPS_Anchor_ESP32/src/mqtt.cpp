@@ -1,9 +1,10 @@
 #include <Arduino.h>
-#include <WiFi.h>
 #include <ArduinoJson.h>
 #include <map>
+#include <WiFi.h>
 #include <PubSubClient.h>
 #include <WiFiClientSecure.h>
+
 #include <Preferences.h>
 
 #include <base64.hpp>
@@ -14,8 +15,6 @@ extern "C" {
 }
 #include "debug.hpp"
 #include "pref.hpp"
-#include "WebSocketClient250.h"
-#include "WebSocketStreamClient.h"
 
 /*
 static const char* ssid = "mayingkuiG";
@@ -346,26 +345,27 @@ void reconnect(PubSubClient &client) {
   }
 }
 
-
+void JWTTask( void * parameter);
 void MQTTTask( void * parameter){
   int core = xPortGetCoreID();
   LOG_I(core);
   setupMQTT();
+  xTaskCreatePinnedToCore(JWTTask, "JWTTask", 10000, nullptr, 1, nullptr,  1); 
+
   auto goodPref = preferences.begin(preferencesZone);
-
-  auto jwt_host = preferences.getString(strConstMqttJWTHostKey);
-  auto jwt_port = preferences.getInt(strConstMqttJWTPortKey);
-  auto jwt_path = preferences.getString(strConstMqttJWTPathKey);
-
   auto mqtt_host = preferences.getString(strConstMqttURLHostKey);
   auto mqtt_port = preferences.getInt(strConstMqttURLPortKey);
   auto mqtt_path = preferences.getString(strConstMqttURLPathKey);
   preferences.end();
 
-  WiFiClientSecure wiFiClient;
+  
+
+/*  
   WebSocketClient250 wsClient(wiFiClient,mqtt_host.c_str(),mqtt_port);
   WebSocketStreamClient wsStreamClient(wsClient,mqtt_path.c_str());
-  static PubSubClient client(wsStreamClient);
+*/
+  WiFiClientSecure wiFiClient;
+  static PubSubClient client(wiFiClient);
 
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
