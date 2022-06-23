@@ -350,6 +350,7 @@ void MQTTTask( void * parameter){
   int core = xPortGetCoreID();
   LOG_I(core);
   setupMQTT();
+  
   xTaskCreatePinnedToCore(JWTTask, "JWTTask", 10000, nullptr, 1, nullptr,  1); 
 
   auto goodPref = preferences.begin(preferencesZone);

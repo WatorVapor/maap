@@ -3,8 +3,10 @@
 #include <map>
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
-#include <WebSocketsClient.h>
+#include <HTTPClient.h>
 #include <Preferences.h>
+
+
 
 
 //#include <base64.hpp>
@@ -17,7 +19,6 @@ extern "C" {
 #include "pref.hpp"
 
 static Preferences preferences;
-static WebSocketsClient webSocket;
 
 void JWTTask( void * parameter){
   int core = xPortGetCoreID();
@@ -34,10 +35,10 @@ void JWTTask( void * parameter){
   LOG_S(jwt_path);
   preferences.end();
   
-  //WiFiClientSecure wiFiClient;
-  webSocket.beginSSL(jwt_host, jwt_port,jwt_path);
+  WiFiClientSecure client;
+  client.setInsecure();
+  client.connect(jwt_host.c_str(),(uint16_t)jwt_port);
   for(;;) {
-    webSocket.loop();
     delay(1);
   }
 }
