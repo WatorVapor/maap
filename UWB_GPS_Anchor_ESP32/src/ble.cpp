@@ -149,6 +149,7 @@ static void onInfoCommand(void) {
   auto password = preferences.getString(strConstWifiPasswordKey);
   auto url = preferences.getString(strConstMqttURLKey);
   auto jwt = preferences.getString(strConstMqttJWTKey);
+  auto topicOut = preferences.getString(strConstMqttTopicOutKey);
   LOG_S(jwt);
 
   auto address = preferences.getString(strConstEdtokenAddressKey);
@@ -161,6 +162,13 @@ static void onInfoCommand(void) {
   mqtt["address"] = address;
   mqtt["url"] = url;
   mqtt["jwt"] = jwt;
+
+  StaticJsonDocument<256> topic;
+  DeserializationError error = deserializeJson(topic, topicOut);
+  LOG_S(error);
+  if(error == DeserializationError::Ok) {
+    mqtt["topic"]["out"] = topic;
+  }
 
   StaticJsonDocument<256> info;
   info["mqtt"] = mqtt;
@@ -193,6 +201,7 @@ void onExternalCommand(StaticJsonDocument<512> &doc) {
   }
 }
 
+StaticJsonDocument<512> bleInputdoc;
 class MyCallbacks: public BLECharacteristicCallbacks {
   void onRead(BLECharacteristic *pCharacteristic) {
     //pCharacteristic->setValue("Hello World!");
@@ -202,11 +211,10 @@ class MyCallbacks: public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *pCharacteristic) {
     std::string value = pCharacteristic->getValue();
     LOG_S(value);
-    StaticJsonDocument<512> doc;
-    DeserializationError error = deserializeJson(doc, value);
+    DeserializationError error = deserializeJson(bleInputdoc, value);
     LOG_S(error);
     if(error == DeserializationError::Ok) {
-      onExternalCommand(doc);
+      onExternalCommand(bleInputdoc);
     }
   }
 };
