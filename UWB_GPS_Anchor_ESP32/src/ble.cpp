@@ -98,13 +98,13 @@ static void onSettingCommand(const JsonObject &setting) {
     if(mqtt.containsKey("jwt")) {
       auto jwt = mqtt["jwt"].as<std::string>();
       savePref(strConstMqttJWTKey,jwt);
-    }
-   
-    if(mqtt.containsKey("topic")) {
-      auto topic = mqtt["topic"].as<JsonObject>();
-      onSettingMqttTopic(topic);
-    }
+    }   
   }
+  if(setting.containsKey("topic")) {
+    auto topic = setting["topic"].as<JsonObject>();
+    onSettingMqttTopic(topic);
+  }
+
   if(setting.containsKey("mqtt_")) {
     auto mqtt = setting["mqtt_"];
     if(mqtt.containsKey("url")) {
@@ -157,31 +157,48 @@ static void onInfoCommand(void) {
   StaticJsonDocument<256> wifi;
   wifi["ssid"] = ssid;
   wifi["password"] = password;
+  {
+    StaticJsonDocument<256> info;
+    info["wifi"] = wifi;
+    StaticJsonDocument<512> doc;
+    doc["info"] = info;
+    std::string outStr;
+    serializeJson(doc, outStr);
+    outStr += "\r\n";
+    pTxCharacteristic->setValue(outStr);
+    pTxCharacteristic->notify();
+  }
 
   StaticJsonDocument<256> mqtt;
   mqtt["address"] = address;
   mqtt["url"] = url;
   mqtt["jwt"] = jwt;
+  {
+    StaticJsonDocument<256> info;
+    info["mqtt"] = mqtt;
+    StaticJsonDocument<512> doc;
+    doc["info"] = info;
+    std::string outStr;
+    serializeJson(doc, outStr);
+    outStr += "\r\n";
+    pTxCharacteristic->setValue(outStr);
+    pTxCharacteristic->notify();
+  }
 
   StaticJsonDocument<256> topic;
   DeserializationError error = deserializeJson(topic, topicOut);
   LOG_S(error);
   if(error == DeserializationError::Ok) {
-    mqtt["topic"]["out"] = topic;
+    StaticJsonDocument<256> info;
+    info["topic"]["out"] = topic;
+    StaticJsonDocument<512> doc;
+    doc["info"] = info;
+    std::string outStr;
+    serializeJson(doc, outStr);
+    outStr += "\r\n";
+    pTxCharacteristic->setValue(outStr);
+    pTxCharacteristic->notify();
   }
-
-  StaticJsonDocument<256> info;
-  info["mqtt"] = mqtt;
-  info["wifi"] = wifi;
-
-  StaticJsonDocument<512> doc;
-  doc["info"] = info;
-
-  std::string outStr;
-  serializeJson(doc, outStr);
-  outStr += "\r\n";
-  pTxCharacteristic->setValue(outStr);
-  pTxCharacteristic->notify();
 }
 
 void onExternalCommand(StaticJsonDocument<512> &doc) {
