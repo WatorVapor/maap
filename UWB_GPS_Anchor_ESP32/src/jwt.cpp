@@ -5,8 +5,8 @@
 #include <Preferences.h>
 #include <WebSocketsClient.h>
 
-//#include <base64.hpp>
 #include "mbedtls/sha1.h"
+#include "mybase64.hpp"
 #include "base32/Base32.h"
 extern "C" {
   #include <tweetnacl.h>
