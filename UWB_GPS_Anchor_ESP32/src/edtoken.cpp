@@ -23,6 +23,9 @@ static uint8_t gPublicKeyBinary[32];
 static const int SHA512_HASH_BIN_MAX = 512/8;
 static unsigned char gCalcTempHash[SHA512_HASH_BIN_MAX];
 
+std::string sha1Address(byte *msg,size_t length);
+std::string sha1Bin(byte *msg,size_t length);
+
 StaticJsonDocument<512> signMsg(StaticJsonDocument<512> &msg,const std::string &ts) {
   auto goodPref = preferences.begin(preferencesZone);
   LOG_I(goodPref);
@@ -33,12 +36,15 @@ StaticJsonDocument<512> signMsg(StaticJsonDocument<512> &msg,const std::string &
   msg["ts"] = ts;
   String origMsgStr;
   serializeJson(msg, origMsgStr);
-  auto hashRet = crypto_hash_sha512(gCalcTempHash,(unsigned char*)origMsgStr.c_str(),origMsgStr.size());
+  auto hashRet = crypto_hash_sha512(gCalcTempHash,(unsigned char*)origMsgStr.c_str(),origMsgStr.length());
   DUMP_I(hashRet);
   int shaRet = encode_base64(gCalcTempHash,SHA512_HASH_BIN_MAX,gBase64TempBinary);
   DUMP_I(shaRet);
   std::string calHashB64((char*)gBase64TempBinary,shaRet);
   LOG_S(calHashB64);
+  auto sha1 = sha1Bin((byte*)calHashB64.c_str(),calHashB64.size());
+
+  //crypto_sign(,)
 
   StaticJsonDocument<512> signedMsg;
   return signedMsg;
@@ -102,6 +108,18 @@ bool isAuthedMessage(const JsonVariant &msg,const std::string &topic,const std::
   }
   return false;
 }
+std::string sha1Bin(byte *msg,size_t length) {
+  mbedtls_sha1_context sha1_ctx;
+  mbedtls_sha1_init(&sha1_ctx);
+  mbedtls_sha1_starts(&sha1_ctx);
+  mbedtls_sha1_update(&sha1_ctx, msg, length);
+  byte digest[20] = {0};
+  mbedtls_sha1_finish(&sha1_ctx, digest);
+  std::string result((char*)digest,sizeof(digest));
+  return result;
+}
+
+
 std::string sha1Address(byte *msg,size_t length) {
   mbedtls_sha1_context sha1_ctx;
   mbedtls_sha1_init(&sha1_ctx);
