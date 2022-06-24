@@ -13,6 +13,8 @@ extern "C" {
 #include "debug.hpp"
 #include "pref.hpp"
 
+static Preferences preferences;
+
 
 static unsigned char gBase64TempBinary[512];
 static unsigned char gOpenedTempMsg[512];
@@ -20,6 +22,27 @@ static uint8_t gSignBinary[512];
 static uint8_t gPublicKeyBinary[32];
 static const int SHA512_HASH_BIN_MAX = 512/8;
 static unsigned char gCalcTempHash[SHA512_HASH_BIN_MAX];
+
+StaticJsonDocument<512> signMsg(StaticJsonDocument<512> &msg,const std::string &ts) {
+  auto goodPref = preferences.begin(preferencesZone);
+  LOG_I(goodPref);
+  auto secretKey = preferences.getString(strConstEdtokenSecretKey);
+  preferences.end();
+  int secretRet = decode_base64((unsigned char*)secretKey.c_str(),secretKey.length(),gBase64TempBinary);
+  LOG_I(secretRet);
+  msg["ts"] = ts;
+  String origMsgStr;
+  serializeJson(msg, origMsgStr);
+  auto hashRet = crypto_hash_sha512(gCalcTempHash,(unsigned char*)origMsgStr.c_str(),origMsgStr.size());
+  DUMP_I(hashRet);
+  int shaRet = encode_base64(gCalcTempHash,SHA512_HASH_BIN_MAX,gBase64TempBinary);
+  DUMP_I(shaRet);
+  std::string calHashB64((char*)gBase64TempBinary,shaRet);
+  LOG_S(calHashB64);
+
+  StaticJsonDocument<512> signedMsg;
+  return signedMsg;
+}
 
 bool verifySign(const std::string &pub,const std::string &sign,const std::string &sha){
   DUMP_S(pub);
@@ -93,8 +116,6 @@ std::string sha1Address(byte *msg,size_t length) {
   std::string result((char*)digestB32,b32Ret);
   return result;
 }
-static Preferences preferences;
-extern bool isPreferenceAllow;
 
 static void savePref2(const char * key,const std::string &value){
   LOG_SC(key);
