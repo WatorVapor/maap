@@ -1,6 +1,13 @@
 const onUISettingInfo = (info) => {
-  APP.vm.wifi = info.wifi;
-  APP.vm.mqtt = info.mqtt;
+  if(info.wifi) {
+    APP.vm.wifi = info.wifi;
+  }
+  if(info.mqtt) {
+    APP.vm.mqtt = info.mqtt;
+  }
+  if(info.topic) {
+    APP.vm.topic = info.topic;
+  }
 }
 document.addEventListener('DOMContentLoaded',()=>{
   setTimeout(()=>{
@@ -16,10 +23,15 @@ const setting_anchor_data = {
   mqtt:{
     address: '',
     jwt: '',
-    url: '',
-  }
+    url: '', 
+  },
+  topic:{
+    out:[],
+  },
+  mansions:[],
+  mansionSelected:'',
 }
-const createVueApps = ()=> {
+const createVueApps = ()=> {  
   const setting_option = {
     data() {
       return setting_anchor_data;
@@ -53,8 +65,36 @@ const createVueApps = ()=> {
         }
         writeJsonCmd(setting);
       },
+      onClickAddMansion(evt) {
+        console.log('onClickAddMansion::evt=<',evt,'>');
+        console.log('onClickAddMansion::this.mansionSelected=<',this.mansionSelected,'>');
+        if(!this.topic) {
+          this.topic = {};
+        }
+        if(!this.topic.out) {
+          this.topic.out = [];
+        }
+        this.topic.out.push(this.mansionSelected);
+        this.topic.out = [...new Set(this.topic.out)];
+        console.log('onClickAddMansion::this.topic.out=<',this.topic.out,'>');
+        const setting = {
+          setting:{
+            topic:{
+              out:this.topic.out
+            }
+          }
+        }
+        writeJsonCmd(setting);
+      },
     }
   };
   const settingApp = Vue.createApp(setting_option);
-  APP.vm = settingApp.mount('#vue-ui-info-of-achor');  
+  APP.vm = settingApp.mount('#vue-ui-info-of-anchor');  
+  const starMansionListStr = localStorage.getItem(constMansionList);
+  if(starMansionListStr) {
+    const starMansionList = JSON.parse(starMansionListStr);    
+    console.log('loadStarryDashboardApp_::starMansionList=<',starMansionList,'>');
+    APP.vm.mansions = starMansionList;
+  }
+
 }

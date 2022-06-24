@@ -65,6 +65,7 @@ const onSettingInfo = (info) => {
 
 
 const writeJsonCmd = (jCmd) => {
+  console.log('::writeJsonCmd::jCmd=<',jCmd,'>');
   const strCmd = JSON.stringify(jCmd);
   //console.log('::writeJsonCmd::strCmd=<',strCmd,'>');
   const bufCmd = new TextEncoder('utf-8').encode(strCmd);
