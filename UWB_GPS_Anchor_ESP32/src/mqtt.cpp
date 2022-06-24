@@ -368,14 +368,16 @@ void MQTTTask( void * parameter){
   WiFiClientSecure wiFiClient;
   static PubSubClient client(wiFiClient);
 
-  client.setServer(mqtt_server, 1883);
+  client.setServer(mqtt_host.c_str(), (uint16_t)mqtt_port);
   client.setCallback(callback);
 
   for(;;) {//
+    #if 0
     if (!client.connected()) {
       reconnect(client);
     }
     client.loop();
+    #endif
     delay(1);
   }
 }
