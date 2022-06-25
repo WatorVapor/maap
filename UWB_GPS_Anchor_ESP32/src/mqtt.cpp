@@ -196,9 +196,10 @@ void setupMQTT(void) {
 
 
 #include <list>
+extern std::string gMqttJWTToken;
 
 
-void subscribeAtConnected(PubSubClient client) {
+void subscribeAtConnected(PubSubClient &client) {
   client.subscribe(gAddress.c_str(),1);
 }
 
@@ -207,10 +208,11 @@ void reconnect(PubSubClient &client) {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
     // Create a random client ID
-    String clientId = "public-iot";
-    clientId += String(random(0xffff), HEX);
+    String clientId = "uwb-gps-anchor-";
+    clientId += gAddress;
     // Attempt to connect
-    auto rc = client.connect(clientId.c_str());
+    LOG_S(clientId);
+    auto rc = client.connect(clientId.c_str(),"",gMqttJWTToken.c_str());
     if (rc) {
       LOG_I(client.connected());
       // ... and resubscribe
@@ -225,6 +227,10 @@ void reconnect(PubSubClient &client) {
 }
 
 void JWTTask( void * parameter);
+
+static WiFiClient espClient;
+static PubSubClient client(espClient);
+
 void MQTTTask( void * parameter){
   int core = xPortGetCoreID();
   LOG_I(core);
@@ -237,26 +243,18 @@ void MQTTTask( void * parameter){
   auto mqtt_port = preferences.getInt(strConstMqttURLPortKey);
   auto mqtt_path = preferences.getString(strConstMqttURLPathKey);
   preferences.end();
+  LOG_S(mqtt_host);
+  LOG_I(mqtt_port);
 
   
-
-/*  
-  WebSocketClient250 wsClient(wiFiClient,mqtt_host.c_str(),mqtt_port);
-  WebSocketStreamClient wsStreamClient(wsClient,mqtt_path.c_str());
-*/
-  WiFiClientSecure wiFiClient;
-  static PubSubClient client(wiFiClient);
-
   client.setServer(mqtt_host.c_str(), (uint16_t)mqtt_port);
   client.setCallback(callback);
 
   for(;;) {//
-    #if 0
     if (!client.connected()) {
       reconnect(client);
     }
     client.loop();
-    #endif
     delay(1);
   }
 }

@@ -26,6 +26,11 @@ static unsigned char gCalcTempHash[SHA512_HASH_BIN_MAX];
 std::string sha1Address(byte *msg,size_t length);
 std::string sha1Bin(byte *msg,size_t length);
 
+extern byte gSecretKeyBin[crypto_sign_SECRETKEYBYTES];
+extern String gPublicKey;
+
+static   byte gTempSignedMsg[1024];
+
 StaticJsonDocument<512> signMsg(StaticJsonDocument<512> &msg,const std::string &ts) {
   auto goodPref = preferences.begin(preferencesZone);
   LOG_I(goodPref);
@@ -38,16 +43,29 @@ StaticJsonDocument<512> signMsg(StaticJsonDocument<512> &msg,const std::string &
   serializeJson(msg, origMsgStr);
   auto hashRet = crypto_hash_sha512(gCalcTempHash,(unsigned char*)origMsgStr.c_str(),origMsgStr.length());
   DUMP_I(hashRet);
-  int shaRet = encode_base64(gCalcTempHash,SHA512_HASH_BIN_MAX,gBase64TempBinary);
-  DUMP_I(shaRet);
-  std::string calHashB64((char*)gBase64TempBinary,shaRet);
+  int b64Ret1 = encode_base64(gCalcTempHash,SHA512_HASH_BIN_MAX,gBase64TempBinary);
+  DUMP_I(b64Ret1);
+  std::string calHashB64((char*)gBase64TempBinary,b64Ret1);
   LOG_S(calHashB64);
   auto sha1 = sha1Bin((byte*)calHashB64.c_str(),calHashB64.size());
-
-  //crypto_sign(,)
-
-  StaticJsonDocument<512> signedMsg;
-  return signedMsg;
+  LOG_S(sha1);
+  LOG_I(sha1.length());
+  
+  uint32_t signedSize = 0;
+  int signRet = crypto_sign(gTempSignedMsg,(uint64_t*)&signedSize,(byte*)sha1.c_str(),sha1.length(),gSecretKeyBin);
+  LOG_I(signRet);
+  LOG_I(signedSize);
+  int b64Ret2 = encode_base64(gTempSignedMsg,signedSize,gBase64TempBinary);
+  std::string signedB64((char*)gBase64TempBinary,b64Ret2);
+  LOG_S(signedB64);
+  StaticJsonDocument<512> signedDoc;
+  DeserializationError error = deserializeJson(signedDoc, origMsgStr);
+  DUMP_S(error);
+  if(error == DeserializationError::Ok) {
+    signedDoc["auth"]["pub"] = gPublicKey;
+    signedDoc["auth"]["sign"] = signedB64;
+  }
+  return signedDoc;
 }
 
 bool verifySign(const std::string &pub,const std::string &sign,const std::string &sha){
@@ -127,10 +145,11 @@ std::string sha1Address(byte *msg,size_t length) {
   mbedtls_sha1_update(&sha1_ctx, msg, length);
   byte digest[20] = {0};
   mbedtls_sha1_finish(&sha1_ctx, digest);
+  LOG_H(digest,sizeof(digest));
   Base32 base32;
   byte *digestB32 = NULL;
   auto b32Ret = base32.toBase32(digest,sizeof(digest),digestB32,true);
-  DUMP_I(b32Ret);
+  LOG_I(b32Ret);
   std::string result((char*)digestB32,b32Ret);
   return result;
 }
@@ -153,13 +172,19 @@ void miningAddress(void) {
   while(true)
   {
     crypto_sign_keypair(publicKey,secretKey);
-    DUMP_H(secretKey,sizeof(secretKey));
-    DUMP_H(publicKey,sizeof(publicKey));
+    LOG_H(secretKey,sizeof(secretKey));
+    LOG_H(publicKey,sizeof(publicKey));
     byte mineSha512[crypto_hash_sha512_BYTES] = {0};
     auto hashRet = crypto_hash_sha512(mineSha512,publicKey,crypto_sign_PUBLICKEYBYTES);
-    DUMP_I(hashRet);
-    address = sha1Address(mineSha512,sizeof(mineSha512));
-    DUMP_S(address);
+    LOG_I(hashRet);
+    LOG_H(mineSha512,sizeof(mineSha512));
+    byte sha512B64[crypto_hash_sha512_BYTES*2] = {0};
+    int b64Ret1 = encode_base64(mineSha512,crypto_hash_sha512_BYTES,sha512B64);
+    LOG_I(b64Ret1);
+    std::string sha512B64Str((char*)sha512B64,b64Ret1);
+    LOG_S(sha512B64Str);
+    address = sha1Address((byte*)sha512B64Str.c_str(),sha512B64Str.size());
+    LOG_S(address);
 /*
     break;
     if(address.at(0) == 'm') {
@@ -173,7 +198,6 @@ void miningAddress(void) {
       break;
     }
   }
-  LOG_S(address);
   byte publicKeyB64[crypto_sign_PUBLICKEYBYTES*2] = {0};
   int b64Ret = encode_base64(publicKey,crypto_sign_PUBLICKEYBYTES,publicKeyB64);
   LOG_I(b64Ret);

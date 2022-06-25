@@ -19,11 +19,17 @@ static WebSocketsClient webSocket;
 
 static String createJWTRequest(const std::string &ts);
 static String createDateRequest(void);
-
+std::string gMqttJWTToken;
 void onWSMsg(const StaticJsonDocument<512> &doc) {
   if(doc.containsKey("date")) {
     std::string dateStr = doc["date"].as<std::string>();
-    createJWTRequest(dateStr);
+    auto jwtReq = createJWTRequest(dateStr);
+    LOG_S(jwtReq);
+    webSocket.sendTXT(jwtReq);
+  }
+  if(doc.containsKey("jwt")) {
+    gMqttJWTToken = doc["jwt"].as<std::string>();
+    LOG_S(gMqttJWTToken);
   }
 }
 
@@ -43,13 +49,13 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
     break;
   case WStype_TEXT:
     {
-      LOG_I(payload);
+      LOG_SC((char*)payload);
       LOG_I(length);
       std::string payloadStr((char*)payload,length);
       LOG_S(payloadStr);
       StaticJsonDocument<512> doc;
       DeserializationError error = deserializeJson(doc, payloadStr);
-      DUMP_S(error);
+      LOG_S(error);
       if(error == DeserializationError::Ok) {
         onWSMsg(doc);
       }
@@ -68,13 +74,16 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
 
 StaticJsonDocument<512> signMsg(StaticJsonDocument<512> &msg,const std::string &ts);
 
+String gAddress;
+String gSecretKey;
+byte gSecretKeyBin[crypto_sign_SECRETKEYBYTES] = {0};
+String gPublicKey;
+
+
 static String createJWTRequest(const std::string &ts) {
-  auto goodPref = preferences.begin(preferencesZone);
-  LOG_I(goodPref);
-  auto address = preferences.getString(strConstEdtokenAddressKey);
-  preferences.end();
   StaticJsonDocument<512> doc;
-  doc["jwt"]["address"] = address;
+  doc["jwt"]["add"] = gAddress;
+  doc["jwt"]["min"] = true;
   auto signedRequest = signMsg(doc,ts);
   String request;
   serializeJson(signedRequest, request);
@@ -83,12 +92,11 @@ static String createJWTRequest(const std::string &ts) {
 
 static String createDateRequest(void) {
   StaticJsonDocument<256> doc;
-  doc["date"] = "request";
+  doc["date"] = "req";
   String request;
   serializeJson(doc, request);
   return request;
 }
-
 
 void JWTTask( void * parameter){
   int core = xPortGetCoreID();
@@ -103,7 +111,17 @@ void JWTTask( void * parameter){
   LOG_I(jwt_port);
   auto jwt_path = preferences.getString(strConstMqttJWTPathKey);
   LOG_S(jwt_path);
+
+  gAddress = preferences.getString(strConstEdtokenAddressKey);
+  LOG_S(gAddress);
+  gPublicKey = preferences.getString(strConstEdtokenPublicKey);
+  LOG_S(gPublicKey);
+  gSecretKey = preferences.getString(strConstEdtokenSecretKey);
+  LOG_S(gSecretKey);
   preferences.end();
+
+  int b64Ret2 = decode_base64((byte*)(gSecretKey.c_str()),gSecretKey.length(),gSecretKeyBin);
+  LOG_H(gSecretKeyBin,sizeof(gSecretKeyBin));
 
   webSocket.begin(jwt_host.c_str(),(uint16_t)jwt_port,jwt_path.c_str());
   webSocket.onEvent(webSocketEvent);
