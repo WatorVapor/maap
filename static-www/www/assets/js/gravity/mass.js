@@ -20,7 +20,16 @@ export class Mass {
     if(Mass.debug) {
       console.log('Mass::sign::hash=<',hash,'>');
     }
-    const signed = nacl.sign(hash,this.secretKey_);
+    const hash512B64 = nacl.util.encodeBase64(hash);
+    if(Mass.debug) {
+      console.log('Mass::sign::hash512B64=<',hash512B64,'>');
+    }
+    const sha1MsgB64 = CryptoJS.SHA1(hash512B64).toString(CryptoJS.enc.Base64);
+    if(Mass.debug) {
+      console.log('Mass::sign::sha1MsgB64=<',sha1MsgB64,'>');
+    }
+    const sha1MsgBin = nacl.util.decodeBase64(sha1MsgB64);;
+    const signed = nacl.sign(sha1MsgBin,this.secretKey_);
     if(Mass.debug) {
       console.log('Mass::sign::signed=<',signed,'>');
     }
@@ -170,7 +179,8 @@ export class Mass {
     return true;
   }
   calcAddress_(b64Pub) {
-    const hash512 = nacl.hash(nacl.util.decodeBase64(b64Pub));
+    const binPub = nacl.util.decodeBase64(b64Pub);
+    const hash512 = nacl.hash(binPub);
     const hash512B64 = nacl.util.encodeBase64(hash512);
     const hash1Pub = CryptoJS.SHA1(hash512B64).toString(CryptoJS.enc.Base64);
     if(Mass.debug) {
@@ -180,7 +190,7 @@ export class Mass {
     if(Mass.debug) {
       console.log('Mass::load:hash1pubBuffer=<',hash1pubBuffer,'>');
     }
-    const encoder = new base32.Encoder({ type: "crockford", lc: true });
+    const encoder = new base32.Encoder({ type: "rfc4648", lc: true });
     const address = encoder.write(hash1pubBuffer).finalize();
     if(Mass.debug) {
       console.log('Mass::load:address=<',address,'>');

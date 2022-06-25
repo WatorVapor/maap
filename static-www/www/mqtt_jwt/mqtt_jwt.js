@@ -76,7 +76,7 @@ const requestMansionMqttJwt_ = (mansionAddress,wsClient) => {
   }
   const request = {
     jwt:{
-      address:mass.address_
+      add:mass.address_
     }
   }
   const signedReq = mass.sign(request);
@@ -122,8 +122,8 @@ const onMqttJwtReply_ = (jwt,payload,replyMsg) => {
     console.log('MqttJwt::onMqttJwtReply_:jwt=<',jwt,'>');
     console.log('MqttJwt::onMqttJwtReply_:payload=<',payload,'>');
   }
-  if(payload.address) {
-    const keyPath = `${constMansionMqttJwtPrefix}/${payload.address}`;
+  if(payload.add) {
+    const keyPath = `${constMansionMqttJwtPrefix}/${payload.add}`;
     if(MqttJwt.debug) {
       console.log('MqttJwt::onMqttJwtReply_:keyPath=<',keyPath,'>');
     }
