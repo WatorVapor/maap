@@ -41,11 +41,16 @@ static std::string uwbLine;
 std::mutex gUWBLineMtx;
 std::list <std::string> gUWBLineBuff;
 
+//#define UART_DIR 1
+
+
 void loop() {
   // put your main code here, to run repeatedly:
   if(GPS_.available()) {
     auto ch = GPS_.read();
+#ifdef UART_DIR
     Serial.write(ch);
+#endif
     gpsLine.push_back(ch);
     if(gpsLine.size() > iConstGPSLineMax) {
       gpsLine.clear();
@@ -58,7 +63,9 @@ void loop() {
   }
   if(UWB_.available()) {
     auto ch = UWB_.read();
+#ifdef UART_DIR
     Serial.write(ch);
+#endif
     {
       std::lock_guard<std::mutex> lock(gUWBLineMtx);
       uwbLine.push_back(ch);

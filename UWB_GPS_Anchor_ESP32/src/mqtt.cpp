@@ -163,6 +163,9 @@ void setupMQTT(void) {
   LOG_S(ssid);
   LOG_S(password);
 
+  auto topicOut = preferences.getString(strConstMqttTopicOutKey);
+  LOG_S(topicOut);
+
   preferences.end();
   if(gAddress.isEmpty() || pubKeyB64.isEmpty() || secKeyB64.isEmpty()) {
     miningAddress();
@@ -230,6 +233,7 @@ void JWTTask( void * parameter);
 
 static WiFiClient espClient;
 static PubSubClient client(espClient);
+void runMqttTransimit(void);
 
 void MQTTTask( void * parameter){
   int core = xPortGetCoreID();
@@ -255,6 +259,63 @@ void MQTTTask( void * parameter){
       reconnect(client);
     }
     client.loop();
+    runMqttTransimit();
     delay(1);
   }
+}
+
+#include <sstream>
+#include <string>
+#include <mutex>
+#include <list>
+extern std::mutex gUWBLineMtx;
+extern std::list <std::string> gUWBLineBuff;
+
+extern std::string gDateOfSign;
+
+StaticJsonDocument<512> signMsg(StaticJsonDocument<512> &msg,const std::string &ts);
+static StaticJsonDocument<512> gTempMqttReportDoc;
+static StaticJsonDocument<512> gTempMqttReportDocSign;
+
+static void reportUWB(void)
+{
+  std::lock_guard<std::mutex> lock(gUWBLineMtx);
+  if(gUWBLineBuff.empty() == false) {
+    auto line = gUWBLineBuff.front();
+    gTempMqttReportDoc["uwb"] = line;
+    if(gDateOfSign.empty() == false) {
+      auto gTempMqttReportDocSign = signMsg(gTempMqttReportDoc,gDateOfSign);
+      String report;
+      serializeJson(gTempMqttReportDocSign, report);
+    }
+    gUWBLineBuff.pop_front();
+  }
+}
+static void discardUWB(void) {
+  std::lock_guard<std::mutex> lock(gUWBLineMtx);
+  if(gUWBLineBuff.empty() == false) {
+    gUWBLineBuff.clear();
+  }
+}
+
+extern std::mutex gGpsLineMtx;
+extern std::list <std::string> gGPSLineBuff;
+static void reportGPS(void)
+{
+  std::lock_guard<std::mutex> lock(gGpsLineMtx);
+  if(gGPSLineBuff.empty() == false) {
+    auto line = gGPSLineBuff.front();
+    gGPSLineBuff.pop_front();
+  }
+}
+static void discardGPS(void) {
+  std::lock_guard<std::mutex> lock(gGpsLineMtx);
+  if(gGPSLineBuff.empty() == false) {
+    gGPSLineBuff.clear();
+  }  
+}
+
+void runMqttTransimit(void) {
+  discardGPS();
+  reportUWB();
 }

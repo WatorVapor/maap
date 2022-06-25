@@ -19,10 +19,12 @@ static WebSocketsClient webSocket;
 
 static String createJWTRequest(const std::string &ts);
 static String createDateRequest(void);
+std::string gDateOfSign;
 std::string gMqttJWTToken;
 void onWSMsg(const StaticJsonDocument<512> &doc) {
   if(doc.containsKey("date")) {
     std::string dateStr = doc["date"].as<std::string>();
+    gDateOfSign = dateStr;
     auto jwtReq = createJWTRequest(dateStr);
     LOG_S(jwtReq);
     webSocket.sendTXT(jwtReq);

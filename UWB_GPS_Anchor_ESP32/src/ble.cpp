@@ -314,11 +314,13 @@ void discardUWB(void) {
 void runBleTransimit(void)
 {
   if (deviceConnected) {
-    reportGPS();
-    reportUWB();
+    //reportGPS();
+    //reportUWB();
+    //discardGPS();
+    //discardUWB();
   } else {
-    discardGPS();
-    discardUWB();
+    //discardGPS();
+    //discardUWB();
   }
   if (!deviceConnected && oldDeviceConnected) {
     delay(500); // give the bluetooth stack the chance to get things ready
