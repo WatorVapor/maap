@@ -78,7 +78,7 @@ const onGPSMsg = (gpsMsg,from)=> {
 }
 const onGPSData = (gpsData,from,state) => {
   if(gpsData.type === 'GGA' && gpsData.valid === true) {
-    //console.log('onGPSData::gpsData=<',gpsData,'>');
+    console.log('onGPSData::gpsData=<',gpsData,'>');
     //console.log('onGPSData::from=<',from,'>');
     //console.log('onGPSData::state=<',state,'>');
     onAnchorPosition(gpsData.lon,gpsData.lat,gpsData.geoidal,from);
