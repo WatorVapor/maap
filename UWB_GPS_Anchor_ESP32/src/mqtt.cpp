@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <map>
+#include <list>
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <WiFiClientSecure.h>
@@ -150,7 +151,8 @@ static void savePref2(const char * key,const std::string &value){
 void miningAddress(void);
 
 static String gAddress;
-
+static std::list<std::string> gOutTopics;
+StaticJsonDocument<512> gOutTopicsDoc;
 void setupMQTT(void) {
   auto goodPref = preferences.begin(preferencesZone);
   LOG_I(goodPref);
@@ -165,6 +167,16 @@ void setupMQTT(void) {
 
   auto topicOut = preferences.getString(strConstMqttTopicOutKey);
   LOG_S(topicOut);
+  DeserializationError error = deserializeJson(gOutTopicsDoc, topicOut);
+  LOG_S(error);
+  if(error == DeserializationError::Ok) {
+    JsonArray array = gOutTopicsDoc.as<JsonArray>();
+    for(auto v : array) {
+      auto topic = v.as<std::string>();
+      gOutTopics.push_back(topic);
+    }
+  }
+
 
   preferences.end();
   if(gAddress.isEmpty() || pubKeyB64.isEmpty() || secKeyB64.isEmpty()) {
@@ -203,7 +215,8 @@ extern std::string gMqttJWTToken;
 
 
 void subscribeAtConnected(PubSubClient &client) {
-  client.subscribe(gAddress.c_str(),1);
+  auto topic = gAddress + "/#";
+  client.subscribe(topic.c_str(),1);
 }
 
 void reconnect(PubSubClient &client) {
@@ -253,6 +266,8 @@ void MQTTTask( void * parameter){
   
   client.setServer(mqtt_host.c_str(), (uint16_t)mqtt_port);
   client.setCallback(callback);
+  client.setBufferSize(512);
+  LOG_I(client.getBufferSize());
 
   for(;;) {//
     if (!client.connected()) {
@@ -277,17 +292,33 @@ StaticJsonDocument<512> signMsg(StaticJsonDocument<512> &msg,const std::string &
 static StaticJsonDocument<512> gTempMqttReportDoc;
 static StaticJsonDocument<512> gTempMqttReportDocSign;
 
+static void reportJson(void) {
+  if(gDateOfSign.empty()) {
+    return;
+  }
+  auto gTempMqttReportDocSign = signMsg(gTempMqttReportDoc,gDateOfSign);
+  String report;
+  serializeJson(gTempMqttReportDocSign, report);
+  LOG_S(report);
+  if(client.connected()) {
+    for(auto &topic : gOutTopics) {
+      std::string outTopic = topic + "/uwb";
+      LOG_S(outTopic);
+      auto goodPublish = client.publish_P(outTopic.c_str(),report.c_str(),report.length());
+      LOG_I(goodPublish);
+    }
+  }
+}
 static void reportUWB(void)
 {
   std::lock_guard<std::mutex> lock(gUWBLineMtx);
   if(gUWBLineBuff.empty() == false) {
     auto line = gUWBLineBuff.front();
     gTempMqttReportDoc["uwb"] = line;
-    if(gDateOfSign.empty() == false) {
-      auto gTempMqttReportDocSign = signMsg(gTempMqttReportDoc,gDateOfSign);
-      String report;
-      serializeJson(gTempMqttReportDocSign, report);
+    if(line.empty() == false) {
+      reportJson();
     }
+    gTempMqttReportDoc.clear();
     gUWBLineBuff.pop_front();
   }
 }
@@ -305,6 +336,11 @@ static void reportGPS(void)
   std::lock_guard<std::mutex> lock(gGpsLineMtx);
   if(gGPSLineBuff.empty() == false) {
     auto line = gGPSLineBuff.front();
+    gTempMqttReportDoc["gps"] = line;
+    if(line.empty() == false) {
+      reportJson();
+    }
+    gTempMqttReportDoc.clear();
     gGPSLineBuff.pop_front();
   }
 }
@@ -316,6 +352,6 @@ static void discardGPS(void) {
 }
 
 void runMqttTransimit(void) {
-  discardGPS();
   reportUWB();
+  reportGPS();
 }

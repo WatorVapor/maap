@@ -33,11 +33,11 @@ static   byte gTempSignedMsg[1024];
 
 StaticJsonDocument<512> signMsg(StaticJsonDocument<512> &msg,const std::string &ts) {
   auto goodPref = preferences.begin(preferencesZone);
-  LOG_I(goodPref);
+  DUMP_I(goodPref);
   auto secretKey = preferences.getString(strConstEdtokenSecretKey);
   preferences.end();
   int secretRet = decode_base64((unsigned char*)secretKey.c_str(),secretKey.length(),gBase64TempBinary);
-  LOG_I(secretRet);
+  DUMP_I(secretRet);
   msg["ts"] = ts;
   String origMsgStr;
   serializeJson(msg, origMsgStr);
@@ -46,18 +46,18 @@ StaticJsonDocument<512> signMsg(StaticJsonDocument<512> &msg,const std::string &
   int b64Ret1 = encode_base64(gCalcTempHash,SHA512_HASH_BIN_MAX,gBase64TempBinary);
   DUMP_I(b64Ret1);
   std::string calHashB64((char*)gBase64TempBinary,b64Ret1);
-  LOG_S(calHashB64);
+  DUMP_S(calHashB64);
   auto sha1 = sha1Bin((byte*)calHashB64.c_str(),calHashB64.size());
-  LOG_S(sha1);
-  LOG_I(sha1.length());
+  DUMP_S(sha1);
+  DUMP_I(sha1.length());
   
   uint32_t signedSize = 0;
   int signRet = crypto_sign(gTempSignedMsg,(uint64_t*)&signedSize,(byte*)sha1.c_str(),sha1.length(),gSecretKeyBin);
-  LOG_I(signRet);
-  LOG_I(signedSize);
+  DUMP_I(signRet);
+  DUMP_I(signedSize);
   int b64Ret2 = encode_base64(gTempSignedMsg,signedSize,gBase64TempBinary);
   std::string signedB64((char*)gBase64TempBinary,b64Ret2);
-  LOG_S(signedB64);
+  DUMP_S(signedB64);
   StaticJsonDocument<512> signedDoc;
   DeserializationError error = deserializeJson(signedDoc, origMsgStr);
   DUMP_S(error);
