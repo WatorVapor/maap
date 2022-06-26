@@ -1,4 +1,3 @@
-const GRVT = await import(`${appPrefix}/assets/js/gravity/graviton.js`);
 const GSM = await import(`${appPrefix}/assets/js/gravity/mansion.js`);
 document.addEventListener('AppScriptLoaded', async (evt) => {
   createStarMansionApp_();
@@ -21,25 +20,30 @@ const star_mansion_option = {
     }
   }  
 }
+const App = {
+  anchors:{}
+};
 const createStarMansionApp_ = async ()=> {
-  console.log('createStarMansionApp_::GRVT=<',GRVT,'>');
   const target = localStorage.getItem(constMansionTargetAddress);
   if(!target) {
     return
   }
   console.log('createStarMansionApp_::target=<',target,'>');
-  const mansion = new GSM.StarMansion(constCreateMansionPrefix,target);
-  /*
-  console.log('createStarMansionApp_::mansion=<',mansion,'>');
-  console.log('createStarMansionApp_::mansion=<',mansion,'>');
-  const address = mansion.address();
-  console.log('createStarMansionApp_::address=<',address,'>');
-  const appStarMansion = Vue.createApp(star_mansion_option);
-  const mansionVM = appStarMansion.mount('#vue-ui-view-star-mansion');
-  mansionVM.mansion.address = address;
-  mansionVM.mansion.name = `star-mansion_${address}`;
-  mansionVM.instance = mansion;
-  */
+  const mansion = new GSM.StarMansion(constCreateMansionPrefix,target,(channel,msg)=>{
+    if(msg.from) {
+      if(msg.gps) {
+        onGPSMsg(msg.gps,msg.from);
+      } else if(msg.uwb) {
+        onUWBMsg(msg.uwb,msg.from);
+      } else {
+        console.log('createStarMansionApp_::channel=<',channel,'>');
+        console.log('createStarMansionApp_::msg=<',msg,'>');
+      }
+    } else {
+      console.log('createStarMansionApp_::channel=<',channel,'>');
+      console.log('createStarMansionApp_::msg=<',msg,'>');      
+    }
+  });
 }
 
 const onStarMansionSave = (mansionUI,mansion) => {
@@ -56,4 +60,39 @@ const onStarMansionSave = (mansionUI,mansion) => {
   };
   mf.save(mansionObj);
   location.reload();  
+}
+
+const onGPSMsg = (gpsMsg,from)=> {
+  //console.log('onGPSMsg::gpsMsg=<',gpsMsg,'>');
+  //console.log('onGPSMsg::from=<',from,'>');
+
+  if(!App.anchors[from]) {
+    App.anchors[from] = {};
+    const gps = new GPS();
+    gps.on('data', data => {
+      onGPSData(data,from,gps.state);
+    });
+    App.anchors[from].gps = gps;
+  }
+  App.anchors[from].gps.update(gpsMsg);
+}
+const onGPSData = (gpsData,from,state) => {
+  if(gpsData.type === 'GGA' && gpsData.valid === true) {
+    //console.log('onGPSData::gpsData=<',gpsData,'>');
+    //console.log('onGPSData::from=<',from,'>');
+    //console.log('onGPSData::state=<',state,'>');
+    onAnchorPosition(gpsData.lon,gpsData.lat,gpsData.geoidal,from);
+  }
+}
+
+const onAnchorPosition = (lon,lat,geoidal,anchorAddress) => {
+  console.log('onAnchorPosition::lon=<',lon,'>');
+  console.log('onAnchorPosition::lat=<',lat,'>');
+  console.log('onAnchorPosition::geoidal=<',geoidal,'>');  
+  console.log('onAnchorPosition::anchorAddress=<',anchorAddress,'>');  
+}
+
+const onUWBMsg = (uwb,from)=> {
+  console.log('onUWBMsg::uwb=<',uwb,'>');
+  console.log('onUWBMsg::from=<',from,'>');  
 }

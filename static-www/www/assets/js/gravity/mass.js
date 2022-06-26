@@ -1,3 +1,4 @@
+const iConstOneDayMs = 1000*3600*24;
 export class Mass {
   static debug = false;
   constructor(storePrefix) {
@@ -39,6 +40,52 @@ export class Mass {
     signMsgObj.auth.pub = this.publicKeyB64_;
     signMsgObj.auth.sign = signedB64;
     return signMsgObj;
+  }
+  verify(msg) {
+    //console.log('Mass::verify::msg=<',msg,'>');
+    const created_at = new Date(msg.ts);
+    const now = new Date();
+    const escape_ms = now - created_at;
+    //console.log('Mass::verify::escape_ms=<',escape_ms,'>');
+    if(escape_ms > iConstOneDayMs) {
+      console.log('Mass::verify::escape_ms=<',escape_ms,'>');
+      return false;
+    } 
+    const calcAddress = this.calcAddress_(msg.auth.pub);
+    //console.log('Mass::verify::calcAddress=<',calcAddress,'>');
+    if(!calcAddress.startsWith('mp')) {
+      console.log('Mass::verify::calcAddress=<',calcAddress,'>');
+      return false;
+    }
+    const publicKey = nacl.util.decodeBase64(msg.auth.pub);
+    const signMsg = nacl.util.decodeBase64(msg.auth.sign);
+    //console.log('Mass::verify::publicKey=<',publicKey,'>');
+    //console.log('Mass::verify::signMsg=<',signMsg,'>');
+    const signedHash = nacl.sign.open(signMsg,publicKey);
+    if(!signedHash) {
+      console.log('Mass::verify::signedHash=<',signedHash,'>');
+      return false;
+    }
+    const signedHashB64 = nacl.util.encodeBase64(signedHash);
+    //console.log('Mass::verify::signedHashB64=<',signedHashB64,'>');
+    
+    const msgCal = Object.assign({},msg);
+    delete msgCal.auth;
+    const msgCalcStr = JSON.stringify(msgCal);
+    const encoder = new TextEncoder();
+    const hashCalc = nacl.hash(encoder.encode(msgCalcStr));
+    //console.log('Mass::verify::hashCalc=<',hashCalc,'>');
+    const hashCalc512B64 = nacl.util.encodeBase64(hashCalc);
+    //console.log('Mass::verify::hashCalc512B64=<',hashCalc512B64,'>');
+    const hashCalclB64 = CryptoJS.SHA1(hashCalc512B64).toString(CryptoJS.enc.Base64);   
+    if(signedHashB64 === hashCalclB64) {
+      msg.from = calcAddress;
+      return true;
+    } else {
+      console.log('Mass::verify::signedHashB64=<',signedHashB64,'>');
+      console.log('Mass::verify::hashCalclB64=<',hashCalclB64,'>');
+    }
+    return false;
   }
   load(secretKey) {
     if(Mass.debug) {

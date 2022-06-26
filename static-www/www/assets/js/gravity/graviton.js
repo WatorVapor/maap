@@ -1,11 +1,11 @@
 export class Graviton {
-  static debug = true;
-  static wsClient = false;
-  constructor(mass) {
+  static debug = false;
+  constructor(mass,cb) {
     if(Graviton.debug) {
       console.log('Graviton::constructor:mass=<',mass,'>');
     }
     this.mass_ = mass;
+    this.cb_ = cb;
     this.createMqttClient_();
   }
   createMqttClient_() {
@@ -91,7 +91,7 @@ export class Graviton {
     this.mqttClient_.on('message', (channel, message) => {
       self.onMqttMessage_(channel, message);
     });
-    this.mqttClient_.subscribe(`${this.mass_.address_}/#`);
+    this.mqttClient_.subscribe(`${this.mass_.address_}/#`,{qos:1});
   }  
   onMqttMessage_(channel, message) {
     //console.log('Graviton::onMqttMessage_ channel:=<', channel, '>');
@@ -100,13 +100,19 @@ export class Graviton {
     //console.log('Graviton::onMqttMessage_ msgStr:=<', msgStr, '>');
     try {
       const msgJson = JSON.parse(msgStr);
-      //console.log('Graviton::onMqttMessage_ msgJson:=<', msgJson, '>');
-      if(typeof this.cb_ === 'function') {
+      if(Graviton.debug) {
+        console.log('Graviton::onMqttMessage_ msgJson:=<', msgJson, '>');
+      }
+      const goodAuthed = this.mass_.verify(msgJson);
+      if(Graviton.debug) {
+        console.log('Graviton::onMqttMessage_ goodAuthed:=<', goodAuthed, '>');
+      }
+      if(goodAuthed && typeof this.cb_ === 'function') {
         this.cb_(channel, msgJson);
       }
     } catch(err) {
-      console.log('Graviton::onMqttMessage_ err:=<', err, '>');
-      console.log('Graviton::onMqttMessage_ msgStr:=<', msgStr, '>');
+      console.error('Graviton::onMqttMessage_ err:=<', err, '>');
+      console.error('Graviton::onMqttMessage_ msgStr:=<', msgStr, '>');
     }
   }
 }
