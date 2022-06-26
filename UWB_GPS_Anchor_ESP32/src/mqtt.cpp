@@ -216,7 +216,7 @@ extern std::string gMqttJWTToken;
 
 void subscribeAtConnected(PubSubClient &client) {
   auto topic = gAddress + "/#";
-  client.subscribe(topic.c_str(),1);
+  client.subscribe(topic.c_str(),0);
 }
 
 void reconnect(PubSubClient &client) {
@@ -313,12 +313,12 @@ static void reportUWB(void)
 {
   std::lock_guard<std::mutex> lock(gUWBLineMtx);
   if(gUWBLineBuff.empty() == false) {
+    gTempMqttReportDoc.clear();
     auto line = gUWBLineBuff.front();
     gTempMqttReportDoc["uwb"] = line;
     if(line.empty() == false) {
       reportJson();
     }
-    gTempMqttReportDoc.clear();
     gUWBLineBuff.pop_front();
   }
 }
@@ -335,12 +335,12 @@ static void reportGPS(void)
 {
   std::lock_guard<std::mutex> lock(gGpsLineMtx);
   if(gGPSLineBuff.empty() == false) {
+    gTempMqttReportDoc.clear();
     auto line = gGPSLineBuff.front();
     gTempMqttReportDoc["gps"] = line;
-    if(line.empty() == false) {
+    if(line.find("$GNGGA,") == 0) {
       reportJson();
     }
-    gTempMqttReportDoc.clear();
     gGPSLineBuff.pop_front();
   }
 }
