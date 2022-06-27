@@ -81,15 +81,41 @@ const onGPSData = (gpsData,from,state) => {
     console.log('onGPSData::gpsData=<',gpsData,'>');
     //console.log('onGPSData::from=<',from,'>');
     //console.log('onGPSData::state=<',state,'>');
-    onAnchorPosition(gpsData.lon,gpsData.lat,gpsData.geoidal,from);
+    if(gpsData.lon && gpsData.lat && gpsData.geoidal) {
+      onAnchorPosition(gpsData.lon,gpsData.lat,gpsData.geoidal,from);
+    }
   }
 }
-
+const iConstGPSHistoryMax = 1024;
+const arConstGPSHistory = {
+  
+};
 const onAnchorPosition = (lon,lat,geoidal,anchorAddress) => {
   console.log('onAnchorPosition::lon=<',lon,'>');
   console.log('onAnchorPosition::lat=<',lat,'>');
   console.log('onAnchorPosition::geoidal=<',geoidal,'>');  
-  console.log('onAnchorPosition::anchorAddress=<',anchorAddress,'>');  
+  console.log('onAnchorPosition::anchorAddress=<',anchorAddress,'>');
+  const keyHistory = `${constAnchorGpsHistoryPrefix}/${anchorAddress}`;
+  if(!arConstGPSHistory[anchorAddress]) {
+    const gpsHistoryStr = localStorage.getItem(keyHistory);
+    if(gpsHistoryStr) {
+      arConstGPSHistory[anchorAddress] = JSON.parse(gpsHistoryStr);
+    } else {
+      arConstGPSHistory[anchorAddress] = [];
+    }
+  }
+  const save = {
+    lon:lon,
+    lat:lat,
+    geo:geoidal,
+  };
+  arConstGPSHistory[anchorAddress].push(save);
+  if(arConstGPSHistory[anchorAddress].length > iConstGPSHistoryMax) {
+    arConstGPSHistory[anchorAddress].shift();
+  }
+  localStorage.setItem(keyHistory,JSON.stringify(arConstGPSHistory[anchorAddress]));
+  console.log('onAnchorPosition::keyHistory=<',keyHistory,'>');
+  updateMap(lat,lon);
 }
 
 const onUWBMsg = (uwb,from)=> {

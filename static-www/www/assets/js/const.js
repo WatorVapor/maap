@@ -14,3 +14,7 @@ const constMansionPrefix = 'maap/mansion/store'
 const constMansionMqttJwtPrefix = 'maap/mansion/mqtt/jwt'
 
 const constMansionTargetAddress = 'maap/mansion/target/address'
+
+
+const constAnchorGpsHistoryPrefix = 'maap/anchor/gps/history'
+const constAnchorGpsBestPrefix = 'maap/anchor/gps/best'
