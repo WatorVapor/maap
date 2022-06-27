@@ -145,11 +145,11 @@ std::string sha1Address(byte *msg,size_t length) {
   mbedtls_sha1_update(&sha1_ctx, msg, length);
   byte digest[20] = {0};
   mbedtls_sha1_finish(&sha1_ctx, digest);
-  LOG_H(digest,sizeof(digest));
+  DUMP_H(digest,sizeof(digest));
   Base32 base32;
   byte *digestB32 = NULL;
   auto b32Ret = base32.toBase32(digest,sizeof(digest),digestB32,true);
-  LOG_I(b32Ret);
+  DUMP_I(b32Ret);
   std::string result((char*)digestB32,b32Ret);
   return result;
 }
@@ -172,19 +172,20 @@ void miningAddress(void) {
   while(true)
   {
     crypto_sign_keypair(publicKey,secretKey);
-    LOG_H(secretKey,sizeof(secretKey));
-    LOG_H(publicKey,sizeof(publicKey));
+    DUMP_H(secretKey,sizeof(secretKey));
+    DUMP_H(publicKey,sizeof(publicKey));
     byte mineSha512[crypto_hash_sha512_BYTES] = {0};
     auto hashRet = crypto_hash_sha512(mineSha512,publicKey,crypto_sign_PUBLICKEYBYTES);
-    LOG_I(hashRet);
-    LOG_H(mineSha512,sizeof(mineSha512));
+    DUMP_I(hashRet);
+    DUMP_H(mineSha512,sizeof(mineSha512));
     byte sha512B64[crypto_hash_sha512_BYTES*2] = {0};
     int b64Ret1 = encode_base64(mineSha512,crypto_hash_sha512_BYTES,sha512B64);
-    LOG_I(b64Ret1);
+    DUMP_I(b64Ret1);
     std::string sha512B64Str((char*)sha512B64,b64Ret1);
-    LOG_S(sha512B64Str);
+    DUMP_S(sha512B64Str);
     address = sha1Address((byte*)sha512B64Str.c_str(),sha512B64Str.size());
     LOG_S(address);
+    delay(1);
 /*
     break;
     if(address.at(0) == 'm') {

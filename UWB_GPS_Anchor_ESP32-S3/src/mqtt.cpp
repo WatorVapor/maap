@@ -159,6 +159,8 @@ void setupMQTT(void) {
   gAddress = preferences.getString(strConstEdtokenAddressKey);
   auto pubKeyB64 = preferences.getString(strConstEdtokenPublicKey);
   auto secKeyB64 = preferences.getString(strConstEdtokenSecretKey);
+  LOG_S(pubKeyB64);
+  LOG_S(secKeyB64);
 
   auto ssid = preferences.getString(strConstWifiSsidKey);
   auto password = preferences.getString(strConstWifiPasswordKey);
