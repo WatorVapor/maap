@@ -2,7 +2,9 @@
 #include <string>
 #include <mutex>
 #include <list>
-
+#include <FS.h>
+#include <SPIFFS.h>
+#include "debug.hpp"
 
 #define GPS_ Serial1
 #define UWB_ Serial2
@@ -21,6 +23,9 @@ void setup() {
   Serial.println("UWB GPS Anchor start");
   GPS_.begin(115200,SERIAL_8N1,GPS_RX_PIN,GPS_TX_PIN);
   UWB_.begin(115200,SERIAL_8N1,UWB_RX_PIN,UWB_TX_PIN);
+
+  auto isGoodFS = SPIFFS.begin(true,"/spiffs",100,"spiffs");
+  LOG_I(isGoodFS);
 
   xTaskCreatePinnedToCore(BLETask, "BLETask", 10000, nullptr, 1, nullptr,  1); 
   xTaskCreatePinnedToCore(MQTTTask, "MQTTTask", 10000, nullptr, 1, nullptr,  1); 
