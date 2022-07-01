@@ -8,7 +8,7 @@
 #define UWB_ Serial2
 
 void BLETask( void * parameter);
-void MQTTTask( void * parameter);
+void NetWorkTask( void * parameter);
 
 static const int GPS_TX_PIN = 27; 
 static const int GPS_RX_PIN = 26; 
@@ -23,7 +23,7 @@ void setup() {
   UWB_.begin(115200,SERIAL_8N1,UWB_RX_PIN,UWB_TX_PIN);
 
   xTaskCreatePinnedToCore(BLETask, "BLETask", 10000, nullptr, 1, nullptr,  1); 
-  xTaskCreatePinnedToCore(MQTTTask, "MQTTTask", 10000, nullptr, 1, nullptr,  1); 
+  xTaskCreatePinnedToCore(NetWorkTask, "NetWorkTask", 10000, nullptr, 1, nullptr,  1); 
 
   delay(5000);
   UWB_.print("AT+switchdis=1\r\n");

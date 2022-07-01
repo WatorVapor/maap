@@ -219,7 +219,7 @@ void subscribeAtConnected(PubSubClient &client) {
   client.subscribe(topic.c_str(),0);
 }
 
-void reconnect(PubSubClient &client) {
+void reconnectMqtt(PubSubClient &client) {
   // Loop until we're reconnected
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
@@ -245,16 +245,10 @@ void reconnect(PubSubClient &client) {
 void JWTTask( void * parameter);
 
 static WiFiClient espClient;
-static PubSubClient client(espClient);
+static PubSubClient mqttClient(espClient);
 void runMqttTransimit(void);
 
-void MQTTTask( void * parameter){
-  int core = xPortGetCoreID();
-  LOG_I(core);
-  setupMQTT();
-  
-  xTaskCreatePinnedToCore(JWTTask, "JWTTask", 10000, nullptr, 1, nullptr,  1); 
-
+void connectMqtt(void) {
   auto goodPref = preferences.begin(preferencesZone);
   auto mqtt_host = preferences.getString(strConstMqttURLHostKey);
   auto mqtt_port = preferences.getInt(strConstMqttURLPortKey);
@@ -263,11 +257,29 @@ void MQTTTask( void * parameter){
   LOG_S(mqtt_host);
   LOG_I(mqtt_port);
 
+  mqttClient.setServer(mqtt_host.c_str(), (uint16_t)mqtt_port);
+  mqttClient.setCallback(callback);
+  mqttClient.setBufferSize(512);
+  LOG_I(mqttClient.getBufferSize());
+
+} 
+void loopMqtt(void) {
+  if (!mqttClient.connected()) {
+    reconnectMqtt(mqttClient);
+  }
+  mqttClient.loop();
+  runMqttTransimit();
+}
+/*
+void MQTTTask( void * parameter){
+  int core = xPortGetCoreID();
+  LOG_I(core);
+  setupMQTT();
   
-  client.setServer(mqtt_host.c_str(), (uint16_t)mqtt_port);
-  client.setCallback(callback);
-  client.setBufferSize(512);
-  LOG_I(client.getBufferSize());
+  xTaskCreatePinnedToCore(JWTTask, "JWTTask", 10000, nullptr, 1, nullptr,  1); 
+
+
+  
 
   for(;;) {//
     if (!client.connected()) {
@@ -278,6 +290,7 @@ void MQTTTask( void * parameter){
     delay(1);
   }
 }
+*/
 
 #include <sstream>
 #include <string>
@@ -300,11 +313,11 @@ static void reportJson(void) {
   String report;
   serializeJson(gTempMqttReportDocSign, report);
   LOG_S(report);
-  if(client.connected()) {
+  if(mqttClient.connected()) {
     for(auto &topic : gOutTopics) {
       std::string outTopic = topic + "/uwb";
       LOG_S(outTopic);
-      auto goodPublish = client.publish_P(outTopic.c_str(),report.c_str(),report.length());
+      auto goodPublish = mqttClient.publish_P(outTopic.c_str(),report.c_str(),report.length());
       LOG_I(goodPublish);
     }
   }
