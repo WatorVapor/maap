@@ -4,7 +4,6 @@
 #include <list>
 #include <WiFi.h>
 #include <PubSubClient.h>
-#include <WiFiClientSecure.h>
 
 #include <Preferences.h>
 
@@ -248,13 +247,17 @@ static WiFiClient espClient;
 static PubSubClient mqttClient(espClient);
 void runMqttTransimit(void);
 
+static String mqtt_host;
+static uint16_t mqtt_port;
+//static String mqtt_path;
 void connectMqtt(void) {
   auto goodPref = preferences.begin(preferencesZone);
-  auto mqtt_host = preferences.getString(strConstMqttURLHostKey);
-  auto mqtt_port = preferences.getInt(strConstMqttURLPortKey);
-  auto mqtt_path = preferences.getString(strConstMqttURLPathKey);
+  mqtt_host = preferences.getString(strConstMqttURLHostKey);
+  mqtt_port = preferences.getInt(strConstMqttURLPortKey);
+  //mqtt_path = preferences.getString(strConstMqttURLPathKey);
   preferences.end();
   LOG_S(mqtt_host);
+  LOG_I(mqtt_host.length());
   LOG_I(mqtt_port);
 
   mqttClient.setServer(mqtt_host.c_str(), (uint16_t)mqtt_port);
