@@ -137,7 +137,17 @@ static void onSettingCommand(const JsonObject &setting) {
         savePref(strConstMqttJWTPathKey,path);
       }
     }
-
+  }
+  if(setting.containsKey("uwb")) {
+    auto uwb = setting["uwb"];
+    if(uwb.containsKey("mode")) {
+      auto mode = uwb["mode"].as<int32_t>();
+      savePref(strConstUWBModeKey,mode);
+    }
+    if(uwb.containsKey("id")) {
+      auto id = uwb["id"].as<int32_t>();
+      savePref(strConstUWBIdKey,id);
+    }
   }
   preferences.end();
 }
@@ -149,19 +159,19 @@ static void onInfoCommand(void) {
   auto password = preferences.getString(strConstWifiPasswordKey);
   auto url = preferences.getString(strConstMqttURLKey);
   auto jwt = preferences.getString(strConstMqttJWTKey);
-  auto topicOut = preferences.getString(strConstMqttTopicOutKey);
   LOG_S(jwt);
+  auto topicOut = preferences.getString(strConstMqttTopicOutKey);
+
+  auto uwbMode = preferences.getInt(strConstUWBModeKey);
+  auto uwbId = preferences.getInt(strConstUWBIdKey);
 
   auto address = preferences.getString(strConstEdtokenAddressKey);
   preferences.end();
-  StaticJsonDocument<256> wifi;
-  wifi["ssid"] = ssid;
-  wifi["password"] = password;
   {
-    StaticJsonDocument<256> info;
-    info["wifi"] = wifi;
-    StaticJsonDocument<512> doc;
-    doc["info"] = info;
+    static StaticJsonDocument<512> doc;
+    doc.clear();
+    doc["info"]["wifi"]["ssid"] = ssid;
+    doc["info"]["wifi"]["password"] = password;
     std::string outStr;
     serializeJson(doc, outStr);
     outStr += "\r\n";
@@ -169,15 +179,12 @@ static void onInfoCommand(void) {
     pTxCharacteristic->notify();
   }
 
-  StaticJsonDocument<256> mqtt;
-  mqtt["address"] = address;
-  mqtt["url"] = url;
-  mqtt["jwt"] = jwt;
   {
-    StaticJsonDocument<256> info;
-    info["mqtt"] = mqtt;
-    StaticJsonDocument<512> doc;
-    doc["info"] = info;
+    static StaticJsonDocument<512> doc;
+    doc.clear();
+    doc["info"]["mqtt"]["address"] = address;
+    doc["info"]["mqtt"]["url"] = url;
+    doc["info"]["mqtt"]["jwt"] = jwt;
     std::string outStr;
     serializeJson(doc, outStr);
     outStr += "\r\n";
@@ -185,28 +192,43 @@ static void onInfoCommand(void) {
     pTxCharacteristic->notify();
   }
 
-  StaticJsonDocument<256> topic;
+  static StaticJsonDocument<256> topic;
   DeserializationError error = deserializeJson(topic, topicOut);
   LOG_S(error);
   if(error == DeserializationError::Ok) {
-    StaticJsonDocument<256> info;
-    info["topic"]["out"] = topic;
-    StaticJsonDocument<512> doc;
-    doc["info"] = info;
+    static StaticJsonDocument<512> doc;
+    doc.clear();
+    doc["info"]["topic"]["out"] = topic;
     std::string outStr;
     serializeJson(doc, outStr);
     outStr += "\r\n";
     pTxCharacteristic->setValue(outStr);
     pTxCharacteristic->notify();
   }
+
+  {
+    static StaticJsonDocument<512> doc;
+    doc.clear();
+    doc["info"]["uwb"]["mode"] = uwbMode;
+    doc["info"]["uwb"]["id"] = uwbId;
+    std::string outStr;
+    serializeJson(doc, outStr);
+    outStr += "\r\n";
+    pTxCharacteristic->setValue(outStr);
+    pTxCharacteristic->notify();
+  }
+
+
 }
 
+void runUWBAtCommand(const std::string &At);
 void onExternalCommand(StaticJsonDocument<512> &doc) {
   if(doc.containsKey("uwb")) {
     auto uwb = doc["uwb"];
     if(uwb.containsKey("AT")) {
       auto atCmd = uwb["AT"].as<std::string>();
       LOG_S(atCmd);
+      runUWBAtCommand(atCmd);
     }
   }
   if(doc.containsKey("setting")) {

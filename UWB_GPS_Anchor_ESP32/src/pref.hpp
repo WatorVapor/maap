@@ -18,3 +18,6 @@ static const char *strConstMqttTopicOutKey = "mqtt.out";
 static const char *strConstEdtokenAddressKey = "mqtt.address";
 static const char *strConstEdtokenPublicKey = "mqtt.public";
 static const char *strConstEdtokenSecretKey = "mqtt.secret";
+
+static const char *strConstUWBModeKey = "uwb.mode";
+static const char *strConstUWBIdKey = "uwb.id";

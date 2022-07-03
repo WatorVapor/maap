@@ -249,11 +249,14 @@ void runMqttTransimit(void);
 
 static String mqtt_host;
 static uint16_t mqtt_port;
+static uint16_t uwb_id;
+
 //static String mqtt_path;
 void connectMqtt(void) {
   auto goodPref = preferences.begin(preferencesZone);
   mqtt_host = preferences.getString(strConstMqttURLHostKey);
   mqtt_port = preferences.getInt(strConstMqttURLPortKey);
+  uwb_id = preferences.getInt(strConstUWBIdKey);
   //mqtt_path = preferences.getString(strConstMqttURLPathKey);
   preferences.end();
   LOG_S(mqtt_host);
@@ -273,28 +276,6 @@ void loopMqtt(void) {
   mqttClient.loop();
   runMqttTransimit();
 }
-/*
-void MQTTTask( void * parameter){
-  int core = xPortGetCoreID();
-  LOG_I(core);
-  setupMQTT();
-  
-  xTaskCreatePinnedToCore(JWTTask, "JWTTask", 10000, nullptr, 1, nullptr,  1); 
-
-
-  
-
-  for(;;) {//
-    if (!client.connected()) {
-      reconnect(client);
-    }
-    client.loop();
-    runMqttTransimit();
-    delay(1);
-  }
-}
-*/
-
 #include <sstream>
 #include <string>
 #include <mutex>
@@ -315,13 +296,13 @@ static void reportJson(void) {
   auto gTempMqttReportDocSign = signMsg(gTempMqttReportDoc,gDateOfSign);
   String report;
   serializeJson(gTempMqttReportDocSign, report);
-  LOG_S(report);
+  DUMP_S(report);
   if(mqttClient.connected()) {
     for(auto &topic : gOutTopics) {
       std::string outTopic = topic + "/uwb";
-      LOG_S(outTopic);
+      DUMP_S(outTopic);
       auto goodPublish = mqttClient.publish_P(outTopic.c_str(),report.c_str(),report.length());
-      LOG_I(goodPublish);
+      DUMP_I(goodPublish);
     }
   }
 }
@@ -353,7 +334,8 @@ static void reportGPS(void)
   if(gGPSLineBuff.empty() == false) {
     gTempMqttReportDoc.clear();
     auto line = gGPSLineBuff.front();
-    gTempMqttReportDoc["gps"] = line;
+    gTempMqttReportDoc["gps"]["raw"] = line;
+    gTempMqttReportDoc["gps"]["id"] = uwb_id;
     if(line.find("$GNGGA,") == 0) {
       reportJson();
     }

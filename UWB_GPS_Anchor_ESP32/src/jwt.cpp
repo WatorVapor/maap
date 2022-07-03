@@ -55,7 +55,8 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
       LOG_I(length);
       std::string payloadStr((char*)payload,length);
       LOG_S(payloadStr);
-      StaticJsonDocument<512> doc;
+      static StaticJsonDocument<512> doc;
+      doc.clear();
       DeserializationError error = deserializeJson(doc, payloadStr);
       LOG_S(error);
       if(error == DeserializationError::Ok) {
@@ -83,7 +84,8 @@ String gPublicKey;
 
 
 static String createJWTRequest(const std::string &ts) {
-  StaticJsonDocument<512> doc;
+  static StaticJsonDocument<512> doc;
+  doc.clear();
   doc["jwt"]["add"] = gAddress;
   doc["jwt"]["min"] = true;
   auto signedRequest = signMsg(doc,ts);
@@ -93,7 +95,8 @@ static String createJWTRequest(const std::string &ts) {
 }
 
 static String createDateRequest(void) {
-  StaticJsonDocument<256> doc;
+  static StaticJsonDocument<256> doc;
+  doc.clear();
   doc["date"] = "req";
   String request;
   serializeJson(doc, request);
@@ -131,38 +134,3 @@ void connectJWT(void) {
 void loopJWT(void) {
     webSocket.loop();  
 }
-/*
-void JWTTask( void * parameter){
-  int core = xPortGetCoreID();
-  LOG_I(core);
-  auto goodPref = preferences.begin(preferencesZone);
-  LOG_I(goodPref);
-  auto jwt_url = preferences.getString(strConstMqttJWTKey);
-  LOG_S(jwt_url);
-  auto jwt_host = preferences.getString(strConstMqttJWTHostKey);
-  LOG_S(jwt_host);
-  auto jwt_port = preferences.getInt(strConstMqttJWTPortKey);
-  LOG_I(jwt_port);
-  auto jwt_path = preferences.getString(strConstMqttJWTPathKey);
-  LOG_S(jwt_path);
-
-  gAddress = preferences.getString(strConstEdtokenAddressKey);
-  LOG_S(gAddress);
-  gPublicKey = preferences.getString(strConstEdtokenPublicKey);
-  LOG_S(gPublicKey);
-  gSecretKey = preferences.getString(strConstEdtokenSecretKey);
-  LOG_S(gSecretKey);
-  preferences.end();
-
-  int b64Ret2 = decode_base64((byte*)(gSecretKey.c_str()),gSecretKey.length(),gSecretKeyBin);
-  LOG_H(gSecretKeyBin,sizeof(gSecretKeyBin));
-
-  webSocket.begin(jwt_host.c_str(),(uint16_t)jwt_port,jwt_path.c_str());
-  webSocket.onEvent(webSocketEvent);
-  for(;;) {
-    webSocket.loop();
-    delay(1);
-  }
-}
-*/
-

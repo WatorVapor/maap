@@ -2,6 +2,7 @@
 #include <string>
 #include <mutex>
 #include <list>
+#include "debug.hpp"
 
 
 #define GPS_ Serial1
@@ -9,6 +10,7 @@
 
 void BLETask( void * parameter);
 void NetWorkTask( void * parameter);
+void initUWB(void);
 
 static const int GPS_TX_PIN = 27; 
 static const int GPS_RX_PIN = 26; 
@@ -26,7 +28,7 @@ void setup() {
   xTaskCreatePinnedToCore(NetWorkTask, "NetWorkTask", 10000, nullptr, 1, nullptr,  1); 
 
   delay(5000);
-  UWB_.print("AT+switchdis=1\r\n");
+  initUWB();
 }
 
 
@@ -41,14 +43,23 @@ static std::string uwbLine;
 std::mutex gUWBLineMtx;
 std::list <std::string> gUWBLineBuff;
 
-//#define UART_DIR 1
+//#define UART_DIR_GPS 1
+#define UART_DIR_UWB 1
+
+
+std::mutex gUWBAtCmdMtx;
+std::list <std::string> gUWBAtCmdBuff;
+void runUWBAtCommand(const std::string&At) {
+  std::lock_guard<std::mutex> lock(gUWBAtCmdMtx);
+  gUWBAtCmdBuff.push_back(At);
+}
 
 
 void loop() {
   // put your main code here, to run repeatedly:
   if(GPS_.available()) {
     auto ch = GPS_.read();
-#ifdef UART_DIR
+#ifdef UART_DIR_GPS
     Serial.write(ch);
 #endif
     gpsLine.push_back(ch);
@@ -63,7 +74,7 @@ void loop() {
   }
   if(UWB_.available()) {
     auto ch = UWB_.read();
-#ifdef UART_DIR
+#ifdef UART_DIR_UWB
     Serial.write(ch);
 #endif
     {
@@ -77,6 +88,15 @@ void loop() {
       std::lock_guard<std::mutex> lock(gUWBLineMtx);
       gUWBLineBuff.push_back(uwbLine);
       uwbLine.clear();   
+    }
+  }
+  {
+    std::lock_guard<std::mutex> lock(gUWBAtCmdMtx);
+    if(gUWBAtCmdBuff.empty() == false) {
+      auto at = gUWBAtCmdBuff.front();
+      LOG_S(at);
+      UWB_.write(at.c_str(),at.size());
+      gUWBAtCmdBuff.pop_front();
     }
   }
   isPreferenceAllow = true;
