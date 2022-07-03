@@ -1,21 +1,25 @@
-const onUISettingInfo = (info) => {
+const onConnectiongInfo = (info) => {
   if(info.wifi) {
-    APP.vm.wifi = info.wifi;
+    connectionApp.vm.wifi = info.wifi;
   }
   if(info.mqtt) {
-    APP.vm.mqtt = info.mqtt;
+    connectionApp.vm.mqtt = info.mqtt;
   }
   if(info.topic) {
-    APP.vm.topic = info.topic;
+    connectionApp.vm.topic = info.topic;
+  }
+  if(info.uwb) {
+    connectionApp.vm.uwb = info.uwb;
   }
 }
+
 document.addEventListener('DOMContentLoaded',()=>{
   setTimeout(()=>{
-    createVueApps();
+    createVueConnectionApp();
   },1000);
 })
-const APP = {};
-const setting_anchor_data = {
+const connectionApp = {};
+const setting_connection_data = {
   wifi:{
     password: '',
     ssid: '',
@@ -28,13 +32,17 @@ const setting_anchor_data = {
   topic:{
     out:[],
   },
+  uwb:{
+    mode:0,
+    id:0,
+  },
   mansions:[],
   mansionSelected:'',
 }
-const createVueApps = ()=> {  
+const createVueConnectionApp = ()=> {  
   const setting_option = {
     data() {
-      return setting_anchor_data;
+      return setting_connection_data;
     },
     methods: {
       onClickChangeSetting(evt) {
@@ -49,6 +57,7 @@ const createVueApps = ()=> {
           setting:{
             wifi:this.wifi,
             mqtt:this.mqtt,
+            uwb:this.uwb,
             mqtt_:{
               url:{
                 host:uri.host,
@@ -89,12 +98,11 @@ const createVueApps = ()=> {
     }
   };
   const settingApp = Vue.createApp(setting_option);
-  APP.vm = settingApp.mount('#vue-ui-info-of-anchor');  
+  connectionApp.vm = settingApp.mount('#vue-ui-connection-of-anchor');  
   const starMansionListStr = localStorage.getItem(constMansionList);
   if(starMansionListStr) {
     const starMansionList = JSON.parse(starMansionListStr);    
     console.log('loadStarryDashboardApp_::starMansionList=<',starMansionList,'>');
-    APP.vm.mansions = starMansionList;
+    connectionApp.vm.mansions = starMansionList;
   }
-
 }

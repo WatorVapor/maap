@@ -70,19 +70,20 @@ const onGPSMsg = (gpsMsg,from)=> {
     App.anchors[from] = {};
     const gps = new GPS();
     gps.on('data', data => {
-      onGPSData(data,from,gps.state);
+      onGPSData(data,gpsMsg.id,from,gps.state);
     });
     App.anchors[from].gps = gps;
   }
-  App.anchors[from].gps.update(gpsMsg);
+  App.anchors[from].gps.update(gpsMsg.raw);
 }
-const onGPSData = (gpsData,from,state) => {
+const onGPSData = (gpsData,id,from,state) => {
   if(gpsData.type === 'GGA' && gpsData.valid === true) {
     console.log('onGPSData::gpsData=<',gpsData,'>');
+    console.log('onGPSData::id=<',id,'>');
     //console.log('onGPSData::from=<',from,'>');
     //console.log('onGPSData::state=<',state,'>');
     if(gpsData.lon && gpsData.lat && gpsData.geoidal) {
-      onAnchorPosition(gpsData.lon,gpsData.lat,gpsData.geoidal,from);
+      onAnchorPosition(gpsData.lon,gpsData.lat,gpsData.geoidal,id,from);
     }
   }
 }
@@ -90,10 +91,11 @@ const iConstGPSHistoryMax = 1024;
 const arConstGPSHistory = {
   
 };
-const onAnchorPosition = (lon,lat,geoidal,anchorAddress) => {
+const onAnchorPosition = (lon,lat,geoidal,uwbId,anchorAddress) => {
   console.log('onAnchorPosition::lon=<',lon,'>');
   console.log('onAnchorPosition::lat=<',lat,'>');
   console.log('onAnchorPosition::geoidal=<',geoidal,'>');  
+  console.log('onAnchorPosition::uwbId=<',uwbId,'>');
   console.log('onAnchorPosition::anchorAddress=<',anchorAddress,'>');
   const keyHistory = `${constAnchorGpsHistoryPrefix}/${anchorAddress}`;
   if(!arConstGPSHistory[anchorAddress]) {
@@ -108,6 +110,7 @@ const onAnchorPosition = (lon,lat,geoidal,anchorAddress) => {
     lon:lon,
     lat:lat,
     geo:geoidal,
+    uwbid:uwbId,
   };
   arConstGPSHistory[anchorAddress].push(save);
   if(arConstGPSHistory[anchorAddress].length > iConstGPSHistoryMax) {

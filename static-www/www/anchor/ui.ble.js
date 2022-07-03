@@ -58,8 +58,8 @@ const onBleData = (characteristic,value) => {
 
 const onSettingInfo = (info) => {
   console.log('::onSettingInfo::info=<',info,'>');
-  if(typeof onUISettingInfo === 'function') {
-    onUISettingInfo(info);
+  if(typeof onConnectiongInfo === 'function') {
+    onConnectiongInfo(info);
   }
 }
 
