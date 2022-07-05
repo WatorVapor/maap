@@ -19,6 +19,8 @@ extern "C" {
 /*
 static const char* ssid = "mayingkuiG";
 static const char* password = "xuanxuanhaohao";
+static const char* mqtt = "mqtt://wator.xyz:1883";
+static const char* jwt = "ws://wator.xyz:8083/jwt";
 */
 
 

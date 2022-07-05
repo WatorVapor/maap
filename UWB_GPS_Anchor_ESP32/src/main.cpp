@@ -14,8 +14,10 @@ void initUWB(void);
 
 static const int GPS_TX_PIN = 27; 
 static const int GPS_RX_PIN = 26; 
-static const int UWB_TX_PIN = 16; 
-static const int UWB_RX_PIN = 17; 
+//static const int UWB_TX_PIN = 16; 
+//static const int UWB_RX_PIN = 17; 
+static const int UWB_TX_PIN = 18; 
+static const int UWB_RX_PIN = 19; 
 
 void setup() {
   // put your setup code here, to run once:

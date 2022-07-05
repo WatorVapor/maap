@@ -26,8 +26,10 @@ void initUWB(void) {
   mode += "\r\n";
   LOG_S(mode);
   UWB_.print(mode.c_str());
-  delay(1000);
+  delay(2000);
   if(gUWBMode == 0) {
+    UWB_.print("AT+interval=1\r\n");
+    delay(2000);
     UWB_.print("AT+switchdis=1\r\n");
   } else {
     UWB_.print("AT+switchdis=0\r\n");
