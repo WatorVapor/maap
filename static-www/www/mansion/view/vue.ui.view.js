@@ -63,7 +63,7 @@ const onStarMansionSave = (mansionUI,mansion) => {
 }
 
 const onGPSMsg = (gpsMsg,from)=> {
-  //console.log('onGPSMsg::gpsMsg=<',gpsMsg,'>');
+  console.log('onGPSMsg::gpsMsg=<',gpsMsg,'>');
   //console.log('onGPSMsg::from=<',from,'>');
 
   if(!App.anchors[from]) {
