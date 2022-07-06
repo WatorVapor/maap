@@ -1,10 +1,13 @@
 document.addEventListener('AppScriptLoaded', async (evt) => {
   const posHistory = loadMapBySavedGpsAnchors();
   console.log('calcBestGPSFromHistory::posHistory=<',posHistory,'>');
-  if(posHistory) {
-    createMapView(posHistory.lon,posHistory.lat);
+  if(posHistory && posHistory.center) {
+    createMapView(posHistory.center.lon,posHistory.center.lat);
   } else {
     createMapView(0.0,0.0);
+  }
+  if(posHistory && posHistory.anchor) {
+    drawAnchorOnMap(posHistory.anchor);
   }
 });
 
@@ -30,16 +33,29 @@ const loadMapBySavedGpsAnchors = () => {
   }
   //console.log('loadMapBySavedGpsAnchors::anchorsGpsHistory=<',anchorsGpsHistory,'>');
   const bestGps = [];
+  const bestGpsAnchors = {};
   for(const anchorAddress in anchorsGpsHistory) {
     //console.log('loadMapBySavedGpsAnchors::anchorAddress=<',anchorAddress,'>');
     const gpsHistory = anchorsGpsHistory[anchorAddress];
     //console.log('loadMapBySavedGpsAnchors::gpsHistory=<',gpsHistory,'>');
     const gps = calcBestGPSFromHistory(gpsHistory);
     bestGps.push(gps);
+    bestGpsAnchors[anchorAddress] = gps;
   }
+  //console.log('loadMapBySavedGpsAnchors::bestGpsAnchors=<',bestGpsAnchors,'>');
   const gpsCenter = calcCenterOfGPS(bestGps);
   //console.log('loadMapBySavedGpsAnchors::gpsCenter=<',gpsCenter,'>');
-  return gpsCenter;
+  return {center:gpsCenter,anchor:bestGpsAnchors};
+}
+
+const drawAnchorOnMap = (anchorGps) => {
+  //console.log('drawAnchorOnMap::anchorGps=<',anchorGps,'>');
+  for(const anchorAddress in anchorGps) {
+    console.log('drawAnchorOnMap::anchorAddress=<',anchorAddress,'>');
+    const gps = anchorGps[anchorAddress];
+    console.log('drawAnchorOnMap::gps=<',gps,'>');
+    updateAnchorOnMap(anchorAddress,gps.lat,gps.lon);
+  }
 }
 
 const iConstFilterOutOnce = 6;
@@ -63,7 +79,7 @@ const calcBestGPSFromHistory = (gpsPoints)=> {
   const cutStart3 = (geoSorted.length/iConstFilterOutOnce);
   const cutLength3 = geoSorted.length - (geoSorted.length/iConstFilterOutOnce2);
   const remain3 = geoSorted.slice(cutStart3,cutLength3);
-  //console.log('calcBestGPSFromHistory::remain3=<',remain3,'>');
+  console.log('calcBestGPSFromHistory::remain3=<',remain3,'>');
   
   const bestGps = {
     lon:0.0,
@@ -81,6 +97,9 @@ const calcBestGPSFromHistory = (gpsPoints)=> {
     bestGps.lat /= remain3.length;
     bestGps.lon /= remain3.length;
     bestGps.geo /= remain3.length;
+  }
+  if(gpsPoints.length > 0) {
+    bestGps.uwbid = gpsPoints[gpsPoints.length-1].uwbid;
   }
   //console.log('calcBestGPSFromHistory::bestGps=<',bestGps,'>');
   return bestGps;
@@ -126,12 +145,7 @@ const createMapView = (lat,lon) => {
   gGPSMap = new ol.Map(mapOption);
 }
 
-let gGPSMapCenterOfRealGps = false;
 const updateMap = (lat,lon) => {
-  if(gGPSMapCenterOfRealGps === false) {
-    gGPSMap.getView().setCenter(ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857'));
-    gGPSMapCenterOfRealGps = true;
-  }
   const layerMarker = new ol.layer.Vector({
      source: new ol.source.Vector({
        features: [
@@ -139,6 +153,45 @@ const updateMap = (lat,lon) => {
              geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat]))
          })
        ]
+     })
+   });
+  gGPSMap.addLayer(layerMarker);  
+}
+
+let gAnchorColorTableIndex = 0;
+const gAnchorColorTable = [
+  'red','green','blue','orange',
+  'aqua','fuchsia'
+];
+const gAnchorStyles = {};
+const gAnchorFeatures = {};
+
+const updateAnchorOnMap = (address,lat,lon) => {
+  if(!gAnchorStyles[address]) {
+    const color = gAnchorColorTable[gAnchorColorTableIndex];
+    const image = new ol.style.Icon({
+      color: color,
+      crossOrigin: 'anonymous',
+      imgSize: [16, 16],
+      src: './icons/anchor-solid.svg',
+    });
+    const style = new ol.style.Style({image:image});   
+    gAnchorStyles[address] = style;
+    gAnchorColorTableIndex++;
+    gAnchorColorTableIndex %= gAnchorColorTable.length;
+  }
+  if(!gAnchorFeatures[address]) {
+    const feature = new ol.Feature({
+      geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat])),
+    })
+    gAnchorFeatures[address] = feature; 
+  }
+  const dstFeature = gAnchorFeatures[address];
+  dstFeature.setStyle(gAnchorStyles[address]);
+  
+  const layerMarker = new ol.layer.Vector({
+     source: new ol.source.Vector({
+       features: [ dstFeature ]
      })
    });
   gGPSMap.addLayer(layerMarker);  

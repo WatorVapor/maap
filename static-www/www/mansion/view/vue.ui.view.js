@@ -123,5 +123,5 @@ const onAnchorPosition = (lon,lat,geoidal,uwbId,anchorAddress) => {
 
 const onUWBMsg = (uwb,from)=> {
   console.log('onUWBMsg::uwb=<',uwb,'>');
-  console.log('onUWBMsg::from=<',from,'>');  
+  console.log('onUWBMsg::from=<',from,'>');
 }
