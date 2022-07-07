@@ -17,4 +17,4 @@ const constMansionTargetAddress = 'maap/mansion/target/address'
 
 
 const constAnchorGpsHistoryPrefix = 'maap/anchor/gps/history'
-const constAnchorGpsBestPrefix = 'maap/anchor/gps/best'
+const constAnchorGpsBest = 'maap/anchor/gps/best'
