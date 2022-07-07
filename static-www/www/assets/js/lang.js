@@ -1,17 +1,5 @@
+import * as Vue from 'https://cdn.jsdelivr.net/npm/vue@3.2.37/dist/vue.esm-browser.prod.js';
 const constKeyLanguangeCode = 'maap/lang_code';
-/*
-window.addEventListener('load', (evt) => {
-  createMultiLanguage_();
-});
-document.addEventListener('DOMContentLoaded', (evt) => {
-  createMultiLanguage_();
-});
-*/
-/*
-document.addEventListener('AppScriptLoaded', (evt) => {
-  //createMultiLanguage_();
-});
-*/
 
 document.addEventListener('TopMenuBarLoaded', (evt) => {
   createMultiLanguage_();
