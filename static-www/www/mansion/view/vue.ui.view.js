@@ -1,4 +1,8 @@
 const GSM = await import(`${appPrefix}/assets/js/gravity/mansion.js`);
+const COORD = await import(`/maap/assets/js/gps/Coord.js`);
+console.log('::COORD=<',COORD,'>');
+const coord = new COORD.Coord();
+
 document.addEventListener('AppScriptLoaded', async (evt) => {
   createStarMansionApp_();
 });
@@ -65,7 +69,6 @@ const onStarMansionSave = (mansionUI,mansion) => {
 const onGPSMsg = (gpsMsg,from)=> {
   //console.log('onGPSMsg::gpsMsg=<',gpsMsg,'>');
   //console.log('onGPSMsg::from=<',from,'>');
-
   if(!App.anchors[from]) {
     App.anchors[from] = {};
     const gps = new GPS();
@@ -106,10 +109,15 @@ const onAnchorPosition = (lon,lat,geoidal,uwbId,anchorAddress) => {
       arConstGPSHistory[anchorAddress] = [];
     }
   }
+  const xyz = coord.WGS2ECEF(lat,lon,geoidal);
+  //console.log('onAnchorPosition::xyz=<',xyz,'>');
   const save = {
     lon:lon,
     lat:lat,
     geo:geoidal,
+    x:xyz.x,
+    y:xyz.y,
+    z:xyz.z,    
     uwbid:uwbId,
   };
   arConstGPSHistory[anchorAddress].push(save);

@@ -1,3 +1,7 @@
+const COORD = await import(`/maap/assets/js/gps/Coord.js`);
+console.log('::COORD=<',COORD,'>');
+const coord = new COORD.Coord();
+
 document.addEventListener('AppScriptLoaded', async (evt) => {
   const posHistory = loadMapBySavedGpsAnchors();
   console.log('calcBestGPSFromHistory::posHistory=<',posHistory,'>');
@@ -11,7 +15,7 @@ document.addEventListener('AppScriptLoaded', async (evt) => {
   }
 });
 
-const loadMapBySavedGpsAnchors = () => {
+window.loadMapBySavedGpsAnchors = () => {
   const anchorsGpsHistory = {};
   const keys = Object.keys(localStorage);
   //console.log('loadMapBySavedGpsAnchors::keys=<',keys,'>');
@@ -48,6 +52,7 @@ const loadMapBySavedGpsAnchors = () => {
   return {center:gpsCenter,anchor:bestGpsAnchors};
 }
 
+
 const drawAnchorOnMap = (anchorGps) => {
   //console.log('drawAnchorOnMap::anchorGps=<',anchorGps,'>');
   for(const anchorAddress in anchorGps) {
@@ -55,6 +60,8 @@ const drawAnchorOnMap = (anchorGps) => {
     const gps = anchorGps[anchorAddress];
     console.log('drawAnchorOnMap::gps=<',gps,'>');
     updateAnchorOnMap(anchorAddress,gps.lat,gps.lon);
+    const xyz = coord.WGS2ECEF(gps.lat,gps.lon,gps.geo);
+    console.log('onAnchorPosition::xyz=<',xyz,'>');
   }
 }
 
@@ -130,6 +137,7 @@ let gGPSMap = false;
 const createMapView = (lat,lon) => {
   const layer =  new ol.layer.Tile({
     source: new ol.source.OSM()
+    //source: new ol.source.BingMaps()
   });
   const view = new ol.View({
     center: ol.proj.fromLonLat([lat, lon]),
@@ -145,30 +153,49 @@ const createMapView = (lat,lon) => {
   gGPSMap = new ol.Map(mapOption);
 }
 
-const updateMap = (lat,lon) => {
-  const layerMarker = new ol.layer.Vector({
-     source: new ol.source.Vector({
-       features: [
-         new ol.Feature({
-             geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat]))
-         })
-       ]
-     })
-   });
-  gGPSMap.addLayer(layerMarker);  
-}
-
-let gAnchorColorTableIndex = 0;
-const gAnchorColorTable = [
+const gGPSCurrentStyles = {};
+let gGPSCurrentColorTableIndex = 0;
+const gGPSColorTable = [
   'red','green','blue','orange',
   'aqua','fuchsia'
 ];
+
+window.updateMap = (lat,lon,address) => {
+  /*
+  if(!gGPSCurrentStyles[address]) {
+    const color = gGPSColorTable[gGPSCurrentColorTableIndex];
+    const image = new ol.style.Icon({
+      color: color,
+      crossOrigin: 'anonymous',
+      imgSize: [16, 16],
+      src: './icons/location-dot-solid.svg',
+    });
+    const style = new ol.style.Style({image:image});   
+    gGPSCurrentStyles[address] = style;
+    gGPSCurrentColorTableIndex++;
+    gGPSCurrentColorTableIndex %= gGPSColorTable.length;
+  }
+  const feature = new ol.Feature({
+    geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat])),
+  })
+  feature.setStyle(gGPSCurrentStyles[address]);
+
+  const layerMarker = new ol.layer.Vector({
+     source: new ol.source.Vector({
+       features: [ feature ]
+     })
+   });
+  gGPSMap.addLayer(layerMarker);
+  */
+}
+
+let gAnchorColorTableIndex = 0;
 const gAnchorStyles = {};
 const gAnchorFeatures = {};
 
 const updateAnchorOnMap = (address,lat,lon) => {
   if(!gAnchorStyles[address]) {
-    const color = gAnchorColorTable[gAnchorColorTableIndex];
+    const color = gGPSColorTable[gAnchorColorTableIndex];
     const image = new ol.style.Icon({
       color: color,
       crossOrigin: 'anonymous',
@@ -178,7 +205,7 @@ const updateAnchorOnMap = (address,lat,lon) => {
     const style = new ol.style.Style({image:image});   
     gAnchorStyles[address] = style;
     gAnchorColorTableIndex++;
-    gAnchorColorTableIndex %= gAnchorColorTable.length;
+    gAnchorColorTableIndex %= gGPSColorTable.length;
   }
   if(!gAnchorFeatures[address]) {
     const feature = new ol.Feature({
