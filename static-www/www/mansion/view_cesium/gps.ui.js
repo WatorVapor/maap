@@ -61,7 +61,7 @@ const drawAnchorOnMap = (anchorGps) => {
     console.log('drawAnchorOnMap::anchorAddress=<',anchorAddress,'>');
     const gps = anchorGps[anchorAddress];
     console.log('drawAnchorOnMap::gps=<',gps,'>');
-    updateAnchorOnMap(anchorAddress,gps.lat,gps.lon);
+    updateAnchorOnMap(anchorAddress,gps.lat,gps.lon,gps.geo);
     const xyz = coord.WGS2ECEF(gps.lat,gps.lon,gps.geo);
     console.log('onAnchorPosition::xyz=<',xyz,'>');
   }
@@ -146,32 +146,54 @@ const createMapView = (lat,lon) => {
     vrButton: false,
     geocoder:false,
     sceneModePicker:false,
-    navigationHelpButton:false  
+    navigationHelpButton:false,
   };
-  const viewer = new Cesium.Viewer('view_map', options);
-  const buildingTileset = viewer.scene.primitives.add(Cesium.createOsmBuildings());
-  viewer.camera.flyTo({
+  gGPSMap = new Cesium.Viewer('view_map', options);
+  const buildingTileset = gGPSMap.scene.primitives.add(Cesium.createOsmBuildings());
+  gGPSMap.camera.flyTo({
     destination : Cesium.Cartesian3.fromDegrees(lat, lon, 80),
     orientation : {
       heading : Cesium.Math.toRadians(0.0),
       pitch : Cesium.Math.toRadians(-90.0),
     }
-  });    
+  });
 }
 
 const gGPSCurrentStyles = {};
 let gGPSCurrentColorTableIndex = 0;
 const gGPSColorTable = [
-  'red','green','blue','orange',
-  'aqua','fuchsia'
+  Cesium.Color.RED,
+  Cesium.Color.BROWN,
+  Cesium.Color.CYAN,
+  Cesium.Color.DARKRED,
 ];
 
 window.updateMap = (lat,lon,address) => {
 }
 
 let gAnchorColorTableIndex = 0;
-const gAnchorStyles = {};
-const gAnchorFeatures = {};
-
-const updateAnchorOnMap = (address,lat,lon) => {
+const gAnchorColor = {};
+const updateAnchorOnMap = (address,lat,lon,geo) => {
+  let color;
+  if(!gAnchorColor[address]) {
+    color = gGPSColorTable[gAnchorColorTableIndex];
+    gAnchorColorTableIndex++;
+    gAnchorColorTableIndex %= gGPSColorTable.length;
+  }
+  const positionAnchor = Cesium.Cartesian3.fromDegrees(lon,lat,geo);
+  console.log('updateAnchorOnMap::positionAnchor=<',positionAnchor,'>');
+  const billboardAnchor = {
+    image :'./icons/anchor-solid.svg',
+    width : 16,
+    height : 16,
+    color :color,
+  };
+  const entry = {
+    name:address,
+    description:address,
+    position: positionAnchor,
+    billboard : billboardAnchor
+  }
+  const point = gGPSMap.entities.add(entry);
+  console.log('updateAnchorOnMap::point=<',point,'>');
 }
