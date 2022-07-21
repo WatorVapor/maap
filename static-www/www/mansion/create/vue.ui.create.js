@@ -20,6 +20,8 @@ const star_mansion_option = {
     }
   }  
 }
+import * as Vue from 'https://cdn.jsdelivr.net/npm/vue@3.2.37/dist/vue.esm-browser.prod.js';
+
 const createStarMansionApp_ = async ()=> {
   console.log('createStarMansionApp_::GSM=<',GSM,'>');
   const mansion = new GSM.StarMansion(constCreateMansionPrefix);

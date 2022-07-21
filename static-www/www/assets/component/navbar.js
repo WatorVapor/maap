@@ -11,3 +11,4 @@ const createVueApp = async ()=> {
   return await createMaapVueApp(componentTag,componentURL,componentData);
 }
 export default createVueApp;
+

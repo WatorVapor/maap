@@ -1,3 +1,5 @@
+import * as mqtt from 'https://cdn.jsdelivr.net/npm/mqtt@4.3.7/dist/mqtt.min.js'
+
 export class Graviton {
   static debug = false;
   constructor(mass,cb) {
