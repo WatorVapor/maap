@@ -26,7 +26,7 @@ void initUWB(void) {
   mode += "\r\n";
   LOG_S(mode);
   UWB_.print(mode.c_str());
-  delay(2000);
+  delay(5000);
   if(gUWBMode == 0) {
     UWB_.print("AT+interval=1\r\n");
     delay(2000);
