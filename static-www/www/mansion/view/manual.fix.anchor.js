@@ -16,7 +16,13 @@ const fixed_anchor_option = {
   methods: {
     onClickGotoBtn (evt) {
       console.log('onClickGotoBtn::evt=<',evt,'>');
-    }
+    },
+    onChangeAnchorWGS(evt) {
+      console.log('onChangeAnchorWGS::evt=<',evt,'>');
+    },
+    onChangeAnchorECEF(evt) {
+      console.log('onChangeAnchorECEF::evt=<',evt,'>');
+    },
   }  
 }
 

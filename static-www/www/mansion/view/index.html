@@ -36,33 +36,33 @@
           <span class="badge bg-secondary">{{address}}</span>
           <div class="input-group mb-3">
             <span class="input-group-text">lat</span>
-            <input type="text" class="form-control" v-model="anchor.lat">
+            <input type="text" class="form-control" v-model="anchor.lat" @change="onChangeAnchorWGS($event)">
           </div>
 
           <div class="input-group mb-3">
             <span class="input-group-text">lon</span>
-            <input type="text" class="form-control" v-model="anchor.lon">
+            <input type="text" class="form-control" v-model="anchor.lon" @change="onChangeAnchorWGS($event)">
           </div>
 
           <div class="input-group mb-3">
             <span class="input-group-text">geo</span>
-            <input type="text" class="form-control" v-model="anchor.geo">
+            <input type="text" class="form-control" v-model="anchor.geo" @change="onChangeAnchorWGS($event)">
           </div>
 
           
           <div class="input-group mb-3">
             <span class="input-group-text">x</span>
-            <input type="text" class="form-control" v-model="anchor.x">
+            <input type="text" class="form-control" v-model="anchor.x" @change="onChangeAnchorECEF($event)">
           </div>
 
           <div class="input-group mb-3">
             <span class="input-group-text">y</span>
-            <input type="text" class="form-control" v-model="anchor.y">
+            <input type="text" class="form-control" v-model="anchor.y" @change="onChangeAnchorECEF($event)">
           </div>
 
           <div class="input-group mb-3">
             <span class="input-group-text">z</span>
-            <input type="text" class="form-control" v-model="anchor.z">
+            <input type="text" class="form-control" v-model="anchor.z" @change="onChangeAnchorECEF($event)">
           </div>
 
           
