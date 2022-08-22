@@ -31,24 +31,41 @@
         </div>
       </div>
       <div class="row mt-2 justify-content-center" id="ui-vue-fix-anchor-manual">
-        <div class="col-4">
-          <h5 class="text-center">锚点</h5>
+        <div class="col-3" v-for="(anchor,address) in anchors">
+          <h6 class="text-center">锚点</h6>
+          <span class="badge bg-secondary">{{address}}</span>
           <div class="input-group mb-3">
             <span class="input-group-text">lat</span>
-            <input type="text" class="form-control">
-            <span class="input-group-text">log</span>
-            <input type="text" class="form-control">
-            <span class="input-group-text">geo</span>
-            <input type="text" class="form-control">
+            <input type="text" class="form-control" v-model="anchor.lat">
           </div>
+
+          <div class="input-group mb-3">
+            <span class="input-group-text">lon</span>
+            <input type="text" class="form-control" v-model="anchor.lon">
+          </div>
+
+          <div class="input-group mb-3">
+            <span class="input-group-text">geo</span>
+            <input type="text" class="form-control" v-model="anchor.geo">
+          </div>
+
+          
           <div class="input-group mb-3">
             <span class="input-group-text">x</span>
-            <input type="text" class="form-control">
-            <span class="input-group-text">y</span>
-            <input type="text" class="form-control">
-            <span class="input-group-text">z</span>
-            <input type="text" class="form-control">
+            <input type="text" class="form-control" v-model="anchor.x">
           </div>
+
+          <div class="input-group mb-3">
+            <span class="input-group-text">y</span>
+            <input type="text" class="form-control" v-model="anchor.y">
+          </div>
+
+          <div class="input-group mb-3">
+            <span class="input-group-text">z</span>
+            <input type="text" class="form-control" v-model="anchor.z">
+          </div>
+
+          
         </div>
       </div>
     </div>
@@ -74,7 +91,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/gps@0.6.1/gps.min.js" integrity="sha256-aP5ZLTc1l1e/GuhJwYW63UokuP2gHI7L9UB+utU8aA4=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.13.0/build/ol.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.9.0/build/ol.js"></script>
     <script type="module" src="./vue.ui.view.js"></script>
     <script type="module" src="./gps.ui.js"></script>
     <script type="module" src="./manual.fix.anchor.js"></script>

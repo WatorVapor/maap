@@ -2,6 +2,7 @@ const GSM = await import(`${appPrefix}/assets/js/gravity/mansion.js`);
 const COORD = await import(`/maap/assets/js/gps/Coord.js`);
 console.log('::COORD=<',COORD,'>');
 const coord = new COORD.Coord();
+import * as Vue from 'https://cdn.jsdelivr.net/npm/vue@3.2.37/dist/vue.esm-browser.prod.js';
 
 document.addEventListener('AppScriptLoaded', async (evt) => {
   createStarMansionApp_();
@@ -18,8 +19,8 @@ const star_mansion_option = {
   },
   methods: {
     onStarMansionSaveBtn(evt) {
-      //console.log('createStarMansionApp_::evt=<',evt,'>');
-      //console.log('createStarMansionApp_::this.mansion=<',this.mansion,'>');
+      //console.log('onStarMansionSaveBtn::evt=<',evt,'>');
+      //console.log('onStarMansionSaveBtn::this.mansion=<',this.mansion,'>');
       onStarMansionSave(this.mansion,this.instance);
     }
   }  
@@ -48,6 +49,8 @@ const createStarMansionApp_ = async ()=> {
       console.log('createStarMansionApp_::msg=<',msg,'>');      
     }
   });
+  const appMasion = Vue.createApp(star_mansion_option);
+  const vmMasion = appStarry.mount('#vue-ui-view-star-mansion');
 }
 
 const onStarMansionSave = (mansionUI,mansion) => {
