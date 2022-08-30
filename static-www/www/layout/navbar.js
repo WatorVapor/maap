@@ -1,12 +1,12 @@
 const NAVBAR = {
   debug:false,
 }
-window.addEventListener('AppScriptLoaded', async (evt) => {
+window.addEventListener('DOMContentLoaded', async (evt) => {
   createTopNavBar_();
 });
 
 const createTopNavBar_ = async ()=> {
-  const { default:createVueApp } = await import(`${appPrefix}/assets/component/navbar.js`);
+  const { default:createVueApp } = await import(`${constAppPrefix}/assets/component/navbar.js`);
   if(NAVBAR.debug) {
     console.log('w-navbar::createTopNavBar_::createVueApp=<',createVueApp,'>');
   }
@@ -16,7 +16,7 @@ const createTopNavBar_ = async ()=> {
     console.log('w-navbar::createTopNavBar_::vm=<',vm,'>');
   }
   
-  const { EDAuth } = await import(`${appPrefix}/assets/js/edauth.js`);
+  const { EDAuth } = await import(`${constAppPrefix}/assets/js/edauth.js`);
   if(NAVBAR.debug) {
     console.log('w-navbar::createTopNavBar_::EDAuth=<',EDAuth,'>');
   }

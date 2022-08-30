@@ -1,12 +1,12 @@
 const componentTag = 'w-navbar';
-const componentURL = `${appPrefix}/assets/component/navbar.html`;
+const componentURL = `${constAppPrefix}/assets/component/navbar.html`;
 const componentData = {
-  root:appPrefix,
+  root:constAppPrefix,
   accout:{ 
     name:''
   }
 };
-const { default:createMaapVueApp } = await import(`${appPrefix}/assets/component/component.js`);
+const { default:createMaapVueApp } = await import(`${constAppPrefix}/assets/component/component.js`);
 const createVueApp = async ()=> {
   return await createMaapVueApp(componentTag,componentURL,componentData);
 }

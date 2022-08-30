@@ -17,7 +17,7 @@ const createMultiLanguage_ = async () => {
   const langPromise = import(langURL);
   const langModule = await langPromise;
   //console.log('::langModule.data=<',langModule.data,'>');
-  const langCommonURL = `${appPrefix}/layout/lang_${lang}.js`;
+  const langCommonURL = `${constAppPrefix}/layout/lang_${lang}.js`;
   //console.log('::langCommonURL=<',langCommonURL,'>');
   const langCommonPromise = import(langCommonURL);
   const langCommonModule = await langCommonPromise;
