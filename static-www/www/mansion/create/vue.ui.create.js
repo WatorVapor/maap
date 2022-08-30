@@ -37,9 +37,10 @@ const createStarMansionApp_ = async ()=> {
   mansionVM.instance = mansion;
 }
 
-const onStarMansionSave = (mansionUI,mansion) => {
+const onStarMansionSave = async (mansionUI,mansion) => {
   console.log('onStarMansionSave::mansionUI=<',mansionUI,'>');
   console.log('onStarMansionSave::mansion=<',mansion,'>');
+  const GSM = await import(`${constAppPrefix}/assets/js/gravity/mansion.js`);
   const mf = new GSM.MansionFactory();
   const mansionObj = {
     name:mansionUI.name,
