@@ -1,12 +1,7 @@
-const GSM = await import(`${appPrefix}/assets/js/gravity/mansion.js`);
-const COORD = await import(`/maap/assets/js/gps/Coord.js`);
-console.log('::COORD=<',COORD,'>');
-const coord = new COORD.Coord();
 import * as Vue from 'https://cdn.jsdelivr.net/npm/vue@3.2.37/dist/vue.esm-browser.prod.js';
-
-document.addEventListener('AppScriptLoaded', async (evt) => {
-  console.log('AppScriptLoaded::evt=<',evt,'>');
-  createStarMansionApp_();
+document.addEventListener('DOMContentLoaded', async (evt) => {
+  console.log('DOMContentLoaded::evt=<',evt,'>');
+  await createStarMansionApp_();
 });
 
 const star_mansion_option = {
@@ -35,6 +30,7 @@ const createStarMansionApp_ = async ()=> {
     return
   }
   //console.log('createStarMansionApp_::target=<',target,'>');
+  const GSM = await import(`${constAppPrefix}/assets/js/gravity/mansion.js`);
   const mansion = new GSM.StarMansion(constCreateMansionPrefix,target,(channel,msg)=>{
     if(msg.from) {
       if(msg.gps) {
@@ -56,9 +52,10 @@ const createStarMansionApp_ = async ()=> {
   }
 }
 
-const onStarMansionSave = (mansionUI,mansion) => {
+const onStarMansionSave = async (mansionUI,mansion) => {
   //console.log('createStarMansionApp_::mansionUI=<',mansionUI,'>');
   //console.log('createStarMansionApp_::mansion=<',mansion,'>');
+  const GSM = await import(`${constAppPrefix}/assets/js/gravity/mansion.js`);
   const mf = new GSM.MansionFactory();
   const mansionObj = {
     name:mansionUI.name,
@@ -100,7 +97,7 @@ const iConstGPSHistoryMax = 1024;
 const arConstGPSHistory = {
   
 };
-const onAnchorPosition = (lon,lat,geoidal,uwbId,anchorAddress) => {
+const onAnchorPosition = async (lon,lat,geoidal,uwbId,anchorAddress) => {
   //console.log('onAnchorPosition::lon=<',lon,'>');
   //console.log('onAnchorPosition::lat=<',lat,'>');
   //console.log('onAnchorPosition::geoidal=<',geoidal,'>');  
@@ -115,6 +112,10 @@ const onAnchorPosition = (lon,lat,geoidal,uwbId,anchorAddress) => {
       arConstGPSHistory[anchorAddress] = [];
     }
   }
+  const COORD = await import(`${constAppPrefix}/assets/js/gps/Coord.js`);
+  //console.log('onAnchorPosition::COORD=<',COORD,'>');
+  const coord = new COORD.Coord();
+
   const xyz = coord.WGS2ECEF(lat,lon,geoidal);
   //console.log('onAnchorPosition::xyz=<',xyz,'>');
   const save = {
