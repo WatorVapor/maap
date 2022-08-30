@@ -1,27 +1,15 @@
+import * as Vue from 'https://cdn.jsdelivr.net/npm/vue@3.2.37/dist/vue.esm-browser.prod.js';
 let gVMKeyImport = false;
 let gVMToken = false;
 let gVMKeyExport = false;
 let edAuth = false;
-/*
 document.addEventListener('DOMContentLoaded', async (evt) => {
   console.log('DOMContentLoaded::evt=<',evt,'>');
   createAccountApp_();
 });
-*/
-
-document.addEventListener('AppScriptLoaded', async (evt) => {
-  console.log('AppScriptLoaded::evt=<',evt,'>');
-  createAccountApp_();
-});
-/*
-document.addEventListener('load', async (evt) => {
-  console.log('load::evt=<',evt,'>');
-  createAccountApp_();
-});
-*/
 
 const createAccountApp_ = async ()=> {
-  const EDAUTH = await import(`${appPrefix}/assets/js/edauth.js`);
+  const EDAUTH = await import(`${constAppPrefix}/assets/js/edauth.js`);
   console.log('createAccountApp_::EDAUTH=<',EDAUTH,'>');
   edAuth = new EDAUTH.EDAuth();
   const appImport = Vue.createApp({

@@ -1,7 +1,8 @@
-document.addEventListener('AppScriptLoaded', async (evt) => {
+document.addEventListener('DOMContentLoaded', async (evt) => {
   createStarMansionApp_();
 });
-const GSM = await import(`${appPrefix}/assets/js/gravity/mansion.js`);
+import * as Vue from 'https://cdn.jsdelivr.net/npm/vue@3.2.37/dist/vue.esm-browser.prod.js';
+console.log('::Vue=<',Vue,'>');
 
 const star_mansion_option = {
   data() {
@@ -14,15 +15,15 @@ const star_mansion_option = {
   },
   methods: {
     onStarMansionSaveBtn(evt) {
-      //console.log('createStarMansionApp_::evt=<',evt,'>');
-      //console.log('createStarMansionApp_::this.mansion=<',this.mansion,'>');
+      //console.log('onStarMansionSaveBtn::evt=<',evt,'>');
+      //console.log('onStarMansionSaveBtn::this.mansion=<',this.mansion,'>');
       onStarMansionSave(this.mansion,this.instance);
     }
-  }  
+  }
 }
-import * as Vue from 'https://cdn.jsdelivr.net/npm/vue@3.2.37/dist/vue.esm-browser.prod.js';
 
 const createStarMansionApp_ = async ()=> {
+  const GSM = await import(`${constAppPrefix}/assets/js/gravity/mansion.js`);
   console.log('createStarMansionApp_::GSM=<',GSM,'>');
   const mansion = new GSM.StarMansion(constCreateMansionPrefix);
   console.log('createStarMansionApp_::mansion=<',mansion,'>');
@@ -37,8 +38,8 @@ const createStarMansionApp_ = async ()=> {
 }
 
 const onStarMansionSave = (mansionUI,mansion) => {
-  console.log('createStarMansionApp_::mansionUI=<',mansionUI,'>');
-  console.log('createStarMansionApp_::mansion=<',mansion,'>');
+  console.log('onStarMansionSave::mansionUI=<',mansionUI,'>');
+  console.log('onStarMansionSave::mansion=<',mansion,'>');
   const mf = new GSM.MansionFactory();
   const mansionObj = {
     name:mansionUI.name,
