@@ -76,7 +76,9 @@ const requestMansionMqttJwt_ = (mansionAddress,wsClient) => {
   }
   const request = {
     jwt:{
-      add:mass.address_
+      add:mass.address_,
+      username:mass.address_,
+      clientid:mass.address_,
     }
   }
   const signedReq = mass.sign(request);
@@ -132,7 +134,7 @@ const onMqttJwtReply_ = (jwt,payload,replyMsg) => {
   gMqttApp.count--;
   if(MqttJwt.debug) {
     console.log('MqttJwt::onMqttJwtReply_:gMqttApp.count=<',gMqttApp.count,'>');
-  }    
+  }
   if(gMqttApp.count <= 0) {
     history.back();
   }

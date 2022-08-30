@@ -1,7 +1,5 @@
-import * as mqtt from 'https://cdn.jsdelivr.net/npm/mqtt@4.3.7/dist/mqtt.min.js'
-
 export class Graviton {
-  static debug = false;
+  static debug = true;
   constructor(mass,cb) {
     if(Graviton.debug) {
       console.log('Graviton::constructor:mass=<',mass,'>');
@@ -75,8 +73,8 @@ export class Graviton {
     const options = {
       connectTimeout: 4000,
       // Authentication
-      clientId: `browser_jwt_${this.mass_.address_}`,
-      username: '',
+      clientId: `${this.mass_.address_}`,
+      username: `${this.mass_.address_}`,
       password: jwtReply.jwt,
       keepalive: 60*5,
       clean: true,

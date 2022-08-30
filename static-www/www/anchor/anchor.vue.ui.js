@@ -1,3 +1,5 @@
+import * as Vue from 'https://cdn.jsdelivr.net/npm/vue@3.2.37/dist/vue.esm-browser.prod.js';
+
 const onUIAnchor = (anchor) => {
 }
 

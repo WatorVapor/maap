@@ -181,7 +181,15 @@ const onFrameworkScriptLoaded = (ref)=> {
     APP_LOCAL.script_ready = true;
     const evt = document.createEvent('Event');
     evt.initEvent('AppScriptLoaded', true, true);
-    document.dispatchEvent(evt);
+    
+    /*
+    setTimeout(()=>{
+      document.dispatchEvent(evt);
+    },1);
+    */
+    setTimeout(()=>{
+      document.dispatchEvent(evt);
+    },1000);
   }
 }
 

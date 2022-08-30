@@ -5,6 +5,7 @@ const coord = new COORD.Coord();
 import * as Vue from 'https://cdn.jsdelivr.net/npm/vue@3.2.37/dist/vue.esm-browser.prod.js';
 
 document.addEventListener('AppScriptLoaded', async (evt) => {
+  console.log('AppScriptLoaded::evt=<',evt,'>');
   createStarMansionApp_();
 });
 
@@ -49,8 +50,10 @@ const createStarMansionApp_ = async ()=> {
       console.log('createStarMansionApp_::msg=<',msg,'>');      
     }
   });
-  const appMasion = Vue.createApp(star_mansion_option);
-  const vmMasion = appStarry.mount('#vue-ui-view-star-mansion');
+  if(!App.vm) {
+    const appMasion = Vue.createApp(star_mansion_option);
+    App.vm = appMasion.mount('#vue-ui-view-star-mansion');
+  }
 }
 
 const onStarMansionSave = (mansionUI,mansion) => {

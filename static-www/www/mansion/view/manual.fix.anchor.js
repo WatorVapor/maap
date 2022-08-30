@@ -9,6 +9,31 @@ document.addEventListener('AppScriptLoaded', async (evt) => {
 
 const fixed_anchor_option = {
   data() {
+    const manualFixGpsStr = localStorage.getItem(constAnchorGpsManualFix);
+    if(manualFixGpsStr) {
+      const manualFixGps = JSON.parse(manualFixGpsStr);
+      console.log('fixed_anchor_option::manualFixGps=<',manualFixGps,'>');
+      return {
+        anchors:manualFixGps.anchor
+      };
+    } else {
+      const posHistory = loadMapBySavedGpsAnchors();
+      console.log('fixed_anchor_option::posHistory=<',posHistory,'>');
+      for(const address in posHistory.anchor) {
+        console.log('fixed_anchor_option::address=<',address,'>');
+        const anchor = posHistory.anchor[address];
+        console.log('fixed_anchor_option::anchor=<',anchor,'>');
+        const xyz = coord.WGS2ECEF(anchor.lat,anchor.lon,anchor.geo);
+        console.log('fixed_anchor_option::xyz=<',xyz,'>');
+        anchor.x = xyz.x;
+        anchor.y = xyz.y;
+        anchor.z = xyz.z;
+      }
+      console.log('fixed_anchor_option::posHistory.anchor=<',posHistory.anchor,'>');
+      return {
+        anchors:posHistory.anchor
+      };
+    }
     return {
       anchors:{}
     };
@@ -28,28 +53,10 @@ const fixed_anchor_option = {
   }  
 }
 
+const gVueApp = {};
 const tryLoadManualFix_ = () => {
-  const appAnchor = Vue.createApp(fixed_anchor_option);
-  const vmAnchor = appAnchor.mount('#ui-vue-fix-anchor-manual');
-  const manualFixGpsStr = localStorage.getItem(constAnchorGpsManualFix);
-  if(manualFixGpsStr) {
-    const manualFixGps = JSON.parse(manualFixGpsStr);
-    console.log('tryLoadManualFix_::manualFixGps=<',manualFixGps,'>');  
-    vmAnchor.anchors = manualFixGps.anchor;
-  } else {
-    const posHistory = loadMapBySavedGpsAnchors();
-    console.log('tryLoadManualFix_::posHistory=<',posHistory,'>');
-    for(const address in posHistory.anchor) {
-      console.log('tryLoadManualFix_::address=<',address,'>');
-      const anchor = posHistory.anchor[address];
-      console.log('tryLoadManualFix_::anchor=<',anchor,'>');
-      const xyz = coord.WGS2ECEF(anchor.lat,anchor.lon,anchor.geo);
-      console.log('tryLoadManualFix_::xyz=<',xyz,'>');
-      anchor.x = xyz.x;
-      anchor.y = xyz.y;
-      anchor.z = xyz.z;
-    }
-    vmAnchor.anchors = posHistory.anchor;
+  if(!gVueApp.fixAnchor) {
+    const appAnchor = Vue.createApp(fixed_anchor_option);
+    gVueApp.fixAnchor = appAnchor.mount('#ui-vue-fix-anchor-manual');
   }
-
 }
