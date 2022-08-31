@@ -88,7 +88,7 @@ const requestMansionMqttJwt_ = (mansionAddress,wsClient) => {
       address:mass.address_,
     }
   }
-  const signedReq = mass.sign(request);
+  const signedReq = auth.sign(request);
   if(MqttJwt.debug) {
     console.log('requestMansionMqttJwt_::signedReq=<',signedReq,'>');
   }

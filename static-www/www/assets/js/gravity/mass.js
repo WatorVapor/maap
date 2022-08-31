@@ -213,11 +213,14 @@ export class Mass {
       if(Mass.debug) {
         console.log('Mass::loadMassKey_:keyPair=<',keyPair,'>');
       }    
+      this.secretKey_ = keyPair.secretKey;
+      this.publicKey_ = keyPair.publicKey;
       const pubKey = localStorage.getItem(this.publicKeyPath_);
       if(Mass.debug) {
         console.log('Mass::loadMassKey_:pubKey=<',pubKey,'>');
       }
       this.pubKeyB64_ = pubKey;
+      this.publicKeyB64_ = pubKey;
       this.pubKey_ = nacl.util.decodeBase64(pubKey);
     } catch(err) {
       console.log('Mass::loadMassKey_:err=<',err,'>');
