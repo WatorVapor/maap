@@ -4,7 +4,7 @@ const coord = new COORD.Coord();
 
 Cesium.Ion.defaultAccessToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjMWM0MTFlOC04OTljLTQyZDEtOGRkYS00M2EyMWY1MDRhY2UiLCJpZCI6MTAxNzk1LCJpYXQiOjE2NTgyNzk5ODF9.wS71k-QxR6CLoJ5l3VuJeb07sE3qOkkSgy2MbmuLFWg`;
 
-document.addEventListener('AppScriptLoaded', async (evt) => {
+document.addEventListener('DOMContentLoaded', async (evt) => {
   const posHistory = loadMapBySavedGpsAnchors();
   console.log('calcBestGPSFromHistory::posHistory=<',posHistory,'>');
   if(posHistory && posHistory.center) {

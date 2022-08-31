@@ -2,7 +2,7 @@ const COORD = await import(`/maap/assets/js/gps/Coord.js`);
 console.log('::COORD=<',COORD,'>');
 const coord = new COORD.Coord();
 
-document.addEventListener('AppScriptLoaded', async (evt) => {
+document.addEventListener('DOMContentLoaded', async (evt) => {
   const posHistory = loadMapBySavedGpsAnchors();
   console.log('calcBestGPSFromHistory::posHistory=<',posHistory,'>');
   if(posHistory && posHistory.center) {

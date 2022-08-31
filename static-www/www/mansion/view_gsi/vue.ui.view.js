@@ -3,7 +3,7 @@ const COORD = await import(`/maap/assets/js/gps/Coord.js`);
 console.log('::COORD=<',COORD,'>');
 const coord = new COORD.Coord();
 
-document.addEventListener('AppScriptLoaded', async (evt) => {
+document.addEventListener('DOMContentLoaded', async (evt) => {
   createStarMansionApp_();
 });
 
@@ -193,7 +193,7 @@ window.onUIClickSaveAnchorGPS = (elem) => {
   gBestAnchorGps = result.anchor;
 }
 
-document.addEventListener('AppScriptLoaded', async (evt) => {
+document.addEventListener('DOMContentLoaded', async (evt) => {
   const bestStr = localStorage.getItem(constAnchorGpsBest);
   if(bestStr) {
     gBestAnchorGps = JSON.parse(bestStr);
