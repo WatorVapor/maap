@@ -74,11 +74,17 @@ const requestMansionMqttJwt_ = (mansionAddress,wsClient) => {
   if(!mass) {
     return;
   }
+  const auth = new MASS.Mass(constEdAuthPrefix);
+  if(MqttJwt.debug) {
+    console.log('requestMansionMqttJwt_::auth=<',auth,'>');
+  }
+  //const address = auth.load();
+
   const request = {
     jwt:{
       browser:true,
       username:mass.address_,
-      clientid:mass.address_,
+      clientid:auth.address_,
       address:mass.address_,
     }
   }

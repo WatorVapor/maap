@@ -60,8 +60,10 @@ export class Graviton {
       console.log('Graviton::verifyJwt_:iat=<',exp,'>');
     }
     const remain_ms = exp - now;
+    const remain_hour = parseFloat(remain_ms)/(1000.0*3600.0);
     if(Graviton.debug) {
       console.log('Graviton::verifyJwt_:remain_ms=<',remain_ms,'>');
+      console.log('Graviton::verifyJwt_:remain_hour=<',remain_hour,'>');
     }
     if(remain_ms > 0) {
       return true;
@@ -73,25 +75,36 @@ export class Graviton {
     const options = {
       connectTimeout: 4000,
       // Authentication
-      clientId: `${this.mass_.address_}`,
-      username: `${this.mass_.address_}`,
+      clientId: jwtReply.payload.clientid,
+      username: jwtReply.payload.username,
       password: jwtReply.jwt,
       keepalive: 60*5,
       clean: true,
+      protocolVersion:5,
       rejectUnauthorized: false
     }
     if(Graviton.debug) {
       console.log('Graviton::createMqttConnection_:options=<',options,'>');
     }
     this.mqttClient_ = mqtt.connect('wss://wator.xyz:8084/mqtt',options);
-    this.mqttClient_.on('connect', () => {
-      console.log('Graviton::createMqttConnection_ connect this.mqttClient_.connected:=<', this.mqttClient_.connected, '>');
-    });
     const self = this;
+    this.mqttClient_.on('connect', () => {
+      console.log('Graviton::createMqttConnection_ connect self.mqttClient_:=<', self.mqttClient_, '>');
+      console.log('Graviton::createMqttConnection_ connect self.mqttClient_.connected:=<', self.mqttClient_.connected, '>');
+    });
     this.mqttClient_.on('message', (channel, message) => {
       self.onMqttMessage_(channel, message);
     });
-    this.mqttClient_.subscribe(`${this.mass_.address_}/#`,{qos:1});
+    const topics = [
+      `${jwtReply.payload.clientid}/#`,
+      `${jwtReply.payload.username}/#`,
+    ];
+    this.mqttClient_.subscribe(topics,{qos:1,nl:true},(err, granted)=>{
+      if(err) {
+        console.error('Graviton::createMqttConnection_ subscribe err:=<', err, '>');
+      }      
+      console.log('Graviton::createMqttConnection_ subscribe granted:=<', granted, '>');      
+    });
   }  
   onMqttMessage_(channel, message) {
     //console.log('Graviton::onMqttMessage_ channel:=<', channel, '>');
