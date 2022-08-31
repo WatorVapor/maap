@@ -3,7 +3,7 @@ const COORD = await import(`/maap/assets/js/gps/Coord.js`);
 console.log('::COORD=<',COORD,'>');
 const coord = new COORD.Coord();
 
-document.addEventListener('AppScriptLoaded', async (evt) => {
+document.addEventListener('DOMContentLoaded', async (evt) => {
   tryLoadManualFix_();
 });
 

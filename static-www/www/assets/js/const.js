@@ -22,3 +22,4 @@ const constAnchorGpsBest = 'maap/anchor/gps/best';
 const constAnchorGpsManualFix = 'maap/anchor/gps/manual/fix';
 
 const constAppPrefix = '/maap';
+const constKeyLanguangeCode = 'maap/lang_code';

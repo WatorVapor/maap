@@ -1,9 +1,9 @@
-const MASS = await import(`${appPrefix}/assets/js/gravity/mass.js`);
+const MASS = await import(`${constAppPrefix}/assets/js/gravity/mass.js`);
 const MqttJwt = {
   debug:true,
 }
 
-document.addEventListener('AppScriptLoaded', async (evt) => {
+document.addEventListener('DOMContentLoaded', async (evt) => {
   loadMqttJwtChannel_(evt);
 });
 const loadMqttJwtChannel_ = (evt) => {

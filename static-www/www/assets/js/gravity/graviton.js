@@ -34,7 +34,7 @@ export class Graviton {
     this.createMqttConnection_(jwtReply);
   }
   jump2jwtRequest_() {
-    const jwtPaht = `${appPrefix}/mqtt_jwt/`;
+    const jwtPaht = `${constAppPrefix}/mqtt_jwt/`;
     if(Graviton.debug) {
       console.log('Graviton::jump2jwtRequest_:jwtPaht=<',jwtPaht,'>');
     }
